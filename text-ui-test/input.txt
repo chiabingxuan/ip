@@ -1,0 +1,18 @@
+todo borrow book
+todo do yoga
+deadline do laundry /by Mon 11am
+event chess training /from Mon 3pm /to 6pm
+list
+mark 2
+unmark 1
+list
+mark 1
+deadline return book /by Wed
+event project meeting /from Tues 2pm /to 4pm
+unmark 2
+mark 3
+list
+mark 4
+mark 6
+list
+bye
