@@ -10,9 +10,9 @@ class TaskTracker {
         this.numOfTasks = 0;
     }
 
-    private TaskTracker(TaskTracker taskTracker, String newTaskName) {
+    private TaskTracker(TaskTracker taskTracker, Task newTask) {
         this.tasks = taskTracker.tasks;
-        this.tasks[taskTracker.numOfTasks] = new Task(newTaskName);
+        this.tasks[taskTracker.numOfTasks] = newTask;
         this.numOfTasks = taskTracker.numOfTasks + 1;
     }
 
@@ -50,17 +50,21 @@ class TaskTracker {
                 .reduce("", (x, y) -> x + "\n" + y);
     }
 
-    TaskTracker addTask(String taskName) {
+    TaskTracker addTask(Task newTask) {
         if (this.numOfTasks >= MAX_TASKS) {
             // storage is full, throw exception
             throw new IllegalStateException("Task storage is full");
         }
 
-        return new TaskTracker(this, taskName);
+        return new TaskTracker(this, newTask);
     }
 
-    Task changeTaskStatus(int taskIndex, boolean newStatus) {
+    Task changeTaskStatusAtIndex(int taskIndex, boolean newStatus) {
         Task oldTask = this.getTask(taskIndex);
-        return new Task(oldTask, newStatus);
+        return oldTask.changeTaskStatus(newStatus);
+    }
+
+    int getNumOfTasks() {
+        return this.numOfTasks;
     }
 }

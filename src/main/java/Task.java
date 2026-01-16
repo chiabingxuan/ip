@@ -1,4 +1,4 @@
-class Task {
+abstract class Task {
     private static final String DONE_ICON = "X";
     private static final String NOT_DONE_ICON = " ";
 
@@ -10,7 +10,7 @@ class Task {
         this.isDone = false;
     }
 
-    Task(Task task, boolean isDone) {
+    protected Task(Task task, boolean isDone) {
         this.taskName = task.taskName;
         this.isDone = isDone;
     }
@@ -18,6 +18,8 @@ class Task {
     private String getStatusIcon() {
         return this.isDone ? DONE_ICON : NOT_DONE_ICON;
     }
+
+    abstract Task changeTaskStatus(boolean newStatus);
 
     @Override
     public String toString() {

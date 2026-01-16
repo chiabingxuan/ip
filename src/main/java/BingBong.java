@@ -1,12 +1,13 @@
+import java.util.function.BiFunction;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class BingBong {
     // bot properties
     private static final String BOT_NAME = "BingBong";
-    private static final String LIST_COMMAND = "list";
+    private static final HashMap<String,
+            BiFunction<TaskTracker, String, TaskTracker>> COMMANDS_TO_OPERATIONS = new HashMap<>();
     private static final String BYE_COMMAND = "bye";
-    private static final String MARK_COMMAND = "mark";
-    private static final String UNMARK_COMMAND = "unmark";
 
     // messages to print out
     private static String getStartMessage() {
@@ -21,8 +22,12 @@ public class BingBong {
                 + listOfTasks;
     }
 
-    private static String getAddTaskMessage(String taskName) {
-        return "added: " + taskName;
+    private static String getAddTaskMessage(Task task, int numOfTasks) {
+        return "You're getting busier. I've added this task:"
+                + "\n"
+                + task
+                + "\n"
+                + "Now you have " + numOfTasks + " tasks in the list.";
     }
 
     private static String getMarkedTaskMessage(Task task) {
@@ -41,7 +46,80 @@ public class BingBong {
         return "Hasta la vista, baby!";
     }
 
+    // populate mapping of commands to the BiFunction to be called
+    private static void init_commands_to_operations() {
+        // list all tasks in current tracker
+        COMMANDS_TO_OPERATIONS.put("list", (taskTracker, inputLine) -> {
+            String listOfTasks = taskTracker.listTasks();
+            System.out.println(new Message(getListTasksMessage(listOfTasks)));
+            return taskTracker;
+        });
+
+        // mark chosen task done
+        COMMANDS_TO_OPERATIONS.put("mark", (taskTracker, inputLine) -> {
+            String[] inputTokens = inputLine.split(" ");
+            int indexToMark = Integer.parseInt(inputTokens[1]) - 1;
+            Task markedTask = taskTracker.changeTaskStatusAtIndex(indexToMark, true);
+            taskTracker = taskTracker.editTask(indexToMark, markedTask);
+            System.out.println(new Message(getMarkedTaskMessage(markedTask)));
+            return taskTracker;
+        });
+
+        // mark chosen task as not done
+        COMMANDS_TO_OPERATIONS.put("unmark", (taskTracker, inputLine) -> {
+            String[] inputTokens = inputLine.split(" ");
+            int indexToUnmark = Integer.parseInt(inputTokens[1]) - 1;
+            Task unmarkedTask = taskTracker.changeTaskStatusAtIndex(indexToUnmark, false);
+            taskTracker = taskTracker.editTask(indexToUnmark, unmarkedTask);
+            System.out.println(new Message(getUnmarkedTaskMessage(unmarkedTask)));
+            return taskTracker;
+        });
+
+        // add a todo
+        COMMANDS_TO_OPERATIONS.put("todo", (taskTracker, inputLine) -> {
+            String todoName = inputLine.split("todo ", 2)[1];
+            Todo newTodo = new Todo(todoName);
+
+            taskTracker = taskTracker.addTask(newTodo);
+            int numOfTasks = taskTracker.getNumOfTasks();
+            System.out.println(new Message(getAddTaskMessage(newTodo, numOfTasks)));
+            return taskTracker;
+        });
+
+        // add a deadline
+        COMMANDS_TO_OPERATIONS.put("deadline", (taskTracker, inputLine) -> {
+            String[] deadlineDetails = inputLine.split("deadline ", 2)[1]
+                    .split(" /by ");
+            String deadlineName = deadlineDetails[0];
+            String byWhen = deadlineDetails[1];
+            Deadline newDeadline = new Deadline(deadlineName, byWhen);
+
+            taskTracker = taskTracker.addTask(newDeadline);
+            int numOfTasks = taskTracker.getNumOfTasks();
+            System.out.println(new Message(getAddTaskMessage(newDeadline, numOfTasks)));
+            return taskTracker;
+        });
+
+        // add an event
+        COMMANDS_TO_OPERATIONS.put("event", (taskTracker, inputLine) -> {
+            String[] eventDetails = inputLine.split("event ", 2)[1]
+                    .split(" /from | /to ");
+            String eventName = eventDetails[0];
+            String startTime = eventDetails[1];
+            String endTime = eventDetails[2];
+            Event newEvent = new Event(eventName, startTime, endTime);
+
+            taskTracker = taskTracker.addTask(newEvent);
+            int numOfTasks = taskTracker.getNumOfTasks();
+            System.out.println(new Message(getAddTaskMessage(newEvent, numOfTasks)));
+            return taskTracker;
+        });
+    }
+
     public static void main(String[] args) {
+        // initialise mapping of commands to operations
+        init_commands_to_operations();
+
         System.out.println(new Message(getStartMessage()));
 
         TaskTracker taskTracker = new TaskTracker();
@@ -52,31 +130,9 @@ public class BingBong {
             String[] inputTokens = inputLine.split(" ");
             String inputCommand = inputTokens[0];
 
-            switch (inputCommand) {
-                // list existing tasks
-                case LIST_COMMAND:
-                    String listOfTasks = taskTracker.listTasks();
-                    System.out.println(new Message(getListTasksMessage(listOfTasks)));
-                    break;
-                // marked chosen task as done
-                case MARK_COMMAND:
-                    int indexToMark = Integer.parseInt(inputTokens[1]) - 1;
-                    Task markedTask = taskTracker.changeTaskStatus(indexToMark, true);
-                    taskTracker = taskTracker.editTask(indexToMark, markedTask);
-                    System.out.println(new Message(getMarkedTaskMessage(markedTask)));
-                    break;
-                // mark chosen task as not done
-                case UNMARK_COMMAND:
-                    int indexToUnmark = Integer.parseInt(inputTokens[1]) - 1;
-                    Task unmarkedTask = taskTracker.changeTaskStatus(indexToUnmark, false);
-                    taskTracker = taskTracker.editTask(indexToUnmark, unmarkedTask);
-                    System.out.println(new Message(getUnmarkedTaskMessage(unmarkedTask)));
-                    break;
-                // by default we add the input given as a Task
-                default:
-                    taskTracker = taskTracker.addTask(inputLine);
-                    System.out.println(new Message(getAddTaskMessage(inputLine)));
-            }
+            BiFunction<TaskTracker, String, TaskTracker> op = COMMANDS_TO_OPERATIONS.get(inputCommand);
+            taskTracker = op.apply(taskTracker, inputLine);
+
             inputLine = sc.nextLine();
         }
 
