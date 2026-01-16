@@ -8,6 +8,6 @@ class Message {
 
     @Override
     public String toString() {
-        return HORIZONTAL_LINE + "\n" + this.message;
+        return HORIZONTAL_LINE + "\n" + this.message + "\n" + HORIZONTAL_LINE;
     }
 }
