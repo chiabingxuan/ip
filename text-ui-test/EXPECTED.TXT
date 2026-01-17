@@ -12,6 +12,11 @@ You're getting busier. I've added this task:
 Now you have 2 task(s) in the list.
 ________________________________________________________
 ________________________________________________________
+SORRY... :(
+The description of a deadline cannot be empty. Add a task name after the "deadline" command.
+Eg. "deadline finish homework /by 9pm"
+________________________________________________________
+________________________________________________________
 You're getting busier. I've added this task:
 [D][ ] do laundry (by: Mon 11am)
 Now you have 3 task(s) in the list.
@@ -46,13 +51,62 @@ Here are the tasks that you have added to the list:
 4. [E][ ] chess training (from: Mon 3pm to: 6pm)
 ________________________________________________________
 ________________________________________________________
+SORRY... :(
+For events, the "/to" delimiter must be placed between the chosen start time and the chosen end time.
+Eg. "event go for a jog /from 9am /to 10am"
+________________________________________________________
+________________________________________________________
+SORRY... :(
+For events, the "/from" delimiter must be placed between the task description and the chosen start time.
+Eg. "event go for a jog /from 9am /to 10am"
+________________________________________________________
+________________________________________________________
+SORRY... :(
+For events, the "/to" delimiter must be placed between the chosen start time and the chosen end time.
+Eg. "event go for a jog /from 9am /to 10am"
+________________________________________________________
+________________________________________________________
+SORRY... :(
+For events, the "/to" delimiter must be placed between the chosen start time and the chosen end time.
+Eg. "event go for a jog /from 9am /to 10am"
+________________________________________________________
+________________________________________________________
 Congratulations on being hardworking for once! This task has been marked as done:
 [T][X] borrow book
+________________________________________________________
+________________________________________________________
+SORRY... :(
+I have no idea what that means. You could try:
+[todo, deadline, event, list, mark, unmark, bye]
+________________________________________________________
+________________________________________________________
+SORRY... :(
+The task index that you have provided (-1) does not exist. There are currently 4 task(s) in the list.
+________________________________________________________
+________________________________________________________
+SORRY... :(
+Task number is invalid. Make sure you have added the correct task number after the "mark" command.
+Eg. "mark 1" to mark the first task as completed
+________________________________________________________
+________________________________________________________
+SORRY... :(
+Task number is missing. Make sure you have added a task number after the "unmark" command.
+Eg. "unmark 1" to mark the first task as incomplete
 ________________________________________________________
 ________________________________________________________
 You're getting busier. I've added this task:
 [D][ ] return book (by: Wed)
 Now you have 5 task(s) in the list.
+________________________________________________________
+________________________________________________________
+SORRY... :(
+For deadlines, the "/by" delimiter must be placed between the task description and the chosen date.
+Eg. "deadline finish homework /by 9pm"
+________________________________________________________
+________________________________________________________
+SORRY... :(
+For deadlines, the "/by" delimiter must be placed between the task description and the chosen date.
+Eg. "deadline finish homework /by 9pm"
 ________________________________________________________
 ________________________________________________________
 You're getting busier. I've added this task:
@@ -80,6 +134,11 @@ ________________________________________________________
 ________________________________________________________
 Congratulations on being hardworking for once! This task has been marked as done:
 [E][X] chess training (from: Mon 3pm to: 6pm)
+________________________________________________________
+________________________________________________________
+SORRY... :(
+The description of a todo cannot be empty. Add a task name after the "todo" command.
+Eg. "todo go grocery shopping"
 ________________________________________________________
 ________________________________________________________
 Congratulations on being hardworking for once! This task has been marked as done:

@@ -22,19 +22,34 @@ class TaskTracker {
         this.numOfTasks = taskTracker.numOfTasks;
     }
 
-    Task getTask(int index) {
+    private String getWrongIndexExceptionMsg(int index) {
+        int indexInInput = index + 1;  // user uses 1-indexing
+        return "The task index that you have provided ("
+                + indexInInput
+                + ") does not exist. There are currently "
+                + this.numOfTasks
+                + " task(s) in the list.";
+    }
+
+    private String getFullListExceptionMsg() {
+        return "The task tracker is full with "
+                + MAX_TASKS
+                + " tasks, and cannot store any more tasks.";
+    }
+
+    Task getTask(int index) throws BingBongException {
         if (index < 0 || index >= this.numOfTasks) {
             // index out of range
-            throw new IndexOutOfBoundsException("Task index " + index + "does not exist");
+            throw new BingBongException(this.getWrongIndexExceptionMsg(index));
         }
 
         return this.tasks[index];
     }
 
-    TaskTracker editTask(int index, Task newTask) {
+    TaskTracker editTask(int index, Task newTask) throws BingBongException {
         if (index < 0 || index >= this.numOfTasks) {
             // index out of range
-            throw new IndexOutOfBoundsException("Task index " + index + " does not exist");
+            throw new BingBongException(this.getWrongIndexExceptionMsg(index));
         }
 
         return new TaskTracker(this, newTask, index);
@@ -50,16 +65,16 @@ class TaskTracker {
                 .reduce("", (x, y) -> x + "\n" + y);
     }
 
-    TaskTracker addTask(Task newTask) {
+    TaskTracker addTask(Task newTask) throws BingBongException {
         if (this.numOfTasks >= MAX_TASKS) {
             // storage is full, throw exception
-            throw new IllegalStateException("Task storage is full");
+            throw new BingBongException(this.getFullListExceptionMsg());
         }
 
         return new TaskTracker(this, newTask);
     }
 
-    Task changeTaskStatusAtIndex(int taskIndex, boolean newStatus) {
+    Task changeTaskStatusAtIndex(int taskIndex, boolean newStatus) throws BingBongException {
         Task oldTask = this.getTask(taskIndex);
         return oldTask.changeTaskStatus(newStatus);
     }

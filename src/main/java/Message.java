@@ -1,5 +1,6 @@
 class Message {
-    protected static final String HORIZONTAL_LINE = "______________________________________";
+    protected static final String HORIZONTAL_LINE =
+            "________________________________________________________";
     private final String message;
 
     Message(String message) {

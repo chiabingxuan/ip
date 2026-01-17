@@ -1,13 +1,19 @@
-import java.util.function.BiFunction;
-import java.util.HashMap;
-import java.util.Scanner;
+import java.util.*;
 
 public class BingBong {
     // bot properties
     private static final String BOT_NAME = "BingBong";
     private static final HashMap<String,
-            BiFunction<TaskTracker, String, TaskTracker>> COMMANDS_TO_OPERATIONS = new HashMap<>();
+            ThrowingBiFunction<TaskTracker, String, TaskTracker>> COMMANDS_TO_OPERATIONS = new HashMap<>();
+    private static final String LIST_COMMAND = "list";
     private static final String BYE_COMMAND = "bye";
+
+    // examples to be shown in error messages
+    private static final String MARK_EXAMPLE = "\"mark 1\" to mark the first task as completed";
+    private static final String UNMARK_EXAMPLE = "\"unmark 1\" to mark the first task as incomplete";
+    private static final String TODO_EXAMPLE = "\"todo go grocery shopping\"";
+    private static final String DEADLINE_EXAMPLE = "\"deadline finish homework /by 9pm\"";
+    private static final String EVENT_EXAMPLE = "\"event go for a jog /from 9am /to 10am\"";
 
     // messages to print out
     private static String getStartMessage() {
@@ -27,7 +33,7 @@ public class BingBong {
                 + "\n"
                 + task
                 + "\n"
-                + "Now you have " + numOfTasks + " tasks in the list.";
+                + "Now you have " + numOfTasks + " task(s) in the list.";
     }
 
     private static String getMarkedTaskMessage(Task task) {
@@ -42,42 +48,98 @@ public class BingBong {
                 + task;
     }
 
+    private static String getExceptionMessage(String msg) {
+        return "SORRY... :("
+                + "\n"
+                + msg;
+    }
+
     private static String getEndMessage() {
         return "Hasta la vista, baby!";
     }
 
-    // populate mapping of commands to the BiFunction to be called
-    private static void init_commands_to_operations() {
-        // list all tasks in current tracker
-        COMMANDS_TO_OPERATIONS.put("list", (taskTracker, inputLine) -> {
-            String listOfTasks = taskTracker.listTasks();
-            System.out.println(new Message(getListTasksMessage(listOfTasks)));
-            return taskTracker;
-        });
+    // list all tasks in current tracker
+    private static void listTrackerTasks(TaskTracker taskTracker) {
+        String listOfTasks = taskTracker.listTasks();
+        System.out.println(new Message(getListTasksMessage(listOfTasks)));
+    }
 
+    // fetch correct thing to do, based on the given input command
+    private static ThrowingBiFunction<TaskTracker, String, TaskTracker> getOp(String inputCommand)
+            throws BingBongException {
+        if (!COMMANDS_TO_OPERATIONS.containsKey(inputCommand)) {
+            Set<String> commands = new HashSet<>(COMMANDS_TO_OPERATIONS.keySet());
+            commands.addAll(List.of(LIST_COMMAND, BYE_COMMAND));
+
+            throw new BingBongException("I have no idea what that "
+                    + "means. You could try:\n"
+                    + commands
+            );
+        }
+
+        return COMMANDS_TO_OPERATIONS.get(inputCommand);
+    }
+
+    // populate mapping of commands to the ThrowingBiFunction to be called
+    private static void init_commands_to_operations() {
         // mark chosen task done
         COMMANDS_TO_OPERATIONS.put("mark", (taskTracker, inputLine) -> {
-            String[] inputTokens = inputLine.split(" ");
-            int indexToMark = Integer.parseInt(inputTokens[1]) - 1;
-            Task markedTask = taskTracker.changeTaskStatusAtIndex(indexToMark, true);
-            taskTracker = taskTracker.editTask(indexToMark, markedTask);
-            System.out.println(new Message(getMarkedTaskMessage(markedTask)));
-            return taskTracker;
+            String[] inputTokens = inputLine.split("\\s+");
+
+            try {
+                int indexToMark = Integer.parseInt(inputTokens[1]) - 1;
+                Task markedTask = taskTracker.changeTaskStatusAtIndex(indexToMark, true);
+                taskTracker = taskTracker.editTask(indexToMark, markedTask);
+                System.out.println(new Message(getMarkedTaskMessage(markedTask)));
+                return taskTracker;
+            } catch (ArrayIndexOutOfBoundsException ex) {
+                throw new BingBongException("Task number is missing. Make sure you have added a "
+                        + "task number after the \"mark\" command."
+                        + "\nEg. "
+                        + MARK_EXAMPLE);
+            } catch (NumberFormatException ex) {
+                throw new BingBongException("Task number is invalid. Make sure you have added the "
+                        + "correct task number after the \"mark\" command."
+                        + "\nEg. "
+                        + MARK_EXAMPLE);
+            }
         });
 
         // mark chosen task as not done
         COMMANDS_TO_OPERATIONS.put("unmark", (taskTracker, inputLine) -> {
-            String[] inputTokens = inputLine.split(" ");
-            int indexToUnmark = Integer.parseInt(inputTokens[1]) - 1;
-            Task unmarkedTask = taskTracker.changeTaskStatusAtIndex(indexToUnmark, false);
-            taskTracker = taskTracker.editTask(indexToUnmark, unmarkedTask);
-            System.out.println(new Message(getUnmarkedTaskMessage(unmarkedTask)));
-            return taskTracker;
+            String[] inputTokens = inputLine.split("\\s+");
+
+            try {
+                int indexToUnmark = Integer.parseInt(inputTokens[1]) - 1;
+                Task unmarkedTask = taskTracker.changeTaskStatusAtIndex(indexToUnmark, false);
+                taskTracker = taskTracker.editTask(indexToUnmark, unmarkedTask);
+                System.out.println(new Message(getUnmarkedTaskMessage(unmarkedTask)));
+                return taskTracker;
+            } catch (ArrayIndexOutOfBoundsException ex) {
+                throw new BingBongException("Task number is missing. Make sure you have added a "
+                        + "task number after the \"unmark\" command."
+                        + "\nEg. "
+                        + UNMARK_EXAMPLE);
+            } catch (NumberFormatException ex) {
+                throw new BingBongException("Task number is invalid. Make sure you have added the "
+                        + "correct task number after the \"unmark\" command."
+                        + "\nEg. "
+                        + UNMARK_EXAMPLE);
+            }
         });
 
         // add a todo
         COMMANDS_TO_OPERATIONS.put("todo", (taskTracker, inputLine) -> {
-            String todoName = inputLine.split("todo ", 2)[1];
+            String[] detailsAfterSplit = inputLine.split("todo\\s+", 2);
+
+            if (detailsAfterSplit.length < 2) {
+                throw new BingBongException("The description of a todo cannot be empty. "
+                        + "Add a task name after the \"todo\" command."
+                        + "\nEg. "
+                        + TODO_EXAMPLE);
+            }
+
+            String todoName = detailsAfterSplit[1];
             Todo newTodo = new Todo(todoName);
 
             taskTracker = taskTracker.addTask(newTodo);
@@ -88,8 +150,23 @@ public class BingBong {
 
         // add a deadline
         COMMANDS_TO_OPERATIONS.put("deadline", (taskTracker, inputLine) -> {
-            String[] deadlineDetails = inputLine.split("deadline ", 2)[1]
-                    .split(" /by ");
+            String[] detailsAfterSplittingCommand = inputLine.split("deadline\\s+", 2);
+            if (detailsAfterSplittingCommand.length < 2) {
+                throw new BingBongException("The description of a deadline cannot be empty. "
+                        + "Add a task name after the \"deadline\" command."
+                        + "\nEg. "
+                        + DEADLINE_EXAMPLE);
+            }
+
+            String[] deadlineDetails = detailsAfterSplittingCommand[1]
+                    .split("\\s+/by\\s+", 2);
+            if (deadlineDetails.length < 2) {
+                throw new BingBongException("For deadlines, the \"/by\" delimiter "
+                        + "must be placed between the task description and the chosen date."
+                        + "\nEg. "
+                        + DEADLINE_EXAMPLE);
+            }
+
             String deadlineName = deadlineDetails[0];
             String byWhen = deadlineDetails[1];
             Deadline newDeadline = new Deadline(deadlineName, byWhen);
@@ -102,11 +179,35 @@ public class BingBong {
 
         // add an event
         COMMANDS_TO_OPERATIONS.put("event", (taskTracker, inputLine) -> {
-            String[] eventDetails = inputLine.split("event ", 2)[1]
-                    .split(" /from | /to ");
-            String eventName = eventDetails[0];
-            String startTime = eventDetails[1];
-            String endTime = eventDetails[2];
+            String[] detailsAfterSplittingCommand = inputLine.split("event\\s+", 2);
+            if (detailsAfterSplittingCommand.length < 2) {
+                throw new BingBongException("The description of an event cannot be empty. "
+                        + "Add a task name after the \"event\" command."
+                        + "\nEg. "
+                        + EVENT_EXAMPLE);
+            }
+
+            String[] detailsAfterSplittingFrom = detailsAfterSplittingCommand[1]
+                    .split("\\s+/from\\s+",2);
+            if (detailsAfterSplittingFrom.length < 2) {
+                throw new BingBongException("For events, the \"/from\" delimiter "
+                        + "must be placed between the task description and the chosen start time."
+                        + "\nEg. "
+                        + EVENT_EXAMPLE);
+            }
+
+            String eventName = detailsAfterSplittingFrom[0];
+            String[] detailsAfterSplittingTo = detailsAfterSplittingFrom[1]
+                    .split("\\s+/to\\s+",2);
+            if (detailsAfterSplittingTo.length < 2) {
+                throw new BingBongException("For events, the \"/to\" delimiter "
+                        + "must be placed between the chosen start time and the chosen end time."
+                        + "\nEg. "
+                        + EVENT_EXAMPLE);
+            }
+
+            String startTime = detailsAfterSplittingTo[0];
+            String endTime = detailsAfterSplittingTo[1];
             Event newEvent = new Event(eventName, startTime, endTime);
 
             taskTracker = taskTracker.addTask(newEvent);
@@ -124,16 +225,25 @@ public class BingBong {
 
         TaskTracker taskTracker = new TaskTracker();
         Scanner sc = new Scanner(System.in);
-        String inputLine = sc.nextLine();
+        String inputLine = sc.nextLine().strip();
         while (!inputLine.equals(BYE_COMMAND)) {
-            // consider first token and see if it is a known command
-            String[] inputTokens = inputLine.split(" ");
-            String inputCommand = inputTokens[0];
+            // if user wants to list the tasks stored, do so
+            if (inputLine.equals(LIST_COMMAND)) {
+                listTrackerTasks(taskTracker);
+            } else {
+                // consider first token and see if it is a known command
+                String[] inputTokens = inputLine.split("\\s+");
+                String inputCommand = inputTokens[0];
 
-            BiFunction<TaskTracker, String, TaskTracker> op = COMMANDS_TO_OPERATIONS.get(inputCommand);
-            taskTracker = op.apply(taskTracker, inputLine);
+                try {
+                    ThrowingBiFunction<TaskTracker, String, TaskTracker> op = getOp(inputCommand);
+                    taskTracker = op.apply(taskTracker, inputLine);
+                } catch (BingBongException ex) {
+                    System.out.println(new Message(getExceptionMessage(ex.getMessage())));
+                }
+            }
 
-            inputLine = sc.nextLine();
+            inputLine = sc.nextLine().strip();
         }
 
         System.out.println(new Message(getEndMessage()));
