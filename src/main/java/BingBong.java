@@ -11,6 +11,7 @@ public class BingBong {
     // examples to be shown in error messages
     private static final String MARK_EXAMPLE = "\"mark 1\" to mark the first task as completed";
     private static final String UNMARK_EXAMPLE = "\"unmark 1\" to mark the first task as incomplete";
+    private static final String DELETE_EXAMPLE = "\"delete 1\" to delete the first task";
     private static final String TODO_EXAMPLE = "\"todo go grocery shopping\"";
     private static final String DEADLINE_EXAMPLE = "\"deadline finish homework /by 9pm\"";
     private static final String EVENT_EXAMPLE = "\"event go for a jog /from 9am /to 10am\"";
@@ -46,6 +47,14 @@ public class BingBong {
         return "This task has been marked as incomplete:"
                 + "\n"
                 + task;
+    }
+
+    private static String getDeletedTaskMessage(Task task, int numOfTasks) {
+        return "Alright, I've gotten rid of this task:"
+                + "\n"
+                + task
+                + "\n"
+                + "Now you have " + numOfTasks + " task(s) in the list.";
     }
 
     private static String getExceptionMessage(String msg) {
@@ -128,6 +137,30 @@ public class BingBong {
             }
         });
 
+        // delete chosen task
+        COMMANDS_TO_OPERATIONS.put("delete", (taskTracker, inputLine) -> {
+            String[] inputTokens = inputLine.split("\\s+");
+
+            try {
+                int indexToDelete = Integer.parseInt(inputTokens[1]) - 1;
+                Task taskToDelete = taskTracker.getTask(indexToDelete);
+                taskTracker = taskTracker.deleteTask(indexToDelete);
+                int newNumOfTasks = taskTracker.getNumOfTasks();
+                System.out.println(new Message(getDeletedTaskMessage(taskToDelete, newNumOfTasks)));
+                return taskTracker;
+            } catch (ArrayIndexOutOfBoundsException ex) {
+                throw new BingBongException("Task number is missing. Make sure you have added a "
+                        + "task number after the \"delete\" command."
+                        + "\nEg. "
+                        + DELETE_EXAMPLE);
+            } catch (NumberFormatException ex) {
+                throw new BingBongException("Task number is invalid. Make sure you have added the "
+                        + "correct task number after the \"delete\" command."
+                        + "\nEg. "
+                        + DELETE_EXAMPLE);
+            }
+        });
+
         // add a todo
         COMMANDS_TO_OPERATIONS.put("todo", (taskTracker, inputLine) -> {
             String[] detailsAfterSplit = inputLine.split("todo\\s+", 2);
@@ -143,8 +176,8 @@ public class BingBong {
             Todo newTodo = new Todo(todoName);
 
             taskTracker = taskTracker.addTask(newTodo);
-            int numOfTasks = taskTracker.getNumOfTasks();
-            System.out.println(new Message(getAddTaskMessage(newTodo, numOfTasks)));
+            int newNumOfTasks = taskTracker.getNumOfTasks();
+            System.out.println(new Message(getAddTaskMessage(newTodo, newNumOfTasks)));
             return taskTracker;
         });
 
@@ -172,8 +205,8 @@ public class BingBong {
             Deadline newDeadline = new Deadline(deadlineName, byWhen);
 
             taskTracker = taskTracker.addTask(newDeadline);
-            int numOfTasks = taskTracker.getNumOfTasks();
-            System.out.println(new Message(getAddTaskMessage(newDeadline, numOfTasks)));
+            int newNumOfTasks = taskTracker.getNumOfTasks();
+            System.out.println(new Message(getAddTaskMessage(newDeadline, newNumOfTasks)));
             return taskTracker;
         });
 
@@ -211,8 +244,8 @@ public class BingBong {
             Event newEvent = new Event(eventName, startTime, endTime);
 
             taskTracker = taskTracker.addTask(newEvent);
-            int numOfTasks = taskTracker.getNumOfTasks();
-            System.out.println(new Message(getAddTaskMessage(newEvent, numOfTasks)));
+            int newNumOfTasks = taskTracker.getNumOfTasks();
+            System.out.println(new Message(getAddTaskMessage(newEvent, newNumOfTasks)));
             return taskTracker;
         });
     }

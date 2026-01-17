@@ -1,25 +1,29 @@
+import java.util.ArrayList;
 import java.util.stream.IntStream;
 
 class TaskTracker {
-    private static final int MAX_TASKS = 100;
-    private final Task[] tasks;
-    private final int numOfTasks;
+    private final ArrayList<Task> tasks;
 
     TaskTracker() {
-        this.tasks = new Task[MAX_TASKS];
-        this.numOfTasks = 0;
+        this.tasks = new ArrayList<>();
     }
 
+    // for adding new task
     private TaskTracker(TaskTracker taskTracker, Task newTask) {
         this.tasks = taskTracker.tasks;
-        this.tasks[taskTracker.numOfTasks] = newTask;
-        this.numOfTasks = taskTracker.numOfTasks + 1;
+        this.tasks.add(newTask);
     }
 
+    // for editing existing task
     private TaskTracker(TaskTracker taskTracker, Task task, int taskIndex) {
         this.tasks = taskTracker.tasks;
-        this.tasks[taskIndex] = task;
-        this.numOfTasks = taskTracker.numOfTasks;
+        this.tasks.set(taskIndex, task);
+    }
+
+    // for deleting existing task
+    private TaskTracker(TaskTracker taskTracker, int taskIndex) {
+        this.tasks = taskTracker.tasks;
+        this.tasks.remove(taskIndex);
     }
 
     private String getWrongIndexExceptionMsg(int index) {
@@ -27,59 +31,54 @@ class TaskTracker {
         return "The task index that you have provided ("
                 + indexInInput
                 + ") does not exist. There are currently "
-                + this.numOfTasks
+                + this.getNumOfTasks()
                 + " task(s) in the list.";
     }
 
-    private String getFullListExceptionMsg() {
-        return "The task tracker is full with "
-                + MAX_TASKS
-                + " tasks, and cannot store any more tasks.";
+    int getNumOfTasks() {
+        return this.tasks.size();
     }
 
     Task getTask(int index) throws BingBongException {
-        if (index < 0 || index >= this.numOfTasks) {
-            // index out of range
+        try {
+            return this.tasks.get(index);
+        } catch (IndexOutOfBoundsException ex) {
             throw new BingBongException(this.getWrongIndexExceptionMsg(index));
         }
-
-        return this.tasks[index];
     }
 
     TaskTracker editTask(int index, Task newTask) throws BingBongException {
-        if (index < 0 || index >= this.numOfTasks) {
-            // index out of range
+        try {
+            return new TaskTracker(this, newTask, index);
+        } catch (IndexOutOfBoundsException ex) {
             throw new BingBongException(this.getWrongIndexExceptionMsg(index));
         }
+    }
 
-        return new TaskTracker(this, newTask, index);
+    TaskTracker addTask(Task newTask) {
+        return new TaskTracker(this, newTask);
+    }
+
+    TaskTracker deleteTask(int index) throws BingBongException {
+        try {
+            return new TaskTracker(this, index);
+        } catch (IndexOutOfBoundsException ex) {
+            throw new BingBongException(this.getWrongIndexExceptionMsg(index));
+        }
     }
 
     // list tasks in storage
     String listTasks() {
         // use 1-indexing for printed list
-        return IntStream.rangeClosed(1, this.numOfTasks)
+        return IntStream.rangeClosed(1, this.getNumOfTasks())
                 // create list item in String
-                .mapToObj(num -> num + ". " + this.tasks[num - 1])
+                .mapToObj(num -> num + ". " + this.tasks.get(num - 1))
                 // combine list items
                 .reduce("", (x, y) -> x + "\n" + y);
-    }
-
-    TaskTracker addTask(Task newTask) throws BingBongException {
-        if (this.numOfTasks >= MAX_TASKS) {
-            // storage is full, throw exception
-            throw new BingBongException(this.getFullListExceptionMsg());
-        }
-
-        return new TaskTracker(this, newTask);
     }
 
     Task changeTaskStatusAtIndex(int taskIndex, boolean newStatus) throws BingBongException {
         Task oldTask = this.getTask(taskIndex);
         return oldTask.changeTaskStatus(newStatus);
-    }
-
-    int getNumOfTasks() {
-        return this.numOfTasks;
     }
 }

@@ -9,6 +9,7 @@ unmark 1
 list
 event go skating /from    /to 4pm
 event go hiking /from
+delete 10
 event touch grass /from 3pm /to
 event go cycling    /from /to
 mark 1
@@ -26,5 +27,7 @@ list
 mark 4
 todo
 mark 6
+list
+delete 2
 list
 bye

@@ -62,6 +62,10 @@ Eg. "event go for a jog /from 9am /to 10am"
 ________________________________________________________
 ________________________________________________________
 SORRY... :(
+The task index that you have provided (10) does not exist. There are currently 4 task(s) in the list.
+________________________________________________________
+________________________________________________________
+SORRY... :(
 For events, the "/to" delimiter must be placed between the chosen start time and the chosen end time.
 Eg. "event go for a jog /from 9am /to 10am"
 ________________________________________________________
@@ -77,7 +81,7 @@ ________________________________________________________
 ________________________________________________________
 SORRY... :(
 I have no idea what that means. You could try:
-[todo, deadline, event, list, mark, unmark, bye]
+[todo, deadline, event, list, delete, mark, unmark, bye]
 ________________________________________________________
 ________________________________________________________
 SORRY... :(
@@ -153,6 +157,20 @@ Here are the tasks that you have added to the list:
 4. [E][X] chess training (from: Mon 3pm to: 6pm)
 5. [D][ ] return book (by: Wed)
 6. [E][X] project meeting (from: Tues 2pm to: 4pm)
+________________________________________________________
+________________________________________________________
+Alright, I've gotten rid of this task:
+[T][ ] do yoga
+Now you have 5 task(s) in the list.
+________________________________________________________
+________________________________________________________
+Here are the tasks that you have added to the list:
+
+1. [T][X] borrow book
+2. [D][X] do laundry (by: Mon 11am)
+3. [E][X] chess training (from: Mon 3pm to: 6pm)
+4. [D][ ] return book (by: Wed)
+5. [E][X] project meeting (from: Tues 2pm to: 4pm)
 ________________________________________________________
 ________________________________________________________
 Hasta la vista, baby!
