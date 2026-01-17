@@ -4,6 +4,7 @@ deadline
 deadline do laundry /by Mon 11am
 event chess training /from Mon 3pm /to 6pm
 list
+list something
 mark 2
 unmark 1
 list

@@ -3,10 +3,8 @@ import java.util.*;
 public class BingBong {
     // bot properties
     private static final String BOT_NAME = "BingBong";
-    private static final HashMap<String,
+    private static final HashMap<Command,
             ThrowingBiFunction<TaskTracker, String, TaskTracker>> COMMANDS_TO_OPERATIONS = new HashMap<>();
-    private static final String LIST_COMMAND = "list";
-    private static final String BYE_COMMAND = "bye";
 
     // examples to be shown in error messages
     private static final String MARK_EXAMPLE = "\"mark 1\" to mark the first task as completed";
@@ -67,35 +65,12 @@ public class BingBong {
         return "Hasta la vista, baby!";
     }
 
-    // list all tasks in current tracker
-    private static void listTrackerTasks(TaskTracker taskTracker) {
-        String listOfTasks = taskTracker.listTasks();
-        System.out.println(new Message(getListTasksMessage(listOfTasks)));
-    }
-
-    // fetch correct thing to do, based on the given input command
-    private static ThrowingBiFunction<TaskTracker, String, TaskTracker> getOp(String inputCommand)
-            throws BingBongException {
-        if (!COMMANDS_TO_OPERATIONS.containsKey(inputCommand)) {
-            Set<String> commands = new HashSet<>(COMMANDS_TO_OPERATIONS.keySet());
-            commands.addAll(List.of(LIST_COMMAND, BYE_COMMAND));
-
-            throw new BingBongException("I have no idea what that "
-                    + "means. You could try:\n"
-                    + commands
-            );
-        }
-
-        return COMMANDS_TO_OPERATIONS.get(inputCommand);
-    }
-
     // populate mapping of commands to the ThrowingBiFunction to be called
     private static void init_commands_to_operations() {
         // mark chosen task done
-        COMMANDS_TO_OPERATIONS.put("mark", (taskTracker, inputLine) -> {
-            String[] inputTokens = inputLine.split("\\s+");
-
+        COMMANDS_TO_OPERATIONS.put(Command.MARK, (taskTracker, inputLine) -> {
             try {
+                String[] inputTokens = inputLine.split("\\s+");
                 int indexToMark = Integer.parseInt(inputTokens[1]) - 1;
                 Task markedTask = taskTracker.changeTaskStatusAtIndex(indexToMark, true);
                 taskTracker = taskTracker.editTask(indexToMark, markedTask);
@@ -115,10 +90,9 @@ public class BingBong {
         });
 
         // mark chosen task as not done
-        COMMANDS_TO_OPERATIONS.put("unmark", (taskTracker, inputLine) -> {
-            String[] inputTokens = inputLine.split("\\s+");
-
+        COMMANDS_TO_OPERATIONS.put(Command.UNMARK, (taskTracker, inputLine) -> {
             try {
+                String[] inputTokens = inputLine.split("\\s+");
                 int indexToUnmark = Integer.parseInt(inputTokens[1]) - 1;
                 Task unmarkedTask = taskTracker.changeTaskStatusAtIndex(indexToUnmark, false);
                 taskTracker = taskTracker.editTask(indexToUnmark, unmarkedTask);
@@ -138,10 +112,9 @@ public class BingBong {
         });
 
         // delete chosen task
-        COMMANDS_TO_OPERATIONS.put("delete", (taskTracker, inputLine) -> {
-            String[] inputTokens = inputLine.split("\\s+");
-
+        COMMANDS_TO_OPERATIONS.put(Command.DELETE, (taskTracker, inputLine) -> {
             try {
+                String[] inputTokens = inputLine.split("\\s+");
                 int indexToDelete = Integer.parseInt(inputTokens[1]) - 1;
                 Task taskToDelete = taskTracker.getTask(indexToDelete);
                 taskTracker = taskTracker.deleteTask(indexToDelete);
@@ -162,7 +135,7 @@ public class BingBong {
         });
 
         // add a todo
-        COMMANDS_TO_OPERATIONS.put("todo", (taskTracker, inputLine) -> {
+        COMMANDS_TO_OPERATIONS.put(Command.TODO, (taskTracker, inputLine) -> {
             String[] detailsAfterSplit = inputLine.split("todo\\s+", 2);
 
             if (detailsAfterSplit.length < 2) {
@@ -182,7 +155,7 @@ public class BingBong {
         });
 
         // add a deadline
-        COMMANDS_TO_OPERATIONS.put("deadline", (taskTracker, inputLine) -> {
+        COMMANDS_TO_OPERATIONS.put(Command.DEADLINE, (taskTracker, inputLine) -> {
             String[] detailsAfterSplittingCommand = inputLine.split("deadline\\s+", 2);
             if (detailsAfterSplittingCommand.length < 2) {
                 throw new BingBongException("The description of a deadline cannot be empty. "
@@ -211,7 +184,7 @@ public class BingBong {
         });
 
         // add an event
-        COMMANDS_TO_OPERATIONS.put("event", (taskTracker, inputLine) -> {
+        COMMANDS_TO_OPERATIONS.put(Command.EVENT, (taskTracker, inputLine) -> {
             String[] detailsAfterSplittingCommand = inputLine.split("event\\s+", 2);
             if (detailsAfterSplittingCommand.length < 2) {
                 throw new BingBongException("The description of an event cannot be empty. "
@@ -248,37 +221,75 @@ public class BingBong {
             System.out.println(new Message(getAddTaskMessage(newEvent, newNumOfTasks)));
             return taskTracker;
         });
+
+        COMMANDS_TO_OPERATIONS.put(Command.LIST, ((taskTracker, inputLine) -> {
+            String listOfTasks = taskTracker.listTasks();
+            System.out.println(new Message(getListTasksMessage(listOfTasks)));
+            return taskTracker;
+        }));
+    }
+
+    // get the correct command from the input
+    private static Command getCommand(String inputLine) throws BingBongException {
+        Command chosenCommand;
+
+        try {
+            // attempt to convert the whole of the input to a command (ie. LIST or BYE)
+            chosenCommand = Command.valueOf(inputLine.toUpperCase());
+        } catch (IllegalArgumentException notListOrByeEx) {
+            // not LIST or BYE - get the first token and try to convert to a valid command
+            try {
+                String[] inputTokens = inputLine.split("\\s+");
+                String inputCommand = inputTokens[0];
+                chosenCommand = Command.valueOf(inputCommand.toUpperCase());
+                if (chosenCommand.equals(Command.LIST) || chosenCommand.equals(Command.BYE)) {
+                    throw new IllegalArgumentException("LIST or BYE command was given with other arguments - invalid");
+                }
+            } catch (IllegalArgumentException notValidCommandEx) {
+                throw new BingBongException("I have no idea what that "
+                        + "means. You could try:\n"
+                        + Arrays.toString(Command.values())
+                );
+            }
+        }
+
+        return chosenCommand;
     }
 
     public static void main(String[] args) {
         // initialise mapping of commands to operations
         init_commands_to_operations();
 
+        // greet user
         System.out.println(new Message(getStartMessage()));
 
+        // main processing loop for input
         TaskTracker taskTracker = new TaskTracker();
         Scanner sc = new Scanner(System.in);
         String inputLine = sc.nextLine().strip();
-        while (!inputLine.equals(BYE_COMMAND)) {
-            // if user wants to list the tasks stored, do so
-            if (inputLine.equals(LIST_COMMAND)) {
-                listTrackerTasks(taskTracker);
-            } else {
-                // consider first token and see if it is a known command
-                String[] inputTokens = inputLine.split("\\s+");
-                String inputCommand = inputTokens[0];
+        while (true) {
+            try {
+                // get command requested by user
+                Command chosenCommand = getCommand(inputLine);
 
-                try {
-                    ThrowingBiFunction<TaskTracker, String, TaskTracker> op = getOp(inputCommand);
-                    taskTracker = op.apply(taskTracker, inputLine);
-                } catch (BingBongException ex) {
-                    System.out.println(new Message(getExceptionMessage(ex.getMessage())));
+                if (chosenCommand.equals(Command.BYE)) {
+                    // user wants to end the chat
+                    System.out.println(new Message(getEndMessage()));
+                    return;
                 }
+
+                // get operation needed for this command
+                ThrowingBiFunction<TaskTracker, String, TaskTracker> op =
+                        COMMANDS_TO_OPERATIONS.get(chosenCommand);
+
+                // apply operation
+                taskTracker = op.apply(taskTracker, inputLine);
+
+            } catch (BingBongException ex) {
+                System.out.println(new Message(getExceptionMessage(ex.getMessage())));
             }
 
             inputLine = sc.nextLine().strip();
         }
-
-        System.out.println(new Message(getEndMessage()));
     }
 }
