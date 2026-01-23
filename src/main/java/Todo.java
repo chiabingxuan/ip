@@ -1,3 +1,5 @@
+import java.time.format.DateTimeFormatter;
+
 class Todo extends Task {
     static final String TASK_ICON = "T";
 
@@ -14,9 +16,9 @@ class Todo extends Task {
     }
 
     @Override
-    public String getSaveableString() {
+    public String getSaveableString(DateTimeFormatter dateFormatter) {
         return TASK_ICON
-                + DIVIDER + super.getSaveableString();
+                + DIVIDER + super.getSaveableString(dateFormatter);
     }
 
     @Override

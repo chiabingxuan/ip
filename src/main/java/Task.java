@@ -1,4 +1,8 @@
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 abstract class Task {
+    private static final String DATE_OUTPUT_FORMAT = "d MMM yyyy, h:mm a";
     static final String DONE_ICON = "X";
     static final String NOT_DONE_ICON = " ";
     protected static final String DIVIDER = " | ";
@@ -22,7 +26,13 @@ abstract class Task {
 
     abstract Task changeTaskStatus(boolean newStatus);
 
-    public String getSaveableString() {
+    protected String outputDate(LocalDateTime datetime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_OUTPUT_FORMAT);
+        String formatted = datetime.format(formatter);
+        return formatted;
+    }
+
+    String getSaveableString(DateTimeFormatter dateFormatter) {
         return this.getStatusIcon() + DIVIDER + this.taskName;
     }
 

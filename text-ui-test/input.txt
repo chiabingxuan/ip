@@ -1,27 +1,28 @@
 todo borrow book
 todo do yoga
 deadline
-deadline do laundry /by Mon 11am
-event chess training /from Mon 3pm /to 6pm
+deadline do laundry /by 1/3/2025 11:00
+event chess training /from 1/3/2025 15:00 /to 1/3/2025 18:00
 list
 list something
 mark 2
 unmark 1
 list
-event go skating /from    /to 4pm
+event go skating /from    /to 2/3/2025 15:00
 event go hiking /from
 delete 10
-event touch grass /from 3pm /to
+event touch grass /from 2/3/2025 16:00 /to
 event go cycling    /from /to
 mark 1
 random command
 mark -1
 mark something
 unmark
-deadline return book /by Wed
-deadline /by Wed
+deadline return book /by 3/3/2025 15:00
+deadline /by 3/3/2025 15:00
 deadline do some stuff /by
-event project meeting /from Tues 2pm /to 4pm
+deadline do some stuff /by 3-3-2025 2pm
+event project meeting /from 4/3/2025 14:00 /to 4/3/2025 16:00
 unmark 2
 mark 3
 list
