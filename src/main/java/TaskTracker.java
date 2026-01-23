@@ -4,43 +4,36 @@ import java.util.stream.IntStream;
 
 class TaskTracker {
     private final ArrayList<Task> tasks;
-    private final String dataFolderPath;
-    private final String tasksFilename;
-
-    TaskTracker(String dataFolderPath, String tasksFilename) {
+    private final String tasksFilePath;
+    TaskTracker(String tasksFilePath) {
         this.tasks = new ArrayList<>();
-        this.dataFolderPath = dataFolderPath;
-        this.tasksFilename = tasksFilename;
+        this.tasksFilePath = tasksFilePath;
     }
 
     // for adding new task
-    private TaskTracker(TaskTracker taskTracker, Task newTask,
-                        String dataFolderPath, String tasksFilename) {
+    private TaskTracker(TaskTracker taskTracker, Task newTask, String tasksFilePath) {
         this.tasks = taskTracker.tasks;
         this.tasks.add(newTask);
 
-        this.dataFolderPath = dataFolderPath;
-        this.tasksFilename = tasksFilename;
+        this.tasksFilePath = tasksFilePath;
     }
 
     // for editing existing task
     private TaskTracker(TaskTracker taskTracker, Task task, int taskIndex,
-                        String dataFolderPath, String tasksFilename) {
+                        String tasksFilePath) {
         this.tasks = taskTracker.tasks;
         this.tasks.set(taskIndex, task);
 
-        this.dataFolderPath = dataFolderPath;
-        this.tasksFilename = tasksFilename;
+        this.tasksFilePath = tasksFilePath;
     }
 
     // for deleting existing task
     private TaskTracker(TaskTracker taskTracker, int taskIndex,
-                        String dataFolderPath, String tasksFilename) {
+                        String tasksFilePath) {
         this.tasks = taskTracker.tasks;
         this.tasks.remove(taskIndex);
 
-        this.dataFolderPath = dataFolderPath;
-        this.tasksFilename = tasksFilename;
+        this.tasksFilePath = tasksFilePath;
     }
 
     private String getWrongIndexExceptionMsg(int index) {
@@ -77,7 +70,7 @@ class TaskTracker {
             throws BingBongException {
         try {
             return new TaskTracker(this, newTask, index,
-                    this.dataFolderPath, this.tasksFilename);
+                    this.tasksFilePath);
         } catch (IndexOutOfBoundsException ex) {
             throw new BingBongException(this.getWrongIndexExceptionMsg(index));
         }
@@ -85,14 +78,14 @@ class TaskTracker {
 
     TaskTracker addTask(Task newTask) {
         return new TaskTracker(this, newTask,
-                this.dataFolderPath, this.tasksFilename);
+                this.tasksFilePath);
     }
 
     TaskTracker deleteTask(int index)
             throws BingBongException {
         try {
             return new TaskTracker(this, index,
-                    this.dataFolderPath, this.tasksFilename);
+                    this.tasksFilePath);
         } catch (IndexOutOfBoundsException ex) {
             throw new BingBongException(this.getWrongIndexExceptionMsg(index));
         }

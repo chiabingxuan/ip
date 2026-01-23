@@ -283,6 +283,8 @@ public class BingBong {
     }
 
     public BingBong(String dataFolderPath, String tasksFilename){
+        String tasksFilePath = dataFolderPath + "/" + tasksFilename;
+
         try {
             // initialise mapping of commands to operations
             commandsToOperations = init_commands_to_operations();
@@ -292,7 +294,7 @@ public class BingBong {
         } catch (FileNotFoundException ex) {
             System.out.println(new Message("No existing task file detected. "
                     + "An empty task list will be initialised."));
-            taskTracker = new TaskTracker(dataFolderPath, tasksFilename);
+            taskTracker = new TaskTracker(tasksFilePath);
         } catch (IOException ex) {
             System.out.println(new Message(getExceptionMessage("Something went wrong when "
                     + "initialising task storage: "
@@ -300,7 +302,7 @@ public class BingBong {
                     + "\nPlease fix the problem and try again.")));
         } catch (BingBongException ex) {
             System.out.println(new Message(getExceptionMessage(ex.getMessage())));
-            taskTracker = new TaskTracker(dataFolderPath, tasksFilename);
+            taskTracker = new TaskTracker(tasksFilePath);
         }
     }
 

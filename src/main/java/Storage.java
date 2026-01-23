@@ -11,19 +11,15 @@ import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 class Storage {
-    private final String dataFolderPath;
-    private final String filename;
     private final String filePath;
     private final DateTimeFormatter dateFormatter;
 
     Storage(String dataFolderPath, String filename, String dateFormat) throws IOException {
-        this.dataFolderPath = dataFolderPath;
-        this.filename = filename;
-        this.filePath = this.dataFolderPath + "/" + this.filename;
+        this.filePath = dataFolderPath + "/" + filename;
         this.dateFormatter = DateTimeFormatter.ofPattern(dateFormat);
 
         // create data folder if we have not done so
-        Path dataFolderPathObj = Paths.get(this.dataFolderPath);
+        Path dataFolderPathObj = Paths.get(dataFolderPath);
         if (!Files.exists(dataFolderPathObj)) {
             Files.createDirectories(dataFolderPathObj);
         }
@@ -38,7 +34,7 @@ class Storage {
     TaskTracker readSavedTasks(File f) throws FileNotFoundException, BingBongException {
         try {
             Scanner fileScanner = new Scanner(f);
-            TaskTracker taskTracker = new TaskTracker(this.dataFolderPath, this.filename);
+            TaskTracker taskTracker = new TaskTracker(this.filePath);
 
             while (fileScanner.hasNextLine()) {
                 String taskString = fileScanner.nextLine();
