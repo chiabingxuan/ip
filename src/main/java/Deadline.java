@@ -1,8 +1,11 @@
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 class Deadline extends Task {
     static final String TASK_ICON = "D";
-    private final String byWhen;
+    private final LocalDateTime byWhen;
 
-    Deadline(String taskName, String byWhen) {
+    Deadline(String taskName, LocalDateTime byWhen) {
         super(taskName);
         this.byWhen = byWhen;
     }
@@ -17,16 +20,16 @@ class Deadline extends Task {
     }
 
     @Override
-    public String getSaveableString() {
+    public String getSaveableString(DateTimeFormatter dateFormatter) {
         return TASK_ICON
-                + DIVIDER + super.getSaveableString()
-                + DIVIDER + this.byWhen;
+                + DIVIDER + super.getSaveableString(dateFormatter)
+                + DIVIDER + this.byWhen.format(dateFormatter);
     }
 
     @Override
     public String toString() {
         return "[" + TASK_ICON + "]"
                 + super.toString()
-                + " (by: " + this.byWhen + ")";
+                + " (by: " + super.outputDate(this.byWhen) + ")";
     }
 }

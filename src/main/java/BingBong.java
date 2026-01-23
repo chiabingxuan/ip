@@ -1,14 +1,15 @@
-import java.io.DataInput;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
-
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class BingBong {
     // bot properties
@@ -23,10 +24,16 @@ public class BingBong {
     private static final String TODO_EXAMPLE = "\"todo go grocery shopping\"";
     private static final String DEADLINE_EXAMPLE = "\"deadline finish homework /by 9pm\"";
     private static final String EVENT_EXAMPLE = "\"event go for a jog /from 9am /to 10am\"";
+    private static final String DATE_FORMATTING_EXAMPLE = "\"2/1/2003 13:18\" which means "
+            + "2 Jan 2003, 1:18 pm";
 
     // attributes for saving of tasks
     private static final String DATA_FOLDER_PATH = "./data";
     private static final String TASKS_FILENAME = "tasks.txt";
+
+    // for parsing dates
+    private static final String DATE_FORMAT = "d/M/yyyy HH:mm";
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_FORMAT);
 
     // messages to print out
     private static String getStartMessage() {
@@ -79,6 +86,11 @@ public class BingBong {
         return "Hasta la vista, baby!";
     }
 
+    // parse dates that are in String
+    private static LocalDateTime parseDate(String dateString) {
+        return LocalDateTime.parse(dateString, DATE_FORMATTER);
+    }
+
     // populate mapping of commands to the ThrowingBiFunction to be called
     private static void init_commands_to_operations() {
         // mark chosen task done
@@ -87,7 +99,7 @@ public class BingBong {
                 String[] inputTokens = inputLine.split("\\s+");
                 int indexToMark = Integer.parseInt(inputTokens[1]) - 1;
                 Task markedTask = taskTracker.changeTaskStatusAtIndex(indexToMark, true);
-                taskTracker = taskTracker.editTask(indexToMark, markedTask);
+                taskTracker = taskTracker.editTask(indexToMark, markedTask, DATE_FORMATTER);
                 System.out.println(new Message(getMarkedTaskMessage(markedTask)));
                 return taskTracker;
             } catch (ArrayIndexOutOfBoundsException ex) {
@@ -109,7 +121,7 @@ public class BingBong {
                 String[] inputTokens = inputLine.split("\\s+");
                 int indexToUnmark = Integer.parseInt(inputTokens[1]) - 1;
                 Task unmarkedTask = taskTracker.changeTaskStatusAtIndex(indexToUnmark, false);
-                taskTracker = taskTracker.editTask(indexToUnmark, unmarkedTask);
+                taskTracker = taskTracker.editTask(indexToUnmark, unmarkedTask, DATE_FORMATTER);
                 System.out.println(new Message(getUnmarkedTaskMessage(unmarkedTask)));
                 return taskTracker;
             } catch (ArrayIndexOutOfBoundsException ex) {
@@ -131,7 +143,7 @@ public class BingBong {
                 String[] inputTokens = inputLine.split("\\s+");
                 int indexToDelete = Integer.parseInt(inputTokens[1]) - 1;
                 Task taskToDelete = taskTracker.getTask(indexToDelete);
-                taskTracker = taskTracker.deleteTask(indexToDelete);
+                taskTracker = taskTracker.deleteTask(indexToDelete, DATE_FORMATTER);
                 int newNumOfTasks = taskTracker.getNumOfTasks();
                 System.out.println(new Message(getDeletedTaskMessage(taskToDelete, newNumOfTasks)));
                 return taskTracker;
@@ -162,7 +174,7 @@ public class BingBong {
             String todoName = detailsAfterSplit[1];
             Todo newTodo = new Todo(todoName);
 
-            taskTracker = taskTracker.addTask(newTodo);
+            taskTracker = taskTracker.addTask(newTodo, DATE_FORMATTER);
             int newNumOfTasks = taskTracker.getNumOfTasks();
             System.out.println(new Message(getAddTaskMessage(newTodo, newNumOfTasks)));
             return taskTracker;
@@ -188,10 +200,10 @@ public class BingBong {
             }
 
             String deadlineName = deadlineDetails[0];
-            String byWhen = deadlineDetails[1];
+            LocalDateTime byWhen = parseDate(deadlineDetails[1]);
             Deadline newDeadline = new Deadline(deadlineName, byWhen);
 
-            taskTracker = taskTracker.addTask(newDeadline);
+            taskTracker = taskTracker.addTask(newDeadline, DATE_FORMATTER);
             int newNumOfTasks = taskTracker.getNumOfTasks();
             System.out.println(new Message(getAddTaskMessage(newDeadline, newNumOfTasks)));
             return taskTracker;
@@ -226,11 +238,11 @@ public class BingBong {
                         + EVENT_EXAMPLE);
             }
 
-            String startTime = detailsAfterSplittingTo[0];
-            String endTime = detailsAfterSplittingTo[1];
+            LocalDateTime startTime = parseDate(detailsAfterSplittingTo[0]);
+            LocalDateTime endTime = parseDate(detailsAfterSplittingTo[1]);
             Event newEvent = new Event(eventName, startTime, endTime);
 
-            taskTracker = taskTracker.addTask(newEvent);
+            taskTracker = taskTracker.addTask(newEvent, DATE_FORMATTER);
             int newNumOfTasks = taskTracker.getNumOfTasks();
             System.out.println(new Message(getAddTaskMessage(newEvent, newNumOfTasks)));
             return taskTracker;
@@ -273,14 +285,14 @@ public class BingBong {
                     newTask = new Todo(todo, isDone);
                     break;
                 case Deadline.TASK_ICON:
-                    String byWhen = taskDetails[3];
+                    LocalDateTime byWhen = parseDate(taskDetails[3]);
                     Deadline deadline = new Deadline(taskName, byWhen);
                     newTask = new Deadline(deadline, isDone);
                     break;
                 case Event.TASK_ICON:
                     // task is an event
-                    String startTime = taskDetails[3];
-                    String endTime = taskDetails[4];
+                    LocalDateTime startTime = parseDate(taskDetails[3]);
+                    LocalDateTime endTime = parseDate(taskDetails[4]);
                     Event event = new Event(taskName, startTime, endTime);
                     newTask = new Event(event, isDone);
                     break;
@@ -289,7 +301,7 @@ public class BingBong {
                 }
 
                 // add this new task object
-                taskTracker.addTask(newTask);
+                taskTracker.addTask(newTask, DATE_FORMATTER);
             }
 
             return taskTracker;
@@ -298,7 +310,7 @@ public class BingBong {
             System.out.println(new Message("No existing task file detected. "
                     + "An empty task list will be initialised."));
             return new TaskTracker(DATA_FOLDER_PATH, TASKS_FILENAME);
-        } catch (ArrayIndexOutOfBoundsException | IOException ex) {
+        } catch (ArrayIndexOutOfBoundsException | DateTimeParseException | IOException ex) {
             System.out.println(new Message("Something went wrong loading the saved task file: "
                     + ex.getMessage()
                     + "\n The file might be corrupted (ie. wrongly formatted)."
@@ -319,8 +331,7 @@ public class BingBong {
         // populate tracker with saved tasks
         String tasksFilePath = DATA_FOLDER_PATH + "/" + TASKS_FILENAME;
         File f = new File(tasksFilePath);
-        TaskTracker loadedTracker = readSavedTasks(f);
-        return loadedTracker;
+        return readSavedTasks(f);
     }
 
     // get the correct command from the input
@@ -328,7 +339,7 @@ public class BingBong {
         Command chosenCommand;
 
         try {
-            // attempt to convert the whole of the input to a command (ie. LIST or BYE)
+            // attempt to convert the whole of the input to a command (i.e. LIST or BYE)
             chosenCommand = Command.valueOf(inputLine.toUpperCase());
         } catch (IllegalArgumentException notListOrByeEx) {
             // not LIST or BYE - get the first token and try to convert to a valid command
@@ -342,8 +353,7 @@ public class BingBong {
             } catch (IllegalArgumentException notValidCommandEx) {
                 throw new BingBongException("I have no idea what that "
                         + "means. You could try:\n"
-                        + Arrays.toString(Command.values())
-                );
+                        + Arrays.toString(Command.values()));
             }
         }
 
@@ -382,6 +392,12 @@ public class BingBong {
                     // apply operation
                     taskTracker = op.apply(taskTracker, inputLine);
 
+                } catch (DateTimeParseException ex) {
+                    System.out.println(new Message(getExceptionMessage("The date "
+                            + "that you have provided cannot be parsed: "
+                            + ex.getMessage()
+                            + "\nPlease use the correct format for dates. For example: "
+                            + DATE_FORMATTING_EXAMPLE)));
                 } catch (BingBongException ex) {
                     System.out.println(new Message(getExceptionMessage(ex.getMessage())));
                 }
