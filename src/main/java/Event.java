@@ -1,5 +1,5 @@
 class Event extends Task {
-    private static final String TASK_ICON = "E";
+    static final String TASK_ICON = "E";
     private final String startTime;
     private final String endTime;
 
@@ -9,7 +9,7 @@ class Event extends Task {
         this.endTime = endTime;
     }
 
-    private Event(Event event, boolean isDone) {
+    Event(Event event, boolean isDone) {
         super(event, isDone);
         this.startTime = event.startTime;
         this.endTime = event.endTime;
@@ -17,6 +17,14 @@ class Event extends Task {
 
     Event changeTaskStatus(boolean newStatus) {
         return new Event(this, newStatus);
+    }
+
+    @Override
+    public String getSaveableString() {
+        return TASK_ICON
+                + DIVIDER + super.getSaveableString()
+                + DIVIDER + this.startTime
+                + DIVIDER + this.endTime;
     }
 
     @Override

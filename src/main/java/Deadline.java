@@ -1,5 +1,5 @@
 class Deadline extends Task {
-    private static final String TASK_ICON = "D";
+    static final String TASK_ICON = "D";
     private final String byWhen;
 
     Deadline(String taskName, String byWhen) {
@@ -7,13 +7,20 @@ class Deadline extends Task {
         this.byWhen = byWhen;
     }
 
-    private Deadline(Deadline deadline, boolean isDone) {
+    Deadline(Deadline deadline, boolean isDone) {
         super(deadline, isDone);
         this.byWhen = deadline.byWhen;
     }
 
     Deadline changeTaskStatus(boolean newStatus) {
         return new Deadline(this, newStatus);
+    }
+
+    @Override
+    public String getSaveableString() {
+        return TASK_ICON
+                + DIVIDER + super.getSaveableString()
+                + DIVIDER + this.byWhen;
     }
 
     @Override

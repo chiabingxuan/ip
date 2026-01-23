@@ -1,10 +1,20 @@
-import java.util.*;
+import java.io.DataInput;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Scanner;
+
 
 public class BingBong {
     // bot properties
     private static final String BOT_NAME = "BingBong";
     private static final HashMap<Command,
-            ThrowingBiFunction<TaskTracker, String, TaskTracker>> COMMANDS_TO_OPERATIONS = new HashMap<>();
+                ThrowingBiFunction<TaskTracker, String, TaskTracker>> COMMANDS_TO_OPERATIONS = new HashMap<>();
 
     // examples to be shown in error messages
     private static final String MARK_EXAMPLE = "\"mark 1\" to mark the first task as completed";
@@ -13,6 +23,10 @@ public class BingBong {
     private static final String TODO_EXAMPLE = "\"todo go grocery shopping\"";
     private static final String DEADLINE_EXAMPLE = "\"deadline finish homework /by 9pm\"";
     private static final String EVENT_EXAMPLE = "\"event go for a jog /from 9am /to 10am\"";
+
+    // attributes for saving of tasks
+    private static final String DATA_FOLDER_PATH = "./data";
+    private static final String TASKS_FILENAME = "tasks.txt";
 
     // messages to print out
     private static String getStartMessage() {
@@ -229,6 +243,86 @@ public class BingBong {
         }));
     }
 
+    // read saved task file
+    private static TaskTracker readSavedTasks(File f) {
+        try {
+            Scanner fileScanner = new Scanner(f);
+            System.out.println(new Message("Existing task file detected. "
+                    + "Initialising saved task list..."));
+
+            TaskTracker taskTracker = new TaskTracker(DATA_FOLDER_PATH, TASKS_FILENAME);
+
+            while (fileScanner.hasNextLine()) {
+                String taskString = fileScanner.nextLine();
+                String[] taskDetails = taskString.split(" \\| ");
+
+                // get task details
+                String taskType = taskDetails[0];
+                String isDoneIcon = taskDetails[1];
+                if (!isDoneIcon.equals(Task.DONE_ICON) && !isDoneIcon.equals(Task.NOT_DONE_ICON)) {
+                    throw new IOException("Invalid progress icons in saved task file");
+                }
+                boolean isDone = isDoneIcon.equals(Task.DONE_ICON);
+                String taskName = taskDetails[2];
+
+                // create new task object
+                Task newTask;
+                switch (taskType) {
+                case Todo.TASK_ICON:
+                    Todo todo = new Todo(taskName);
+                    newTask = new Todo(todo, isDone);
+                    break;
+                case Deadline.TASK_ICON:
+                    String byWhen = taskDetails[3];
+                    Deadline deadline = new Deadline(taskName, byWhen);
+                    newTask = new Deadline(deadline, isDone);
+                    break;
+                case Event.TASK_ICON:
+                    // task is an event
+                    String startTime = taskDetails[3];
+                    String endTime = taskDetails[4];
+                    Event event = new Event(taskName, startTime, endTime);
+                    newTask = new Event(event, isDone);
+                    break;
+                default:
+                    throw new IOException("Invalid task icons in saved task file");
+                }
+
+                // add this new task object
+                taskTracker.addTask(newTask);
+            }
+
+            return taskTracker;
+        } catch (FileNotFoundException fileNotFoundEx) {
+            // no saved tasks
+            System.out.println(new Message("No existing task file detected. "
+                    + "An empty task list will be initialised."));
+            return new TaskTracker(DATA_FOLDER_PATH, TASKS_FILENAME);
+        } catch (ArrayIndexOutOfBoundsException | IOException ex) {
+            System.out.println(new Message("Something went wrong loading the saved task file: "
+                    + ex.getMessage()
+                    + "\n The file might be corrupted (ie. wrongly formatted)."
+                    + "\nAn empty task list will be initialised."));
+            return new TaskTracker(DATA_FOLDER_PATH, TASKS_FILENAME);
+        }
+    }
+
+    // load saved tasks
+    private static TaskTracker loadSavedTasks() throws IOException {
+        // create data folder if we have not done so
+        Path dataFolderPathObj = Paths.get(DATA_FOLDER_PATH);
+        if (!Files.exists(dataFolderPathObj)) {
+            Files.createDirectories(dataFolderPathObj);
+            System.out.println(new Message("Data directory created!"));
+        }
+
+        // populate tracker with saved tasks
+        String tasksFilePath = DATA_FOLDER_PATH + "/" + TASKS_FILENAME;
+        File f = new File(tasksFilePath);
+        TaskTracker loadedTracker = readSavedTasks(f);
+        return loadedTracker;
+    }
+
     // get the correct command from the input
     private static Command getCommand(String inputLine) throws BingBongException {
         Command chosenCommand;
@@ -260,36 +354,44 @@ public class BingBong {
         // initialise mapping of commands to operations
         init_commands_to_operations();
 
-        // greet user
-        System.out.println(new Message(getStartMessage()));
+        try {
+            // load existing task list, if any
+            TaskTracker taskTracker = loadSavedTasks();
 
-        // main processing loop for input
-        TaskTracker taskTracker = new TaskTracker();
-        Scanner sc = new Scanner(System.in);
-        String inputLine = sc.nextLine().strip();
-        while (true) {
-            try {
-                // get command requested by user
-                Command chosenCommand = getCommand(inputLine);
+            // greet user
+            System.out.println(new Message(getStartMessage()));
 
-                if (chosenCommand.equals(Command.BYE)) {
-                    // user wants to end the chat
-                    System.out.println(new Message(getEndMessage()));
-                    return;
+            // main processing loop for input
+            Scanner sc = new Scanner(System.in);
+            String inputLine = sc.nextLine().strip();
+            while (true) {
+                try {
+                    // get command requested by user
+                    Command chosenCommand = getCommand(inputLine);
+
+                    if (chosenCommand.equals(Command.BYE)) {
+                        // user wants to end the chat
+                        System.out.println(new Message(getEndMessage()));
+                        return;
+                    }
+
+                    // get operation needed for this command
+                    ThrowingBiFunction<TaskTracker, String, TaskTracker> op =
+                            COMMANDS_TO_OPERATIONS.get(chosenCommand);
+
+                    // apply operation
+                    taskTracker = op.apply(taskTracker, inputLine);
+
+                } catch (BingBongException ex) {
+                    System.out.println(new Message(getExceptionMessage(ex.getMessage())));
                 }
 
-                // get operation needed for this command
-                ThrowingBiFunction<TaskTracker, String, TaskTracker> op =
-                        COMMANDS_TO_OPERATIONS.get(chosenCommand);
-
-                // apply operation
-                taskTracker = op.apply(taskTracker, inputLine);
-
-            } catch (BingBongException ex) {
-                System.out.println(new Message(getExceptionMessage(ex.getMessage())));
+                inputLine = sc.nextLine().strip();
             }
-
-            inputLine = sc.nextLine().strip();
+        } catch (IOException ex) {
+            System.out.println(new Message("Something went wrong when initialising task tracker: "
+                    + ex.getMessage()
+                    + "\nPlease fix the problem and try again."));
         }
     }
 }

@@ -1,29 +1,47 @@
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.stream.IntStream;
 
 class TaskTracker {
     private final ArrayList<Task> tasks;
+    private final String dataFolderPath;
+    private final String tasksFilename;
 
-    TaskTracker() {
+    TaskTracker(String dataFolderPath, String tasksFilename) {
         this.tasks = new ArrayList<>();
+        this.dataFolderPath = dataFolderPath;
+        this.tasksFilename = tasksFilename;
     }
 
     // for adding new task
-    private TaskTracker(TaskTracker taskTracker, Task newTask) {
+    private TaskTracker(TaskTracker taskTracker, Task newTask,
+                        String dataFolderPath, String tasksFilename) {
         this.tasks = taskTracker.tasks;
         this.tasks.add(newTask);
+
+        this.dataFolderPath = dataFolderPath;
+        this.tasksFilename = tasksFilename;
     }
 
     // for editing existing task
-    private TaskTracker(TaskTracker taskTracker, Task task, int taskIndex) {
+    private TaskTracker(TaskTracker taskTracker, Task task, int taskIndex,
+                        String dataFolderPath, String tasksFilename) {
         this.tasks = taskTracker.tasks;
         this.tasks.set(taskIndex, task);
+
+        this.dataFolderPath = dataFolderPath;
+        this.tasksFilename = tasksFilename;
     }
 
     // for deleting existing task
-    private TaskTracker(TaskTracker taskTracker, int taskIndex) {
+    private TaskTracker(TaskTracker taskTracker, int taskIndex,
+                        String dataFolderPath, String tasksFilename) {
         this.tasks = taskTracker.tasks;
         this.tasks.remove(taskIndex);
+
+        this.dataFolderPath = dataFolderPath;
+        this.tasksFilename = tasksFilename;
     }
 
     private String getWrongIndexExceptionMsg(int index) {
@@ -33,6 +51,27 @@ class TaskTracker {
                 + ") does not exist. There are currently "
                 + this.getNumOfTasks()
                 + " task(s) in the list.";
+    }
+
+    // save recorded tasks to file
+    void saveTasks() {
+        try {
+            // get combined string to write to saved file
+            String textToWrite = IntStream.range(0, this.getNumOfTasks())
+                    .mapToObj(index -> this.tasks.get(index).getSaveableString())
+                    .reduce((x, y) -> x + System.lineSeparator() + y)
+                    .orElse("");
+
+            // write to file
+            String tasksFilePath = dataFolderPath + "/" + this.tasksFilename;
+            FileWriter fw = new FileWriter(tasksFilePath);
+            fw.write(textToWrite);
+            fw.close();
+        } catch (IOException ex) {
+            System.out.println(new Message("Something went wrong when saving the tasks: "
+                    + ex.getMessage()
+                    + "\nHence, the tasks are not being saved to disk."));
+        }
     }
 
     int getNumOfTasks() {
@@ -49,19 +88,28 @@ class TaskTracker {
 
     TaskTracker editTask(int index, Task newTask) throws BingBongException {
         try {
-            return new TaskTracker(this, newTask, index);
+            TaskTracker modifiedTracker = new TaskTracker(this, newTask, index,
+                    this.dataFolderPath, this.tasksFilename);
+            modifiedTracker.saveTasks();
+            return modifiedTracker;
         } catch (IndexOutOfBoundsException ex) {
             throw new BingBongException(this.getWrongIndexExceptionMsg(index));
         }
     }
 
     TaskTracker addTask(Task newTask) {
-        return new TaskTracker(this, newTask);
+        TaskTracker modifiedTracker = new TaskTracker(this, newTask,
+                this.dataFolderPath, this.tasksFilename);
+        modifiedTracker.saveTasks();
+        return modifiedTracker;
     }
 
     TaskTracker deleteTask(int index) throws BingBongException {
         try {
-            return new TaskTracker(this, index);
+            TaskTracker modifiedTracker = new TaskTracker(this, index,
+                    this.dataFolderPath, this.tasksFilename);
+            modifiedTracker.saveTasks();
+            return modifiedTracker;
         } catch (IndexOutOfBoundsException ex) {
             throw new BingBongException(this.getWrongIndexExceptionMsg(index));
         }
