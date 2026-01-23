@@ -1,6 +1,7 @@
 abstract class Task {
-    private static final String DONE_ICON = "X";
-    private static final String NOT_DONE_ICON = " ";
+    static final String DONE_ICON = "X";
+    static final String NOT_DONE_ICON = " ";
+    protected static final String DIVIDER = " | ";
 
     private final String taskName;
     private final boolean isDone;
@@ -20,6 +21,10 @@ abstract class Task {
     }
 
     abstract Task changeTaskStatus(boolean newStatus);
+
+    public String getSaveableString() {
+        return this.getStatusIcon() + DIVIDER + this.taskName;
+    }
 
     @Override
     public String toString() {

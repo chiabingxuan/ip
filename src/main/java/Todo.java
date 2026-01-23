@@ -1,16 +1,22 @@
 class Todo extends Task {
-    private static final String TASK_ICON = "T";
+    static final String TASK_ICON = "T";
 
     Todo(String taskName) {
         super(taskName);
     }
 
-    private Todo(Todo todo, boolean isDone) {
+    Todo(Todo todo, boolean isDone) {
         super(todo, isDone);
     }
 
     Todo changeTaskStatus(boolean newStatus) {
         return new Todo(this, newStatus);
+    }
+
+    @Override
+    public String getSaveableString() {
+        return TASK_ICON
+                + DIVIDER + super.getSaveableString();
     }
 
     @Override
