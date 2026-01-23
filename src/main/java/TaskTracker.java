@@ -1,5 +1,3 @@
-import java.io.FileWriter;
-import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.stream.IntStream;
@@ -54,25 +52,13 @@ class TaskTracker {
                 + " task(s) in the list.";
     }
 
-    // save recorded tasks to file
-    void saveTasks(DateTimeFormatter dateFormatter) {
-        try {
-            // get combined string to write to saved file
-            String textToWrite = IntStream.range(0, this.getNumOfTasks())
-                    .mapToObj(index -> this.tasks.get(index).getSaveableString(dateFormatter))
-                    .reduce((x, y) -> x + System.lineSeparator() + y)
-                    .orElse("");
-
-            // write to file
-            String tasksFilePath = dataFolderPath + "/" + this.tasksFilename;
-            FileWriter fw = new FileWriter(tasksFilePath);
-            fw.write(textToWrite);
-            fw.close();
-        } catch (IOException ex) {
-            System.out.println(new Message("Something went wrong when saving the tasks: "
-                    + ex.getMessage()
-                    + "\nHence, the tasks are not being saved to disk."));
-        }
+    // get the combined string of tasks, which can be saved
+    String getCombinedSaveableTasks(DateTimeFormatter dateFormatter) {
+        // get combined string to write to saved file
+        return IntStream.range(0, this.getNumOfTasks())
+                .mapToObj(index -> this.tasks.get(index).getSaveableString(dateFormatter))
+                .reduce((x, y) -> x + System.lineSeparator() + y)
+                .orElse("");
     }
 
     int getNumOfTasks() {
@@ -87,32 +73,26 @@ class TaskTracker {
         }
     }
 
-    TaskTracker editTask(int index, Task newTask, DateTimeFormatter dateFormatter)
+    TaskTracker editTask(int index, Task newTask)
             throws BingBongException {
         try {
-            TaskTracker modifiedTracker = new TaskTracker(this, newTask, index,
+            return new TaskTracker(this, newTask, index,
                     this.dataFolderPath, this.tasksFilename);
-            modifiedTracker.saveTasks(dateFormatter);
-            return modifiedTracker;
         } catch (IndexOutOfBoundsException ex) {
             throw new BingBongException(this.getWrongIndexExceptionMsg(index));
         }
     }
 
-    TaskTracker addTask(Task newTask, DateTimeFormatter dateFormatter) {
-        TaskTracker modifiedTracker = new TaskTracker(this, newTask,
+    TaskTracker addTask(Task newTask) {
+        return new TaskTracker(this, newTask,
                 this.dataFolderPath, this.tasksFilename);
-        modifiedTracker.saveTasks(dateFormatter);
-        return modifiedTracker;
     }
 
-    TaskTracker deleteTask(int index, DateTimeFormatter dateFormatter)
+    TaskTracker deleteTask(int index)
             throws BingBongException {
         try {
-            TaskTracker modifiedTracker = new TaskTracker(this, index,
+            return new TaskTracker(this, index,
                     this.dataFolderPath, this.tasksFilename);
-            modifiedTracker.saveTasks(dateFormatter);
-            return modifiedTracker;
         } catch (IndexOutOfBoundsException ex) {
             throw new BingBongException(this.getWrongIndexExceptionMsg(index));
         }

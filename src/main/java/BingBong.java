@@ -1,21 +1,15 @@
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 public class BingBong {
     // bot properties
     private static final String BOT_NAME = "BingBong";
-    private static final HashMap<Command,
-                ThrowingBiFunction<TaskTracker, String, TaskTracker>> COMMANDS_TO_OPERATIONS = new HashMap<>();
 
     // examples to be shown in error messages
     private static final String MARK_EXAMPLE = "\"mark 1\" to mark the first task as completed";
@@ -27,13 +21,14 @@ public class BingBong {
     private static final String DATE_FORMATTING_EXAMPLE = "\"2/1/2003 13:18\" which means "
             + "2 Jan 2003, 1:18 pm";
 
-    // attributes for saving of tasks
-    private static final String DATA_FOLDER_PATH = "./data";
-    private static final String TASKS_FILENAME = "tasks.txt";
-
     // for parsing dates
     private static final String DATE_FORMAT = "d/M/yyyy HH:mm";
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_FORMAT);
+
+    // tools given to the bot
+    private Storage storage;
+    private TaskTracker taskTracker;
+    private HashMap<Command,
+            ThrowingBiFunction<TaskTracker, String, TaskTracker>> commandsToOperations;
 
     // messages to print out
     private static String getStartMessage() {
@@ -88,18 +83,22 @@ public class BingBong {
 
     // parse dates that are in String
     private static LocalDateTime parseDate(String dateString) {
-        return LocalDateTime.parse(dateString, DATE_FORMATTER);
+        return LocalDateTime.parse(dateString, DateTimeFormatter.ofPattern(DATE_FORMAT));
     }
 
     // populate mapping of commands to the ThrowingBiFunction to be called
-    private static void init_commands_to_operations() {
+    private static HashMap<Command,
+            ThrowingBiFunction<TaskTracker, String, TaskTracker>> init_commands_to_operations() {
+        HashMap<Command, ThrowingBiFunction<TaskTracker, String, TaskTracker>>
+                commandsToOperations = new HashMap<>();
+
         // mark chosen task done
-        COMMANDS_TO_OPERATIONS.put(Command.MARK, (taskTracker, inputLine) -> {
+        commandsToOperations.put(Command.MARK, (taskTracker, inputLine) -> {
             try {
                 String[] inputTokens = inputLine.split("\\s+");
                 int indexToMark = Integer.parseInt(inputTokens[1]) - 1;
                 Task markedTask = taskTracker.changeTaskStatusAtIndex(indexToMark, true);
-                taskTracker = taskTracker.editTask(indexToMark, markedTask, DATE_FORMATTER);
+                taskTracker = taskTracker.editTask(indexToMark, markedTask);
                 System.out.println(new Message(getMarkedTaskMessage(markedTask)));
                 return taskTracker;
             } catch (ArrayIndexOutOfBoundsException ex) {
@@ -116,12 +115,12 @@ public class BingBong {
         });
 
         // mark chosen task as not done
-        COMMANDS_TO_OPERATIONS.put(Command.UNMARK, (taskTracker, inputLine) -> {
+        commandsToOperations.put(Command.UNMARK, (taskTracker, inputLine) -> {
             try {
                 String[] inputTokens = inputLine.split("\\s+");
                 int indexToUnmark = Integer.parseInt(inputTokens[1]) - 1;
                 Task unmarkedTask = taskTracker.changeTaskStatusAtIndex(indexToUnmark, false);
-                taskTracker = taskTracker.editTask(indexToUnmark, unmarkedTask, DATE_FORMATTER);
+                taskTracker = taskTracker.editTask(indexToUnmark, unmarkedTask);
                 System.out.println(new Message(getUnmarkedTaskMessage(unmarkedTask)));
                 return taskTracker;
             } catch (ArrayIndexOutOfBoundsException ex) {
@@ -138,12 +137,12 @@ public class BingBong {
         });
 
         // delete chosen task
-        COMMANDS_TO_OPERATIONS.put(Command.DELETE, (taskTracker, inputLine) -> {
+        commandsToOperations.put(Command.DELETE, (taskTracker, inputLine) -> {
             try {
                 String[] inputTokens = inputLine.split("\\s+");
                 int indexToDelete = Integer.parseInt(inputTokens[1]) - 1;
                 Task taskToDelete = taskTracker.getTask(indexToDelete);
-                taskTracker = taskTracker.deleteTask(indexToDelete, DATE_FORMATTER);
+                taskTracker = taskTracker.deleteTask(indexToDelete);
                 int newNumOfTasks = taskTracker.getNumOfTasks();
                 System.out.println(new Message(getDeletedTaskMessage(taskToDelete, newNumOfTasks)));
                 return taskTracker;
@@ -161,7 +160,7 @@ public class BingBong {
         });
 
         // add a todo
-        COMMANDS_TO_OPERATIONS.put(Command.TODO, (taskTracker, inputLine) -> {
+        commandsToOperations.put(Command.TODO, (taskTracker, inputLine) -> {
             String[] detailsAfterSplit = inputLine.split("todo\\s+", 2);
 
             if (detailsAfterSplit.length < 2) {
@@ -174,14 +173,14 @@ public class BingBong {
             String todoName = detailsAfterSplit[1];
             Todo newTodo = new Todo(todoName);
 
-            taskTracker = taskTracker.addTask(newTodo, DATE_FORMATTER);
+            taskTracker = taskTracker.addTask(newTodo);
             int newNumOfTasks = taskTracker.getNumOfTasks();
             System.out.println(new Message(getAddTaskMessage(newTodo, newNumOfTasks)));
             return taskTracker;
         });
 
         // add a deadline
-        COMMANDS_TO_OPERATIONS.put(Command.DEADLINE, (taskTracker, inputLine) -> {
+        commandsToOperations.put(Command.DEADLINE, (taskTracker, inputLine) -> {
             String[] detailsAfterSplittingCommand = inputLine.split("deadline\\s+", 2);
             if (detailsAfterSplittingCommand.length < 2) {
                 throw new BingBongException("The description of a deadline cannot be empty. "
@@ -203,14 +202,14 @@ public class BingBong {
             LocalDateTime byWhen = parseDate(deadlineDetails[1]);
             Deadline newDeadline = new Deadline(deadlineName, byWhen);
 
-            taskTracker = taskTracker.addTask(newDeadline, DATE_FORMATTER);
+            taskTracker = taskTracker.addTask(newDeadline);
             int newNumOfTasks = taskTracker.getNumOfTasks();
             System.out.println(new Message(getAddTaskMessage(newDeadline, newNumOfTasks)));
             return taskTracker;
         });
 
         // add an event
-        COMMANDS_TO_OPERATIONS.put(Command.EVENT, (taskTracker, inputLine) -> {
+        commandsToOperations.put(Command.EVENT, (taskTracker, inputLine) -> {
             String[] detailsAfterSplittingCommand = inputLine.split("event\\s+", 2);
             if (detailsAfterSplittingCommand.length < 2) {
                 throw new BingBongException("The description of an event cannot be empty. "
@@ -242,96 +241,19 @@ public class BingBong {
             LocalDateTime endTime = parseDate(detailsAfterSplittingTo[1]);
             Event newEvent = new Event(eventName, startTime, endTime);
 
-            taskTracker = taskTracker.addTask(newEvent, DATE_FORMATTER);
+            taskTracker = taskTracker.addTask(newEvent);
             int newNumOfTasks = taskTracker.getNumOfTasks();
             System.out.println(new Message(getAddTaskMessage(newEvent, newNumOfTasks)));
             return taskTracker;
         });
 
-        COMMANDS_TO_OPERATIONS.put(Command.LIST, ((taskTracker, inputLine) -> {
+        commandsToOperations.put(Command.LIST, ((taskTracker, inputLine) -> {
             String listOfTasks = taskTracker.listTasks();
             System.out.println(new Message(getListTasksMessage(listOfTasks)));
             return taskTracker;
         }));
-    }
 
-    // read saved task file
-    private static TaskTracker readSavedTasks(File f) {
-        try {
-            Scanner fileScanner = new Scanner(f);
-            System.out.println(new Message("Existing task file detected. "
-                    + "Initialising saved task list..."));
-
-            TaskTracker taskTracker = new TaskTracker(DATA_FOLDER_PATH, TASKS_FILENAME);
-
-            while (fileScanner.hasNextLine()) {
-                String taskString = fileScanner.nextLine();
-                String[] taskDetails = taskString.split(" \\| ");
-
-                // get task details
-                String taskType = taskDetails[0];
-                String isDoneIcon = taskDetails[1];
-                if (!isDoneIcon.equals(Task.DONE_ICON) && !isDoneIcon.equals(Task.NOT_DONE_ICON)) {
-                    throw new IOException("Invalid progress icons in saved task file");
-                }
-                boolean isDone = isDoneIcon.equals(Task.DONE_ICON);
-                String taskName = taskDetails[2];
-
-                // create new task object
-                Task newTask;
-                switch (taskType) {
-                case Todo.TASK_ICON:
-                    Todo todo = new Todo(taskName);
-                    newTask = new Todo(todo, isDone);
-                    break;
-                case Deadline.TASK_ICON:
-                    LocalDateTime byWhen = parseDate(taskDetails[3]);
-                    Deadline deadline = new Deadline(taskName, byWhen);
-                    newTask = new Deadline(deadline, isDone);
-                    break;
-                case Event.TASK_ICON:
-                    // task is an event
-                    LocalDateTime startTime = parseDate(taskDetails[3]);
-                    LocalDateTime endTime = parseDate(taskDetails[4]);
-                    Event event = new Event(taskName, startTime, endTime);
-                    newTask = new Event(event, isDone);
-                    break;
-                default:
-                    throw new IOException("Invalid task icons in saved task file");
-                }
-
-                // add this new task object
-                taskTracker.addTask(newTask, DATE_FORMATTER);
-            }
-
-            return taskTracker;
-        } catch (FileNotFoundException fileNotFoundEx) {
-            // no saved tasks
-            System.out.println(new Message("No existing task file detected. "
-                    + "An empty task list will be initialised."));
-            return new TaskTracker(DATA_FOLDER_PATH, TASKS_FILENAME);
-        } catch (ArrayIndexOutOfBoundsException | DateTimeParseException | IOException ex) {
-            System.out.println(new Message("Something went wrong loading the saved task file: "
-                    + ex.getMessage()
-                    + "\n The file might be corrupted (ie. wrongly formatted)."
-                    + "\nAn empty task list will be initialised."));
-            return new TaskTracker(DATA_FOLDER_PATH, TASKS_FILENAME);
-        }
-    }
-
-    // load saved tasks
-    private static TaskTracker loadSavedTasks() throws IOException {
-        // create data folder if we have not done so
-        Path dataFolderPathObj = Paths.get(DATA_FOLDER_PATH);
-        if (!Files.exists(dataFolderPathObj)) {
-            Files.createDirectories(dataFolderPathObj);
-            System.out.println(new Message("Data directory created!"));
-        }
-
-        // populate tracker with saved tasks
-        String tasksFilePath = DATA_FOLDER_PATH + "/" + TASKS_FILENAME;
-        File f = new File(tasksFilePath);
-        return readSavedTasks(f);
+        return commandsToOperations;
     }
 
     // get the correct command from the input
@@ -360,54 +282,71 @@ public class BingBong {
         return chosenCommand;
     }
 
-    public static void main(String[] args) {
-        // initialise mapping of commands to operations
-        init_commands_to_operations();
-
+    public BingBong(String dataFolderPath, String tasksFilename){
         try {
-            // load existing task list, if any
-            TaskTracker taskTracker = loadSavedTasks();
+            // initialise mapping of commands to operations
+            commandsToOperations = init_commands_to_operations();
 
-            // greet user
-            System.out.println(new Message(getStartMessage()));
+            storage = new Storage(dataFolderPath, tasksFilename, DATE_FORMAT);
+            taskTracker = storage.loadSavedTasks();
+        } catch (FileNotFoundException ex) {
+            System.out.println(new Message("No existing task file detected. "
+                    + "An empty task list will be initialised."));
+            taskTracker = new TaskTracker(dataFolderPath, tasksFilename);
+        } catch (IOException ex) {
+            System.out.println(new Message(getExceptionMessage("Something went wrong when "
+                    + "initialising task storage: "
+                    + ex.getMessage()
+                    + "\nPlease fix the problem and try again.")));
+        } catch (BingBongException ex) {
+            System.out.println(new Message(getExceptionMessage(ex.getMessage())));
+            taskTracker = new TaskTracker(dataFolderPath, tasksFilename);
+        }
+    }
 
-            // main processing loop for input
-            Scanner sc = new Scanner(System.in);
-            String inputLine = sc.nextLine().strip();
-            while (true) {
-                try {
-                    // get command requested by user
-                    Command chosenCommand = getCommand(inputLine);
+    public void run() {
+        // greet user
+        System.out.println(new Message(getStartMessage()));
 
-                    if (chosenCommand.equals(Command.BYE)) {
-                        // user wants to end the chat
-                        System.out.println(new Message(getEndMessage()));
-                        return;
-                    }
+        // main processing loop for input
+        Scanner sc = new Scanner(System.in);
+        String inputLine = sc.nextLine().strip();
+        while (true) {
+            try {
+                // get command requested by user
+                Command chosenCommand = getCommand(inputLine);
 
-                    // get operation needed for this command
-                    ThrowingBiFunction<TaskTracker, String, TaskTracker> op =
-                            COMMANDS_TO_OPERATIONS.get(chosenCommand);
-
-                    // apply operation
-                    taskTracker = op.apply(taskTracker, inputLine);
-
-                } catch (DateTimeParseException ex) {
-                    System.out.println(new Message(getExceptionMessage("The date "
-                            + "that you have provided cannot be parsed: "
-                            + ex.getMessage()
-                            + "\nPlease use the correct format for dates. For example: "
-                            + DATE_FORMATTING_EXAMPLE)));
-                } catch (BingBongException ex) {
-                    System.out.println(new Message(getExceptionMessage(ex.getMessage())));
+                if (chosenCommand.equals(Command.BYE)) {
+                    // user wants to end the chat
+                    System.out.println(new Message(getEndMessage()));
+                    return;
                 }
 
-                inputLine = sc.nextLine().strip();
+                // get operation needed for this command
+                ThrowingBiFunction<TaskTracker, String, TaskTracker> op =
+                        commandsToOperations.get(chosenCommand);
+
+                // apply operation
+                taskTracker = op.apply(taskTracker, inputLine);
+
+                // save to storage
+                storage.saveTasks(taskTracker.getCombinedSaveableTasks(DateTimeFormatter.ofPattern(DATE_FORMAT)));
+
+            } catch (DateTimeParseException ex) {
+                System.out.println(new Message(getExceptionMessage("The date "
+                        + "that you have provided cannot be parsed: "
+                        + ex.getMessage()
+                        + "\nPlease use the correct format for dates. For example: "
+                        + DATE_FORMATTING_EXAMPLE)));
+            } catch (BingBongException ex) {
+                System.out.println(new Message(getExceptionMessage(ex.getMessage())));
             }
-        } catch (IOException ex) {
-            System.out.println(new Message("Something went wrong when initialising task tracker: "
-                    + ex.getMessage()
-                    + "\nPlease fix the problem and try again."));
+
+            inputLine = sc.nextLine().strip();
         }
+    }
+
+    public static void main(String[] args) {
+        new BingBong("./data", "tasks.txt").run();
     }
 }
