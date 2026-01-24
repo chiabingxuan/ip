@@ -2,10 +2,10 @@ package bingbong;
 
 import bingbong.command.Command;
 import bingbong.util.BingBongException;
-import bingbong.util.Storage;
 import bingbong.util.Parser;
-import bingbong.task.TaskTracker;
+import bingbong.util.Storage;
 import bingbong.util.Ui;
+import bingbong.task.TaskTracker;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

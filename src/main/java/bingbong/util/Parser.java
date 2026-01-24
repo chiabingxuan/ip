@@ -1,10 +1,10 @@
 package bingbong.util;
 
+import bingbong.command.AddCommand;
+import bingbong.command.ByeCommand;
 import bingbong.command.Command;
 import bingbong.command.CommandType;
-import bingbong.command.AddCommand;
 import bingbong.command.DeleteCommand;
-import bingbong.command.ByeCommand;
 import bingbong.command.ListCommand;
 import bingbong.command.MarkCommand;
 import bingbong.command.UnmarkCommand;
