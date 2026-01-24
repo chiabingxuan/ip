@@ -12,11 +12,9 @@ import java.util.Scanner;
 
 class Storage {
     private final String filePath;
-    private final DateTimeFormatter dateFormatter;
 
-    Storage(String dataFolderPath, String filename, String dateFormat) throws IOException {
+    Storage(String dataFolderPath, String filename) throws IOException {
         this.filePath = dataFolderPath + "/" + filename;
-        this.dateFormatter = DateTimeFormatter.ofPattern(dateFormat);
 
         // create data folder if we have not done so
         Path dataFolderPathObj = Paths.get(dataFolderPath);
@@ -25,15 +23,12 @@ class Storage {
         }
     }
 
-    // parse dates that are in String
-    private LocalDateTime parseDate(String dateString) {
-        return LocalDateTime.parse(dateString, this.dateFormatter);
-    }
-
     // read saved task file
-    TaskTracker readSavedTasks(File f) throws FileNotFoundException, BingBongException {
+    TaskTracker loadSavedTasks() throws FileNotFoundException, BingBongException {
         try {
+            File f = new File(this.filePath);
             Scanner fileScanner = new Scanner(f);
+
             TaskTracker taskTracker = new TaskTracker(this.filePath);
 
             while (fileScanner.hasNextLine()) {
@@ -57,14 +52,14 @@ class Storage {
                     newTask = new Todo(todo, isDone);
                     break;
                 case Deadline.TASK_ICON:
-                    LocalDateTime byWhen = parseDate(taskDetails[3]);
+                    LocalDateTime byWhen = Parser.parseDate(taskDetails[3]);
                     Deadline deadline = new Deadline(taskName, byWhen);
                     newTask = new Deadline(deadline, isDone);
                     break;
                 case Event.TASK_ICON:
                     // task is an event
-                    LocalDateTime startTime = parseDate(taskDetails[3]);
-                    LocalDateTime endTime = parseDate(taskDetails[4]);
+                    LocalDateTime startTime = Parser.parseDate(taskDetails[3]);
+                    LocalDateTime endTime = Parser.parseDate(taskDetails[4]);
                     Event event = new Event(taskName, startTime, endTime);
                     newTask = new Event(event, isDone);
                     break;
@@ -83,13 +78,6 @@ class Storage {
                     + "\n The file might be corrupted (ie. wrongly formatted)."
                     + "\nAn empty task list will be initialised.");
         }
-    }
-
-    // load saved tasks
-    TaskTracker loadSavedTasks() throws FileNotFoundException, BingBongException {
-        // populate tracker with saved tasks
-        File f = new File(filePath);
-        return readSavedTasks(f);
     }
 
     // save recorded tasks to file
