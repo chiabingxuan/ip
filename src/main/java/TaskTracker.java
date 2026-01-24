@@ -12,7 +12,7 @@ class TaskTracker {
 
     // for adding new task
     private TaskTracker(TaskTracker taskTracker, Task newTask, String tasksFilePath) {
-        this.tasks = taskTracker.tasks;
+        this.tasks = new ArrayList<>(taskTracker.tasks);
         this.tasks.add(newTask);
 
         this.tasksFilePath = tasksFilePath;
@@ -21,7 +21,7 @@ class TaskTracker {
     // for editing existing task
     private TaskTracker(TaskTracker taskTracker, Task task, int taskIndex,
                         String tasksFilePath) {
-        this.tasks = taskTracker.tasks;
+        this.tasks = new ArrayList<>(taskTracker.tasks);
         this.tasks.set(taskIndex, task);
 
         this.tasksFilePath = tasksFilePath;
@@ -30,7 +30,7 @@ class TaskTracker {
     // for deleting existing task
     private TaskTracker(TaskTracker taskTracker, int taskIndex,
                         String tasksFilePath) {
-        this.tasks = taskTracker.tasks;
+        this.tasks = new ArrayList<>(taskTracker.tasks);
         this.tasks.remove(taskIndex);
 
         this.tasksFilePath = tasksFilePath;

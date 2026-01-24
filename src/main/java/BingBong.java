@@ -48,7 +48,7 @@ public class BingBong {
                 String inputLine = sc.nextLine().strip();
                 ui.showLine();
                 Command chosenCommand = Parser.parse(inputLine);
-                chosenCommand.execute(taskTracker, ui, storage);
+                taskTracker = chosenCommand.execute(taskTracker, ui, storage);
                 isExit = chosenCommand.isExit();
             } catch (BingBongException ex) {
                 ui.printExceptionMessage(ex.getMessage());
