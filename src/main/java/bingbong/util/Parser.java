@@ -1,10 +1,24 @@
+package bingbong.util;
+
+import bingbong.command.Command;
+import bingbong.command.CommandType;
+import bingbong.command.AddCommand;
+import bingbong.command.DeleteCommand;
+import bingbong.command.ByeCommand;
+import bingbong.command.ListCommand;
+import bingbong.command.MarkCommand;
+import bingbong.command.UnmarkCommand;
+import bingbong.task.Deadline;
+import bingbong.task.Event;
+import bingbong.task.Todo;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.HashMap;
 
-class Parser {
+public class Parser {
     // for parsing of dates
     private static final String DATE_FORMAT = "d/M/yyyy HH:mm";
 
@@ -208,7 +222,7 @@ class Parser {
 
     }
 
-    static Command parse(String inputLine) throws BingBongException {
+    public static Command parse(String inputLine) throws BingBongException {
         setupMapping();
 
         // first identify what type of command is in the input
@@ -217,8 +231,6 @@ class Parser {
         // create a class that can be used to carry out the operation,
         // based on the command type
         ThrowingFunction<String, Command> getCommandFunction = typesToCommands.get(chosenCommandType);
-        Command command = getCommandFunction.apply(inputLine);
-
-        return command;
+        return getCommandFunction.apply(inputLine);
     }
 }

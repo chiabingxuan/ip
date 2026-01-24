@@ -1,10 +1,12 @@
+package bingbong.task;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-abstract class Task {
+public abstract class Task {
     private static final String DATE_OUTPUT_FORMAT = "d MMM yyyy, h:mm a";
-    static final String DONE_ICON = "X";
-    static final String NOT_DONE_ICON = " ";
+    public static final String DONE_ICON = "X";
+    public static final String NOT_DONE_ICON = " ";
     protected static final String DIVIDER = " | ";
 
     private final String taskName;

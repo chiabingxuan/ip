@@ -1,4 +1,6 @@
-enum CommandType {
+package bingbong.command;
+
+public enum CommandType {
     MARK,
     UNMARK,
     DELETE,

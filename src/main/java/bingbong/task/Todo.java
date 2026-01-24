@@ -1,13 +1,15 @@
+package bingbong.task;
+
 import java.time.format.DateTimeFormatter;
 
-class Todo extends Task {
-    static final String TASK_ICON = "T";
+public class Todo extends Task {
+    public static final String TASK_ICON = "T";
 
-    Todo(String taskName) {
+    public Todo(String taskName) {
         super(taskName);
     }
 
-    Todo(Todo todo, boolean isDone) {
+    public Todo(Todo todo, boolean isDone) {
         super(todo, isDone);
     }
 

@@ -1,3 +1,11 @@
+package bingbong.util;
+
+import bingbong.task.Deadline;
+import bingbong.task.Event;
+import bingbong.task.Task;
+import bingbong.task.TaskTracker;
+import bingbong.task.Todo;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -6,14 +14,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
-class Storage {
+public class Storage {
     private final String filePath;
 
-    Storage(String dataFolderPath, String filename) throws IOException {
+    public Storage(String dataFolderPath, String filename) throws IOException {
         this.filePath = dataFolderPath + "/" + filename;
 
         // create data folder if we have not done so
@@ -24,7 +31,7 @@ class Storage {
     }
 
     // read saved task file
-    TaskTracker loadSavedTasks() throws FileNotFoundException, BingBongException {
+    public TaskTracker loadSavedTasks() throws FileNotFoundException, BingBongException {
         try {
             File f = new File(this.filePath);
             Scanner fileScanner = new Scanner(f);
@@ -81,7 +88,7 @@ class Storage {
     }
 
     // save recorded tasks to file
-    void saveTasks(String textToWrite) throws BingBongException {
+    public void saveTasks(String textToWrite) throws BingBongException {
         try {
             // write to file
             FileWriter fw = new FileWriter(this.filePath);
