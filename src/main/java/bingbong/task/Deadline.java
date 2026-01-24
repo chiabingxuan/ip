@@ -1,16 +1,18 @@
+package bingbong.task;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-class Deadline extends Task {
-    static final String TASK_ICON = "D";
+public class Deadline extends Task {
+    public static final String TASK_ICON = "D";
     private final LocalDateTime byWhen;
 
-    Deadline(String taskName, LocalDateTime byWhen) {
+    public Deadline(String taskName, LocalDateTime byWhen) {
         super(taskName);
         this.byWhen = byWhen;
     }
 
-    Deadline(Deadline deadline, boolean isDone) {
+    public Deadline(Deadline deadline, boolean isDone) {
         super(deadline, isDone);
         this.byWhen = deadline.byWhen;
     }

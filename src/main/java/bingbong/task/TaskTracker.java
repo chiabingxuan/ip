@@ -1,11 +1,15 @@
+package bingbong.task;
+
+import bingbong.util.BingBongException;
+
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.stream.IntStream;
 
-class TaskTracker {
+public class TaskTracker {
     private final ArrayList<Task> tasks;
     private final String tasksFilePath;
-    TaskTracker(String tasksFilePath) {
+    public TaskTracker(String tasksFilePath) {
         this.tasks = new ArrayList<>();
         this.tasksFilePath = tasksFilePath;
     }
@@ -46,7 +50,7 @@ class TaskTracker {
     }
 
     // get the combined string of tasks, which can be saved
-    String getCombinedSaveableTasks(DateTimeFormatter dateFormatter) {
+    public String getCombinedSaveableTasks(DateTimeFormatter dateFormatter) {
         // get combined string to write to saved file
         return IntStream.range(0, this.getNumOfTasks())
                 .mapToObj(index -> this.tasks.get(index).getSaveableString(dateFormatter))
@@ -54,11 +58,11 @@ class TaskTracker {
                 .orElse("");
     }
 
-    int getNumOfTasks() {
+    public int getNumOfTasks() {
         return this.tasks.size();
     }
 
-    Task getTask(int index) throws BingBongException {
+    public Task getTask(int index) throws BingBongException {
         try {
             return this.tasks.get(index);
         } catch (IndexOutOfBoundsException ex) {
@@ -66,7 +70,7 @@ class TaskTracker {
         }
     }
 
-    TaskTracker editTask(int index, Task newTask)
+    public TaskTracker editTask(int index, Task newTask)
             throws BingBongException {
         try {
             return new TaskTracker(this, newTask, index,
@@ -76,12 +80,12 @@ class TaskTracker {
         }
     }
 
-    TaskTracker addTask(Task newTask) {
+    public TaskTracker addTask(Task newTask) {
         return new TaskTracker(this, newTask,
                 this.tasksFilePath);
     }
 
-    TaskTracker deleteTask(int index)
+    public TaskTracker deleteTask(int index)
             throws BingBongException {
         try {
             return new TaskTracker(this, index,
@@ -92,7 +96,7 @@ class TaskTracker {
     }
 
     // list tasks in storage
-    String listTasks() {
+    public String listTasks() {
         // use 1-indexing for printed list
         return IntStream.rangeClosed(1, this.getNumOfTasks())
                 // create list item in String
@@ -101,7 +105,7 @@ class TaskTracker {
                 .reduce("", (x, y) -> x + "\n" + y);
     }
 
-    Task changeTaskStatusAtIndex(int taskIndex, boolean newStatus) throws BingBongException {
+    public Task changeTaskStatusAtIndex(int taskIndex, boolean newStatus) throws BingBongException {
         Task oldTask = this.getTask(taskIndex);
         return oldTask.changeTaskStatus(newStatus);
     }

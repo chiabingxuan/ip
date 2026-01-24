@@ -1,18 +1,20 @@
+package bingbong.task;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-class Event extends Task {
-    static final String TASK_ICON = "E";
+public class Event extends Task {
+    public static final String TASK_ICON = "E";
     private final LocalDateTime startTime;
     private final LocalDateTime endTime;
 
-    Event(String taskName, LocalDateTime startTime, LocalDateTime endTime) {
+    public Event(String taskName, LocalDateTime startTime, LocalDateTime endTime) {
         super(taskName);
         this.startTime = startTime;
         this.endTime = endTime;
     }
 
-    Event(Event event, boolean isDone) {
+    public Event(Event event, boolean isDone) {
         super(event, isDone);
         this.startTime = event.startTime;
         this.endTime = event.endTime;

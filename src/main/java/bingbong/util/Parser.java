@@ -1,22 +1,42 @@
+package bingbong.util;
+
+import bingbong.command.AddCommand;
+import bingbong.command.ByeCommand;
+import bingbong.command.Command;
+import bingbong.command.CommandType;
+import bingbong.command.DeleteCommand;
+import bingbong.command.ListCommand;
+import bingbong.command.MarkCommand;
+import bingbong.command.UnmarkCommand;
+import bingbong.task.Deadline;
+import bingbong.task.Event;
+import bingbong.task.Todo;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.HashMap;
 
-class Parser {
+public class Parser {
     // for parsing of dates
     private static final String DATE_FORMAT = "d/M/yyyy HH:mm";
 
     // examples to be shown in error messages
-    private static final String MARK_EXAMPLE = "\"mark 1\" to mark the first task as completed";
-    private static final String UNMARK_EXAMPLE = "\"unmark 1\" to mark the first task as incomplete";
-    private static final String DELETE_EXAMPLE = "\"delete 1\" to delete the first task";
-    private static final String TODO_EXAMPLE = "\"todo go grocery shopping\"";
-    private static final String DEADLINE_EXAMPLE = "\"deadline finish homework /by 9pm\"";
-    private static final String EVENT_EXAMPLE = "\"event go for a jog /from 9am /to 10am\"";
-    private static final String DATE_FORMATTING_EXAMPLE = "\"2/1/2003 13:18\" which means "
-            + "2 Jan 2003, 1:18 pm";
+    private static final String MARK_EXAMPLE =
+            "\"mark 1\" to mark the first task as completed";
+    private static final String UNMARK_EXAMPLE =
+            "\"unmark 1\" to mark the first task as incomplete";
+    private static final String DELETE_EXAMPLE =
+            "\"delete 1\" to delete the first task";
+    private static final String TODO_EXAMPLE =
+            "\"todo go grocery shopping\"";
+    private static final String DEADLINE_EXAMPLE =
+            "\"deadline finish homework /by 2/1/2003 21:00\"";
+    private static final String EVENT_EXAMPLE =
+            "\"event go for a jog /from 2/1/2003 09:00 /to 2/1/2003 10:00\"";
+    private static final String DATE_FORMATTING_EXAMPLE =
+            "\"2/1/2003 13:18\" which means 2 Jan 2003, 1:18 pm";
 
     // maps different command types to a function that gives us the correct Command object
     private static final HashMap<CommandType,
@@ -208,7 +228,7 @@ class Parser {
 
     }
 
-    static Command parse(String inputLine) throws BingBongException {
+    public static Command parse(String inputLine) throws BingBongException {
         setupMapping();
 
         // first identify what type of command is in the input
@@ -217,8 +237,6 @@ class Parser {
         // create a class that can be used to carry out the operation,
         // based on the command type
         ThrowingFunction<String, Command> getCommandFunction = typesToCommands.get(chosenCommandType);
-        Command command = getCommandFunction.apply(inputLine);
-
-        return command;
+        return getCommandFunction.apply(inputLine);
     }
 }

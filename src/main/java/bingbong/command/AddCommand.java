@@ -1,16 +1,24 @@
+package bingbong.command;
+
+import bingbong.task.Task;
+import bingbong.task.TaskTracker;
+import bingbong.util.BingBongException;
+import bingbong.util.Storage;
+import bingbong.util.Ui;
+
 import java.time.format.DateTimeFormatter;
 
-class AddCommand extends Command {
+public class AddCommand extends Command {
     private final Task task;
     private final DateTimeFormatter dateFormatter;
 
-    AddCommand(Task task, String dateFormat) {
+    public AddCommand(Task task, String dateFormat) {
         super(false);
         this.task = task;
         this.dateFormatter = DateTimeFormatter.ofPattern(dateFormat);
     }
 
-    TaskTracker execute(TaskTracker taskTracker, Ui ui, Storage storage) {
+    public TaskTracker execute(TaskTracker taskTracker, Ui ui, Storage storage) {
         // add to tracker
         taskTracker = taskTracker.addTask(task);
         int newNumOfTasks = taskTracker.getNumOfTasks();
