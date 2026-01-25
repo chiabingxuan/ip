@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Storage {
@@ -36,7 +37,7 @@ public class Storage {
             File f = new File(this.filePath);
             Scanner fileScanner = new Scanner(f);
 
-            TaskTracker taskTracker = new TaskTracker();
+            ArrayList<Task> loadedTasks = new ArrayList<>();
 
             while (fileScanner.hasNextLine()) {
                 String taskString = fileScanner.nextLine();
@@ -75,10 +76,10 @@ public class Storage {
                 }
 
                 // add this new task object
-                taskTracker.addTask(newTask);
+                loadedTasks.add(newTask);
             }
 
-            return taskTracker;
+            return new TaskTracker(loadedTasks);
         } catch (ArrayIndexOutOfBoundsException | DateTimeParseException | IllegalArgumentException ex) {
             throw new BingBongException("Something went wrong loading the saved task file: "
                     + ex.getMessage()
