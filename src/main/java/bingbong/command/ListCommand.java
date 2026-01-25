@@ -14,4 +14,9 @@ public class ListCommand extends Command {
         ui.printListTasksMessage(listOfTasks);
         return taskTracker;
     }
+
+    @Override
+    public String toString() {
+        return "list command";
+    }
 }

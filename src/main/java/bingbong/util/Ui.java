@@ -13,7 +13,7 @@ public class Ui {
 
     public void printListTasksMessage(String listOfTasks) {
         System.out.println("Here are the tasks that you have added to the list:"
-                + "\n"
+                + "\n\n"
                 + listOfTasks);
     }
 

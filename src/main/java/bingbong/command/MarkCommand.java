@@ -23,4 +23,9 @@ public class MarkCommand extends Command {
 
         return taskTracker;
     }
+
+    @Override
+    public String toString() {
+        return "mark command: " + this.index;
+    }
 }

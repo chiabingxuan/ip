@@ -13,4 +13,9 @@ public class ByeCommand extends Command {
         ui.sayGoodbye();
         return taskTracker;
     }
+
+    @Override
+    public String toString() {
+        return "bye command";
+    }
 }

@@ -35,4 +35,9 @@ public class AddCommand extends Command {
 
         return taskTracker;
     }
+
+    @Override
+    public String toString() {
+        return "add command: " + this.task.toString();
+    }
 }
