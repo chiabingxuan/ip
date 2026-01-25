@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class ParserTest {
     @Test
-    public void parse_correctFormat_success() throws BingBongException {
+    public void parse_correctFormat_success() throws Exception {
         // todo provided in correct format
         assertEquals("add command: [T][ ] borrow book",
                 Parser.parse("todo borrow book").toString());
