@@ -13,6 +13,10 @@ public class TaskTracker {
         this.tasks = new ArrayList<>();
     }
 
+    public TaskTracker(ArrayList<Task> tasks) {
+        this.tasks = tasks;
+    }
+
     // for adding new task
     private TaskTracker(TaskTracker taskTracker, Task newTask) {
         this.tasks = new ArrayList<>(taskTracker.tasks);
@@ -90,11 +94,22 @@ public class TaskTracker {
                 // create list item in String
                 .mapToObj(num -> num + ". " + this.tasks.get(num - 1))
                 // combine list items
-                .reduce("", (x, y) -> x + "\n" + y);
+                .reduce((x, y) -> x + "\n" + y)
+                .orElse("");
     }
 
     public Task changeTaskStatusAtIndex(int taskIndex, boolean newStatus) throws BingBongException {
         Task oldTask = this.getTask(taskIndex);
         return oldTask.changeTaskStatus(newStatus);
+    }
+
+    @Override
+    public String toString() {
+        return IntStream.range(0, this.getNumOfTasks())
+                // create list item in String
+                .mapToObj(i -> this.tasks.get(i).toString())
+                // combine list items
+                .reduce((x, y) -> x + "\n" + y)
+                .orElse("");
     }
 }
