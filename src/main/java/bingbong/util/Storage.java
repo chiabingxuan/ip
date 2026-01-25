@@ -36,7 +36,7 @@ public class Storage {
             File f = new File(this.filePath);
             Scanner fileScanner = new Scanner(f);
 
-            TaskTracker taskTracker = new TaskTracker(this.filePath);
+            TaskTracker taskTracker = new TaskTracker();
 
             while (fileScanner.hasNextLine()) {
                 String taskString = fileScanner.nextLine();

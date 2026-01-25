@@ -8,36 +8,27 @@ import java.util.stream.IntStream;
 
 public class TaskTracker {
     private final ArrayList<Task> tasks;
-    private final String tasksFilePath;
-    public TaskTracker(String tasksFilePath) {
+
+    public TaskTracker() {
         this.tasks = new ArrayList<>();
-        this.tasksFilePath = tasksFilePath;
     }
 
     // for adding new task
-    private TaskTracker(TaskTracker taskTracker, Task newTask, String tasksFilePath) {
+    private TaskTracker(TaskTracker taskTracker, Task newTask) {
         this.tasks = new ArrayList<>(taskTracker.tasks);
         this.tasks.add(newTask);
-
-        this.tasksFilePath = tasksFilePath;
     }
 
     // for editing existing task
-    private TaskTracker(TaskTracker taskTracker, Task task, int taskIndex,
-                        String tasksFilePath) {
+    private TaskTracker(TaskTracker taskTracker, Task task, int taskIndex) {
         this.tasks = new ArrayList<>(taskTracker.tasks);
         this.tasks.set(taskIndex, task);
-
-        this.tasksFilePath = tasksFilePath;
     }
 
     // for deleting existing task
-    private TaskTracker(TaskTracker taskTracker, int taskIndex,
-                        String tasksFilePath) {
+    private TaskTracker(TaskTracker taskTracker, int taskIndex) {
         this.tasks = new ArrayList<>(taskTracker.tasks);
         this.tasks.remove(taskIndex);
-
-        this.tasksFilePath = tasksFilePath;
     }
 
     private String getWrongIndexExceptionMsg(int index) {
@@ -73,23 +64,20 @@ public class TaskTracker {
     public TaskTracker editTask(int index, Task newTask)
             throws BingBongException {
         try {
-            return new TaskTracker(this, newTask, index,
-                    this.tasksFilePath);
+            return new TaskTracker(this, newTask, index);
         } catch (IndexOutOfBoundsException ex) {
             throw new BingBongException(this.getWrongIndexExceptionMsg(index));
         }
     }
 
     public TaskTracker addTask(Task newTask) {
-        return new TaskTracker(this, newTask,
-                this.tasksFilePath);
+        return new TaskTracker(this, newTask);
     }
 
     public TaskTracker deleteTask(int index)
             throws BingBongException {
         try {
-            return new TaskTracker(this, index,
-                    this.tasksFilePath);
+            return new TaskTracker(this, index);
         } catch (IndexOutOfBoundsException ex) {
             throw new BingBongException(this.getWrongIndexExceptionMsg(index));
         }

@@ -19,7 +19,6 @@ public class BingBong {
 
     public BingBong(String dataFolderPath, String tasksFilename) {
         ui = new Ui();
-        String tasksFilePath = dataFolderPath + "/" + tasksFilename;
 
         try {
             storage = new Storage(dataFolderPath, tasksFilename);
@@ -28,11 +27,11 @@ public class BingBong {
         } catch (FileNotFoundException ex) {
             ui.printWarning("No existing task file detected. "
                     + "An empty task list will be initialised.");
-            taskTracker = new TaskTracker(tasksFilePath);
+            taskTracker = new TaskTracker();
             isInitSuccessful = true;
         } catch (BingBongException ex) {
             ui.printExceptionMessage(ex.getMessage());
-            taskTracker = new TaskTracker(tasksFilePath);
+            taskTracker = new TaskTracker();
             isInitSuccessful = true;
         } catch (IOException ex) {
             ui.printExceptionMessage("Something went wrong when "
