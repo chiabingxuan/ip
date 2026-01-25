@@ -23,4 +23,9 @@ public class DeleteCommand extends Command {
 
         return taskTracker;
     }
+
+    @Override
+    public String toString() {
+        return "delete command: " + this.index;
+    }
 }

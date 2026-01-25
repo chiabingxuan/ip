@@ -23,4 +23,9 @@ public class UnmarkCommand extends Command {
 
         return taskTracker;
     }
+
+    @Override
+    public String toString() {
+        return "unmark command: " + this.index;
+    }
 }

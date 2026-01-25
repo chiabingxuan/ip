@@ -202,7 +202,7 @@ public class Parser {
                 String inputCommand = inputTokens[0];
                 chosenCommand = CommandType.valueOf(inputCommand.toUpperCase());
                 if (chosenCommand.equals(CommandType.LIST) || chosenCommand.equals(CommandType.BYE)) {
-                    throw new IllegalArgumentException("LIST or BYE command was given with other arguments - invalid");
+                    throw new BingBongException("LIST or BYE command was given with other arguments - invalid");
                 }
             } catch (IllegalArgumentException notValidCommandEx) {
                 throw new BingBongException("I have no idea what that "
@@ -231,7 +231,10 @@ public class Parser {
     public static Command parse(String inputLine) throws BingBongException {
         setupMapping();
 
-        // first identify what type of command is in the input
+        // first remove the whitespace in the input
+        inputLine = inputLine.strip();
+
+        // identify what type of command is in the input
         CommandType chosenCommandType = getCommandType(inputLine);
 
         // create a class that can be used to carry out the operation,

@@ -54,7 +54,7 @@ public class BingBong {
         while (!isExit) {
             try {
                 // get command requested by user
-                String inputLine = sc.nextLine().strip();
+                String inputLine = sc.nextLine();
                 ui.showLine();
                 Command chosenCommand = Parser.parse(inputLine);
                 taskTracker = chosenCommand.execute(taskTracker, ui, storage);
