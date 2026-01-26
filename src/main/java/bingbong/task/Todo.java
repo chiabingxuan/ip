@@ -2,21 +2,51 @@ package bingbong.task;
 
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Represents a todo that can be recorded in the chatbot. Contains
+ * details of the todo, including the todo name and the completion status of the
+ * todo.
+ */
 public class Todo extends Task {
     public static final String TASK_ICON = "T";
 
+    /**
+     * Initialises an incomplete todo with the specified name.
+     *
+     * @param taskName Name of the todo.
+     */
     public Todo(String taskName) {
         super(taskName);
     }
 
+    /**
+     * Initialises a copy of the chosen todo with the specified completion status.
+     *
+     * @param todo Chosen todo.
+     * @param isDone Whether the todo has been completed.
+     */
     public Todo(Todo todo, boolean isDone) {
         super(todo, isDone);
     }
 
+    /**
+     * Returns a copy of this todo, but with the specified completion status instead.
+     *
+     * @param newStatus New completion status for this todo.
+     * @return Copy of this todo, with the chosen completion status.
+     */
     Todo changeTaskStatus(boolean newStatus) {
         return new Todo(this, newStatus);
     }
 
+    /**
+     * Returns a <code>String</code> that represents this todo.
+     * This <code>String</code> can be saved to the task storage.
+     *
+     * @param dateFormatter A <code>DateTimeFormatter</code> that converts
+     * <code>LocalDateTime</code> objects to <code>String</code> type.
+     * @return <code>String</code> representation of this todo.
+     */
     @Override
     public String getSaveableString(DateTimeFormatter dateFormatter) {
         return TASK_ICON

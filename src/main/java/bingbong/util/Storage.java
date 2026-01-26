@@ -18,9 +18,22 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * Manages the storage of existing task lists in the disk.
+ * Loads the task list that has been saved in previous runs, if any.
+ * Saves task list to the disk, if updates have occurred.
+ */
 public class Storage {
     private final String filePath;
 
+    /**
+     * Initialises a Storage class that points to the pre-saved
+     * task file (if any).
+     *
+     * @param dataFolderPath Path to the folder in which tasks are saved.
+     * @param tasksFilename Name of the file in which tasks are saved. The
+     * file is stored in <code>dataFolderPath</code>.
+     */
     public Storage(String dataFolderPath, String filename) throws IOException {
         this.filePath = dataFolderPath + "/" + filename;
 
@@ -31,7 +44,17 @@ public class Storage {
         }
     }
 
-    // read saved task file
+    /**
+     * Returns a <code>TaskTracker</code> object containing
+     * a list of loaded tasks from the disk.
+     *
+     * @return <code>TaskTracker</code> object with
+     * a list of existing tasks from previous runs.
+     * @throws FileNotFoundException If there is no existing file
+     * containing a list of pre-saved tasks.
+     * @throws BingBongException If the task file is incorrectly formatted
+     * or corrupted.
+     */
     public TaskTracker loadSavedTasks() throws FileNotFoundException, BingBongException {
         try {
             File f = new File(this.filePath);
@@ -88,7 +111,15 @@ public class Storage {
         }
     }
 
-    // save recorded tasks to file
+    /**
+     * Writes a list of tasks (provided in concatenated <code>String</code>
+     * format) to the disk.
+     *
+     * @param textToWrite Concatenated <code>String</code> representing the current
+     * list of tasks recorded.
+     * @throws BingBongException If the task file cannot be saved due to an
+     * <code>IOException</code> being thrown.
+     */
     public void saveTasks(String textToWrite) throws BingBongException {
         try {
             // write to file

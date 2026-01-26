@@ -18,6 +18,12 @@ import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.HashMap;
 
+/**
+ * Processes and parses input provided by the user. Identifies the type of
+ * command that is to be executed, whilst creating the operation to be applied
+ * when the command is executed. Also parses correctly formatted dates into
+ * <code>LocalDateTime</code> objects.
+ */
 public class Parser {
     // for parsing of dates
     private static final String DATE_FORMAT = "d/M/yyyy HH:mm";
@@ -214,7 +220,14 @@ public class Parser {
         return chosenCommand;
     }
 
-    // parse dates that are in String
+    /**
+     * Returns a <code>LocalDateTime</code> object based on the
+     * date provided in <code>String</code>.
+     *
+     * @param dateString Date provided in <code>String</code>.
+     * @return Date parsed.
+     * @throws BingBongException If date cannot be parsed.
+     */
     static LocalDateTime parseDate(String dateString) throws BingBongException {
         try {
             return LocalDateTime.parse(dateString, DateTimeFormatter.ofPattern(DATE_FORMAT));
@@ -225,9 +238,21 @@ public class Parser {
                     + "\nPlease use the correct format for dates. For example: "
                     + DATE_FORMATTING_EXAMPLE);
         }
-
     }
 
+    /**
+     * Returns the command that is to be executed,
+     * based on the user input provided.
+     *
+     * @param inputLine Input given by the user.
+     * @return Command to be executed.
+     * @throws BingBongException If at least one of the following occurs:
+     * <ul>
+     * <li> Type of command in user input is unknown.
+     * <li> Input arguments are invalid for the command type identified.
+     * <li> Dates in the input cannot be parsed.
+     * </ul>
+     */
     public static Command parse(String inputLine) throws BingBongException {
         setupMapping();
 

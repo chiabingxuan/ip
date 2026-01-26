@@ -11,12 +11,23 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 
+/**
+ * Initialises the task list storage, current task
+ * list and user interface, before running the chatbot application.
+ */
 public class BingBong {
     private Storage storage;
     private TaskTracker taskTracker;
     private final Ui ui;
     private boolean isInitSuccessful;
 
+    /**
+     * Initialises the <code>BingBong</code> class for the running of the chatbot.
+     *
+     * @param dataFolderPath Path to the folder in which tasks are saved.
+     * @param tasksFilename Name of the file in which tasks are saved. The
+     * file is stored in <code>dataFolderPath</code>.
+     */
     public BingBong(String dataFolderPath, String tasksFilename) {
         ui = new Ui();
 
@@ -42,6 +53,9 @@ public class BingBong {
         }
     }
 
+    /**
+     * Runs the chatbot application.
+     */
     public void run() {
         ui.showLine();
         ui.greet();
