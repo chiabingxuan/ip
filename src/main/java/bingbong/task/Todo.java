@@ -22,7 +22,7 @@ public class Todo extends Task {
     /**
      * Initialises a copy of the chosen todo with the specified completion status.
      *
-     * @param todo Chosen todo.
+     * @param todo   Chosen todo.
      * @param isDone Whether the todo has been completed.
      */
     public Todo(Todo todo, boolean isDone) {
@@ -44,7 +44,7 @@ public class Todo extends Task {
      * This <code>String</code> can be saved to the task storage.
      *
      * @param dateFormatter A <code>DateTimeFormatter</code> that converts
-     * <code>LocalDateTime</code> objects to <code>String</code> type.
+     *                      <code>LocalDateTime</code> objects to <code>String</code> type.
      * @return <code>String</code> representation of this todo.
      */
     @Override

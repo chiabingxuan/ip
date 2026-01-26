@@ -30,7 +30,7 @@ public abstract class Task {
     /**
      * Initialises a copy of the chosen task with the specified completion status.
      *
-     * @param task Chosen task.
+     * @param task   Chosen task.
      * @param isDone Whether the task has been completed.
      */
     protected Task(Task task, boolean isDone) {
@@ -68,7 +68,7 @@ public abstract class Task {
      * This <code>String</code> can be saved to the task storage.
      *
      * @param dateFormatter A <code>DateTimeFormatter</code> that converts
-     * <code>LocalDateTime</code> objects to <code>String</code> type.
+     *                      <code>LocalDateTime</code> objects to <code>String</code> type.
      * @return <code>String</code> representation of this task.
      */
     String getSaveableString(DateTimeFormatter dateFormatter) {

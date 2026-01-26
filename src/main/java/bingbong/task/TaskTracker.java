@@ -25,8 +25,8 @@ public class TaskTracker {
      * Initialises a task list populated by the specified
      * list of tasks.
      *
-     * @param tasks: List of tasks that the list will contain
-     * upon initialisation.
+     * @param tasks List of tasks that the list will contain
+     *              upon initialisation.
      */
     public TaskTracker(ArrayList<Task> tasks) {
         this.tasks = tasks;
@@ -37,8 +37,8 @@ public class TaskTracker {
      * a previous task list, as well as a new task. Effectively
      * adds a new task to the list.
      *
-     * @param taskTracker: Previous task list.
-     * @param newTask: New task to be added.
+     * @param taskTracker Previous task list.
+     * @param newTask     New task to be added.
      */
     private TaskTracker(TaskTracker taskTracker, Task newTask) {
         this.tasks = new ArrayList<>(taskTracker.tasks);
@@ -51,9 +51,9 @@ public class TaskTracker {
      * the previous task has been replaced by the new task provided.
      * Effectively modifies the task at that index.
      *
-     * @param taskTracker: Previous task list.
-     * @param task: New task.
-     * @param taskIndex: Index at which the replacement should occur.
+     * @param taskTracker Previous task list.
+     * @param task        New task.
+     * @param taskIndex   Index at which the replacement should occur.
      */
     private TaskTracker(TaskTracker taskTracker, Task task, int taskIndex) {
         this.tasks = new ArrayList<>(taskTracker.tasks);
@@ -66,9 +66,9 @@ public class TaskTracker {
      * the previous task has been deleted.
      * Effectively deletes the task at that index.
      *
-     * @param taskTracker: Previous task list.
-     * @param taskIndex: Index at which the deletion should occur, with
-     * respect to the previous task list.
+     * @param taskTracker Previous task list.
+     * @param taskIndex   Index at which the deletion should occur, with
+     *                    respect to the previous task list.
      */
     private TaskTracker(TaskTracker taskTracker, int taskIndex) {
         this.tasks = new ArrayList<>(taskTracker.tasks);
@@ -91,7 +91,7 @@ public class TaskTracker {
      * recorded. This <code>String</code> can be saved to the task storage.
      *
      * @param dateFormatter A <code>DateTimeFormatter</code> that converts
-     * <code>LocalDateTime</code> objects to <code>String</code> type.
+     *                      <code>LocalDateTime</code> objects to <code>String</code> type.
      * @return Combined <code>String</code> of all the tasks currently in the list.
      */
     public String getCombinedSaveableTasks(DateTimeFormatter dateFormatter) {
@@ -130,7 +130,7 @@ public class TaskTracker {
      * Returns a new task list, where the task at the chosen
      * index has now been replaced with the new task specified.
      *
-     * @param index List index of the task to be edited.
+     * @param index   List index of the task to be edited.
      * @param newTask New task to replace the previous task with.
      * @throws BingBongException If <code>index</code> is out of bounds of the task list.
      */

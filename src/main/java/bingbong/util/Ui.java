@@ -22,7 +22,7 @@ public class Ui {
      * Outputs the current list of tasks saved in the <code>TaskTracker</code>.
      *
      * @param listOfTasks Concatenated <code>String</code> representing the current
-     * list of tasks recorded.
+     *                    list of tasks recorded.
      */
     public void printListTasksMessage(String listOfTasks) {
         System.out.println("Here are the tasks that you have added to the list:"
@@ -34,7 +34,7 @@ public class Ui {
      * Outputs a message notifying the user that the chosen task
      * has been added, as requested.
      *
-     * @param task Task that has been added.
+     * @param task       Task that has been added.
      * @param numOfTasks Number of tasks saved, upon addition of the new task.
      */
     public void printAddTaskMessage(Task task, int numOfTasks) {
@@ -74,7 +74,7 @@ public class Ui {
      * Outputs a message notifying the user that the chosen task
      * has been deleted, as requested.
      *
-     * @param task Task that has been deleted.
+     * @param task       Task that has been deleted.
      * @param numOfTasks Number of tasks saved, upon deletion of the chosen task.
      */
     public void printDeletedTaskMessage(Task task, int numOfTasks) {

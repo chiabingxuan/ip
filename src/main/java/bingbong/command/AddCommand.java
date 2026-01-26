@@ -18,9 +18,9 @@ public class AddCommand extends Command {
     /**
      * Initialises an <code>AddCommand</code>.
      *
-     * @param task Task to be added.
+     * @param task       Task to be added.
      * @param dateFormat Date format used to convert <code>LocalDateTime</code>
-     * objects to <code>String</code>, for the saving of tasks to the storage.
+     *                   objects to <code>String</code>, for the saving of tasks to the storage.
      */
     public AddCommand(Task task, String dateFormat) {
         super(false);
@@ -33,11 +33,11 @@ public class AddCommand extends Command {
      * completion of the command.
      *
      * @param taskTracker Task list before the command's execution.
-     * @param ui User interface that displays messages to the user,
-     * during the command's execution.
-     * @param storage Storage which updates the task file with the new
-     * task list (if modifications have been made),
-     * at the end of the command's execution.
+     * @param ui          User interface that displays messages to the user,
+     *                    during the command's execution.
+     * @param storage     Storage which updates the task file with the new
+     *                    task list (if modifications have been made),
+     *                    at the end of the command's execution.
      * @return New task list.
      */
     public TaskTracker execute(TaskTracker taskTracker, Ui ui, Storage storage) {

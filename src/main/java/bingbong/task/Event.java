@@ -16,9 +16,9 @@ public class Event extends Task {
     /**
      * Initialises an incomplete event with the specified name and date.
      *
-     * @param taskName Name of the event.
+     * @param taskName  Name of the event.
      * @param startTime Time at which the event starts.
-     * @param endTime Time at which the event ends.
+     * @param endTime   Time at which the event ends.
      */
     public Event(String taskName, LocalDateTime startTime, LocalDateTime endTime) {
         super(taskName);
@@ -29,7 +29,7 @@ public class Event extends Task {
     /**
      * Initialises a copy of the chosen event with the specified completion status.
      *
-     * @param event Chosen event.
+     * @param event  Chosen event.
      * @param isDone Whether the event has been completed.
      */
     public Event(Event event, boolean isDone) {
@@ -53,7 +53,7 @@ public class Event extends Task {
      * This <code>String</code> can be saved to the task storage.
      *
      * @param dateFormatter A <code>DateTimeFormatter</code> that converts
-     * <code>LocalDateTime</code> objects to <code>String</code> type.
+     *                      <code>LocalDateTime</code> objects to <code>String</code> type.
      * @return <code>String</code> representation of this event.
      */
     @Override

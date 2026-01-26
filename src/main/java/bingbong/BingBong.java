@@ -25,8 +25,8 @@ public class BingBong {
      * Initialises the <code>BingBong</code> class for the running of the chatbot.
      *
      * @param dataFolderPath Path to the folder in which tasks are saved.
-     * @param tasksFilename Name of the file in which tasks are saved. The
-     * file is stored in <code>dataFolderPath</code>.
+     * @param tasksFilename  Name of the file in which tasks are saved. The
+     *                       file is stored in <code>dataFolderPath</code>.
      */
     public BingBong(String dataFolderPath, String tasksFilename) {
         ui = new Ui();

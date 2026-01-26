@@ -16,7 +16,7 @@ public class Deadline extends Task {
      * Initialises an incomplete deadline with the specified name and date.
      *
      * @param taskName Name of the deadline.
-     * @param byWhen Date by which the deadline must be completed.
+     * @param byWhen   Date by which the deadline must be completed.
      */
     public Deadline(String taskName, LocalDateTime byWhen) {
         super(taskName);
@@ -27,7 +27,7 @@ public class Deadline extends Task {
      * Initialises a copy of the chosen deadline with the specified completion status.
      *
      * @param deadline Chosen deadline.
-     * @param isDone Whether the deadline has been completed.
+     * @param isDone   Whether the deadline has been completed.
      */
     public Deadline(Deadline deadline, boolean isDone) {
         super(deadline, isDone);
@@ -49,7 +49,7 @@ public class Deadline extends Task {
      * This <code>String</code> can be saved to the task storage.
      *
      * @param dateFormatter A <code>DateTimeFormatter</code> that converts
-     * <code>LocalDateTime</code> objects to <code>String</code> type.
+     *                      <code>LocalDateTime</code> objects to <code>String</code> type.
      * @return <code>String</code> representation of this deadline.
      */
     @Override
