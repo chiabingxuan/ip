@@ -17,8 +17,8 @@ public class Deadline extends Task {
         this.byWhen = deadline.byWhen;
     }
 
-    Deadline changeTaskStatus(boolean newStatus) {
-        return new Deadline(this, newStatus);
+    Deadline changeTaskStatus(boolean isDoneNew) {
+        return new Deadline(this, isDoneNew);
     }
 
     @Override

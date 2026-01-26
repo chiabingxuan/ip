@@ -1,10 +1,10 @@
 package bingbong.task;
 
-import bingbong.util.BingBongException;
-
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.stream.IntStream;
+
+import bingbong.util.BingBongException;
 
 public class TaskTracker {
     private final ArrayList<Task> tasks;
@@ -36,7 +36,9 @@ public class TaskTracker {
     }
 
     private String getWrongIndexExceptionMsg(int index) {
-        int indexInInput = index + 1;  // user uses 1-indexing
+        // user uses 1-indexing
+        int indexInInput = index + 1;
+
         return "The task index that you have provided ("
                 + indexInInput
                 + ") does not exist. There are currently "
@@ -98,9 +100,10 @@ public class TaskTracker {
                 .orElse("");
     }
 
-    public Task changeTaskStatusAtIndex(int taskIndex, boolean newStatus) throws BingBongException {
+    public Task changeTaskStatusAtIndex(int taskIndex, boolean isDoneNew)
+            throws BingBongException {
         Task oldTask = this.getTask(taskIndex);
-        return oldTask.changeTaskStatus(newStatus);
+        return oldTask.changeTaskStatus(isDoneNew);
     }
 
     @Override

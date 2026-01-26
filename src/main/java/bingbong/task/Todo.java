@@ -13,8 +13,8 @@ public class Todo extends Task {
         super(todo, isDone);
     }
 
-    Todo changeTaskStatus(boolean newStatus) {
-        return new Todo(this, newStatus);
+    Todo changeTaskStatus(boolean isDoneNew) {
+        return new Todo(this, isDoneNew);
     }
 
     @Override

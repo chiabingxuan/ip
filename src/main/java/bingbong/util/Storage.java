@@ -1,11 +1,5 @@
 package bingbong.util;
 
-import bingbong.task.Deadline;
-import bingbong.task.Event;
-import bingbong.task.Task;
-import bingbong.task.TaskTracker;
-import bingbong.task.Todo;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -17,6 +11,12 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import bingbong.task.Deadline;
+import bingbong.task.Event;
+import bingbong.task.Task;
+import bingbong.task.TaskTracker;
+import bingbong.task.Todo;
 
 public class Storage {
     private final String filePath;

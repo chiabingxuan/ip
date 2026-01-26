@@ -1,12 +1,12 @@
 package bingbong.command;
 
+import java.time.format.DateTimeFormatter;
+
 import bingbong.task.Task;
 import bingbong.task.TaskTracker;
 import bingbong.util.BingBongException;
 import bingbong.util.Storage;
 import bingbong.util.Ui;
-
-import java.time.format.DateTimeFormatter;
 
 public class AddCommand extends Command {
     private final Task task;

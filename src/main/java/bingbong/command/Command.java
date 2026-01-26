@@ -12,7 +12,7 @@ public abstract class Command {
         this.isExit = isExit;
     }
 
-    abstract public TaskTracker execute(TaskTracker taskTracker, Ui ui, Storage storage)
+    public abstract TaskTracker execute(TaskTracker taskTracker, Ui ui, Storage storage)
             throws BingBongException;
 
     public boolean isExit() {

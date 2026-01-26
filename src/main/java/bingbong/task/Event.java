@@ -20,8 +20,8 @@ public class Event extends Task {
         this.endTime = event.endTime;
     }
 
-    Event changeTaskStatus(boolean newStatus) {
-        return new Event(this, newStatus);
+    Event changeTaskStatus(boolean isDoneNew) {
+        return new Event(this, isDoneNew);
     }
 
     @Override
