@@ -34,7 +34,7 @@ public class ParserTest {
         assertEquals("bye command",
                 Parser.parse("bye").toString());
 
-        // list provided in correct format with whitespace
+        // bye provided in correct format with whitespace
         assertEquals("bye command",
                 Parser.parse("    bye  ").toString());
 
@@ -49,6 +49,22 @@ public class ParserTest {
         // delete provided in correct format
         assertEquals("delete command: 1",
                 Parser.parse("delete 2").toString());
+
+        // find provided in correct format
+        assertEquals("find command: running errands",
+                Parser.parse("find running errands").toString());
+
+        // find provided in correct format with whitespace
+        assertEquals("find command: running errands",
+                Parser.parse("find running errands   ").toString());
+
+        // find provided in correct format with whitespace
+        assertEquals("find command: running errands",
+                Parser.parse("find      running errands").toString());
+
+        // find provided in correct format with whitespace
+        assertEquals("find command: running   errands",
+                Parser.parse("find running   errands").toString());
     }
 
     @Test
@@ -60,7 +76,8 @@ public class ParserTest {
         } catch (Exception ex) {
             assertEquals("I have no idea what that "
                     + "means. You could try:\n"
-                    + "[MARK, UNMARK, DELETE, TODO, DEADLINE, EVENT, LIST, BYE]", ex.getMessage());
+                    + "[MARK, UNMARK, DELETE, FIND, TODO, DEADLINE, EVENT, LIST, BYE]",
+                    ex.getMessage());
         }
     }
 
@@ -122,7 +139,7 @@ public class ParserTest {
     }
 
     @Test
-    public void parse_missingIndex_exceptionThrown() {
+    public void parse_markMissingFields_exceptionThrown() {
         // missing index for mark
         try {
             assertEquals("", Parser.parse("mark   ").toString());
@@ -133,7 +150,10 @@ public class ParserTest {
                     + "\nEg. "
                     + "\"mark 1\" to mark the first task as completed", ex.getMessage());
         }
+    }
 
+    @Test
+    public void parse_unmarkMissingFields_exceptionThrown() {
         // missing index for unmark
         try {
             assertEquals("", Parser.parse("unmark   ").toString());
@@ -144,7 +164,10 @@ public class ParserTest {
                     + "\nEg. "
                     + "\"unmark 1\" to mark the first task as incomplete", ex.getMessage());
         }
+    }
 
+    @Test
+    public void parse_deleteMissingFields_exceptionThrown() {
         // missing index for delete
         try {
             assertEquals("", Parser.parse("delete  ").toString());
@@ -154,6 +177,21 @@ public class ParserTest {
                     + "task number after the \"delete\" command."
                     + "\nEg. "
                     + "\"delete 1\" to delete the first task", ex.getMessage());
+        }
+    }
+
+    @Test
+    public void parse_findMissingFields_exceptionThrown() {
+        // missing substring for find
+        try {
+            assertEquals("", Parser.parse("find  ").toString());
+            fail();
+        } catch (Exception ex) {
+            assertEquals("Substring is missing. After the \"find\" command, "
+                    + "make sure you have added a substring to search for."
+                    + "\nEg. "
+                    + "\"find exercise\" to find all the tasks containing the substring \"exercise\"",
+                    ex.getMessage());
         }
     }
 

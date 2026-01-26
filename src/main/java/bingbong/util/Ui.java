@@ -30,6 +30,12 @@ public class Ui {
                 + listOfTasks);
     }
 
+    public void printMatchingTasksMessage(String listOfTasks) {
+        System.out.println("Here are the matching tasks that I've found:"
+                + "\n\n"
+                + listOfTasks);
+    }
+
     /**
      * Outputs a message notifying the user that the chosen task
      * has been added, as requested.

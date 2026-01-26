@@ -2,6 +2,8 @@ package bingbong.task;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
 import bingbong.util.BingBongException;
@@ -84,6 +86,22 @@ public class TaskTracker {
                 + ") does not exist. There are currently "
                 + this.getNumOfTasks()
                 + " task(s) in the list.";
+    }
+
+    private List<Task> getFilteredTasks(Predicate<Task> predicate) {
+        return this.tasks.stream()
+                .filter(predicate)
+                .toList();
+    }
+
+    private String getNumberedTaskList(List<Task> tasks) {
+        // use 1-indexing for printed list
+        return IntStream.rangeClosed(1, tasks.size())
+                // create list item in String
+                .mapToObj(num -> num + ". " + tasks.get(num - 1))
+                // combine list items
+                .reduce((x, y) -> x + "\n" + y)
+                .orElse("");
     }
 
     /**
@@ -176,13 +194,18 @@ public class TaskTracker {
      * @return Numbered list of all the tasks currently being recorded.
      */
     public String listTasks() {
-        // use 1-indexing for printed list
-        return IntStream.rangeClosed(1, this.getNumOfTasks())
-                // create list item in String
-                .mapToObj(num -> num + ". " + this.tasks.get(num - 1))
-                // combine list items
-                .reduce((x, y) -> x + "\n" + y)
-                .orElse("");
+        // get all tasks
+        List<Task> tasks = this.getFilteredTasks(task -> true);
+
+        return this.getNumberedTaskList(tasks);
+    }
+
+    public String findTasks(String substring) {
+        // get tasks containing the given substring
+        List<Task> tasks = this.getFilteredTasks(task ->
+                task.hasSubstringInName(substring));
+
+        return this.getNumberedTaskList(tasks);
     }
 
     /**

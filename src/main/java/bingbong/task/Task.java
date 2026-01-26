@@ -75,6 +75,18 @@ public abstract class Task {
         return this.getStatusIcon() + DIVIDER + this.taskName;
     }
 
+    /**
+     * Returns whether the name of this task
+     * contains the substring provided.
+     *
+     * @param substring The substring queried.
+     * @return Whether the name of this task
+     * contains <code>substring</code>.
+     */
+    boolean hasSubstringInName(String substring) {
+        return this.taskName.contains(substring);
+    }
+
     @Override
     public String toString() {
         return "[" + this.getStatusIcon() + "] " + this.taskName;
