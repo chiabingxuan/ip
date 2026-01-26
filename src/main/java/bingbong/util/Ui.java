@@ -19,7 +19,8 @@ public class Ui {
     }
 
     /**
-     * Outputs the current list of tasks saved in the <code>TaskTracker</code>.
+     * Outputs a message consisting of the current list of tasks
+     * saved in the <code>TaskTracker</code>.
      *
      * @param listOfTasks Concatenated <code>String</code> representing the current
      *                    list of tasks recorded.
@@ -30,6 +31,13 @@ public class Ui {
                 + listOfTasks);
     }
 
+    /**
+     * Outputs a message consisting of the list of tasks
+     * whose names match the substring provided in the user's input.
+     *
+     * @param listOfTasks Concatenated <code>String</code> representing the
+     *                    list of matching tasks.
+     */
     public void printMatchingTasksMessage(String listOfTasks) {
         System.out.println("Here are the matching tasks that I've found:"
                 + "\n\n"

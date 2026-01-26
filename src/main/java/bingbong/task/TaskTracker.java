@@ -200,6 +200,12 @@ public class TaskTracker {
         return this.getNumberedTaskList(tasks);
     }
 
+    /**
+     * Returns a <code>String</code> showing all the tasks whose names
+     * match the given substring, in a numbered list.
+     *
+     * @return Numbered list of all the tasks currently being recorded.
+     */
     public String findTasks(String substring) {
         // get tasks containing the given substring
         List<Task> tasks = this.getFilteredTasks(task ->

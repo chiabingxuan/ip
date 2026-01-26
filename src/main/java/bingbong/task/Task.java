@@ -80,8 +80,7 @@ public abstract class Task {
      * contains the substring provided.
      *
      * @param substring The substring queried.
-     * @return Whether the name of this task
-     * contains <code>substring</code>.
+     * @return Whether the name of this task contains <code>substring</code>.
      */
     boolean hasSubstringInName(String substring) {
         return this.taskName.contains(substring);
