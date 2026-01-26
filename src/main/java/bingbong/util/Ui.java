@@ -17,6 +17,12 @@ public class Ui {
                 + listOfTasks);
     }
 
+    public void printMatchingTasksMessage(String listOfTasks) {
+        System.out.println("Here are the matching tasks that I've found:"
+                + "\n\n"
+                + listOfTasks);
+    }
+
     public void printAddTaskMessage(Task task, int numOfTasks) {
         System.out.println("You're getting busier. I've added this task:"
                 + "\n"

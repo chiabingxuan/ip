@@ -9,17 +9,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class TaskTrackerTest {
-    private static final ArrayList<Task> TASKS = new ArrayList<>(List.of(new Todo("task 1"),
-            new Todo("task 2"), new Todo("task 3")));
+    private static final ArrayList<Task> TASKS = new ArrayList<>(List.of(new Todo("eat lunch"),
+            new Todo("eat dinner"), new Todo("sleep")));
 
     @Test
     public void getTask_indexInRange_success() throws Exception {
-        // get first task "task 1"
-        assertEquals("[T][ ] task 1",
+        // get first task "eat lunch"
+        assertEquals("[T][ ] eat lunch",
                 new TaskTracker(TASKS).getTask(0).toString());
 
-        // get last task "task 3"
-        assertEquals("[T][ ] task 3",
+        // get last task "sleep"
+        assertEquals("[T][ ] sleep",
                 new TaskTracker(TASKS).getTask(2).toString());
     }
 
@@ -56,14 +56,14 @@ public class TaskTrackerTest {
 
     @Test
     public void editTask_indexInRange_success() throws Exception {
-        // edit second task from "task 1" to "task 4"
-        assertEquals("[T][ ] task 1\n[T][ ] task 4\n[T][ ] task 3",
-                new TaskTracker(TASKS).editTask(1, new Todo("task 4")).toString());
+        // edit second task from "eat lunch" to "go jogging"
+        assertEquals("[T][ ] eat lunch\n[T][ ] go jogging\n[T][ ] sleep",
+                new TaskTracker(TASKS).editTask(1, new Todo("go jogging")).toString());
 
         // edit second task from unmarked to marked
-        assertEquals("[T][ ] task 1\n[T][X] task 2\n[T][ ] task 3",
+        assertEquals("[T][ ] eat lunch\n[T][X] eat dinner\n[T][ ] sleep",
                 new TaskTracker(TASKS).editTask(1,
-                        new Todo(new Todo("task 2"), true)).toString());
+                        new Todo(new Todo("eat dinner"), true)).toString());
     }
 
     @Test
@@ -71,7 +71,7 @@ public class TaskTrackerTest {
         // index exceeds length of list - 1
         try {
             assertEquals("", new TaskTracker(TASKS)
-                    .editTask(10, new Todo("task 4"))
+                    .editTask(10, new Todo("go jogging"))
                     .toString());
             fail();
         } catch (Exception ex) {
@@ -86,7 +86,7 @@ public class TaskTrackerTest {
         // negative index
         try {
             assertEquals("", new TaskTracker(TASKS)
-                    .editTask(-3, new Todo("task 4"))
+                    .editTask(-3, new Todo("go jogging"))
                     .toString());
 
             fail();
@@ -102,15 +102,15 @@ public class TaskTrackerTest {
 
     @Test
     public void addTask_success() {
-        // add new task "task 4"
-        assertEquals("[T][ ] task 1\n[T][ ] task 2\n[T][ ] task 3\n[T][ ] task 4",
-                new TaskTracker(TASKS).addTask(new Todo("task 4")).toString());
+        // add new task "go jogging"
+        assertEquals("[T][ ] eat lunch\n[T][ ] eat dinner\n[T][ ] sleep\n[T][ ] go jogging",
+                new TaskTracker(TASKS).addTask(new Todo("go jogging")).toString());
     }
 
     @Test
     public void deleteTask_indexInRange_success() throws Exception {
-        // delete first task "task 1"
-        assertEquals("[T][ ] task 2\n[T][ ] task 3",
+        // delete first task "eat lunch"
+        assertEquals("[T][ ] eat dinner\n[T][ ] sleep",
                 new TaskTracker(TASKS).deleteTask(0).toString());
     }
 
@@ -149,16 +149,27 @@ public class TaskTrackerTest {
     }
 
     @Test
-    public void listTask_success() {
+    public void listTasks_success() {
         // list tasks
-        assertEquals("1. [T][ ] task 1\n2. [T][ ] task 2\n3. [T][ ] task 3",
+        assertEquals("1. [T][ ] eat lunch\n2. [T][ ] eat dinner\n3. [T][ ] sleep",
                 new TaskTracker(TASKS).listTasks());
     }
 
     @Test
+    public void findTasks_success() {
+        // find tasks containing substring "eat" (first and second tasks)
+        assertEquals("1. [T][ ] eat lunch\n2. [T][ ] eat dinner",
+                new TaskTracker(TASKS).findTasks("eat"));
+
+        // find tasks containing substring "sleep" (third task)
+        assertEquals("1. [T][ ] sleep",
+                new TaskTracker(TASKS).findTasks("sleep"));
+    }
+
+    @Test
     public void changeTaskStatusAtIndex_indexInRange_success() throws Exception {
-        // get the completed version of the third task, "task 3"
-        assertEquals("[T][X] task 3", new TaskTracker(TASKS)
+        // get the completed version of the third task, "sleep"
+        assertEquals("[T][X] sleep", new TaskTracker(TASKS)
                 .changeTaskStatusAtIndex(2, true)
                 .toString());
     }

@@ -5,6 +5,7 @@ import bingbong.command.ByeCommand;
 import bingbong.command.Command;
 import bingbong.command.CommandType;
 import bingbong.command.DeleteCommand;
+import bingbong.command.FindCommand;
 import bingbong.command.ListCommand;
 import bingbong.command.MarkCommand;
 import bingbong.command.UnmarkCommand;
@@ -29,6 +30,8 @@ public class Parser {
             "\"unmark 1\" to mark the first task as incomplete";
     private static final String DELETE_EXAMPLE =
             "\"delete 1\" to delete the first task";
+    private static final String FIND_EXAMPLE =
+            "\"find exercise\" to find all the tasks containing the substring \"exercise\"";
     private static final String TODO_EXAMPLE =
             "\"todo go grocery shopping\"";
     private static final String DEADLINE_EXAMPLE =
@@ -99,6 +102,20 @@ public class Parser {
                         + "correct task number after the \"delete\" command."
                         + "\nEg. "
                         + DELETE_EXAMPLE);
+            }
+        });
+
+        // find tasks based on substring in input
+        typesToCommands.put(CommandType.FIND, inputLine -> {
+            try {
+                String[] inputTokens = inputLine.split("\\s+", 2);
+                String substring = inputTokens[1];
+                return new FindCommand(substring);
+            } catch (ArrayIndexOutOfBoundsException ex) {
+                throw new BingBongException("Substring is missing. After the \"find\" command, "
+                        + "make sure you have added a substring to search for."
+                        + "\nEg. "
+                        + FIND_EXAMPLE);
             }
         });
 
