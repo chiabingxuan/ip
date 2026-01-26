@@ -1,11 +1,5 @@
 package bingbong.util;
 
-import bingbong.task.Deadline;
-import bingbong.task.Event;
-import bingbong.task.Task;
-import bingbong.task.TaskTracker;
-import bingbong.task.Todo;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -17,6 +11,12 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import bingbong.task.Deadline;
+import bingbong.task.Event;
+import bingbong.task.Task;
+import bingbong.task.TaskTracker;
+import bingbong.task.Todo;
 
 /**
  * Manages the storage of existing task lists in the disk.
@@ -31,7 +31,7 @@ public class Storage {
      * task file (if any).
      *
      * @param dataFolderPath Path to the folder in which tasks are saved.
-     * @param tasksFilename Name of the file in which tasks are saved. The
+     * @param filename Name of the file in which tasks are saved. The
      * file is stored in <code>dataFolderPath</code>.
      */
     public Storage(String dataFolderPath, String filename) throws IOException {

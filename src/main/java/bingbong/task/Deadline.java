@@ -37,11 +37,11 @@ public class Deadline extends Task {
     /**
      * Returns a copy of this deadline, but with the specified completion status instead.
      *
-     * @param newStatus New completion status for this deadline.
+     * @param isDoneNew New completion status for this deadline.
      * @return Copy of this deadline, with the chosen completion status.
      */
-    Deadline changeTaskStatus(boolean newStatus) {
-        return new Deadline(this, newStatus);
+    Deadline changeTaskStatus(boolean isDoneNew) {
+        return new Deadline(this, isDoneNew);
     }
 
     /**

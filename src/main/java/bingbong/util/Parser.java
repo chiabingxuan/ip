@@ -1,5 +1,11 @@
 package bingbong.util;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Arrays;
+import java.util.HashMap;
+
 import bingbong.command.AddCommand;
 import bingbong.command.ByeCommand;
 import bingbong.command.Command;
@@ -11,12 +17,6 @@ import bingbong.command.UnmarkCommand;
 import bingbong.task.Deadline;
 import bingbong.task.Event;
 import bingbong.task.Todo;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.Arrays;
-import java.util.HashMap;
 
 /**
  * Processes and parses input provided by the user. Identifies the type of

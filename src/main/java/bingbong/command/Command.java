@@ -34,7 +34,7 @@ public abstract class Command {
      * @return New task list.
      * @throws BingBongException If the command was not executed successfully.
      */
-    abstract public TaskTracker execute(TaskTracker taskTracker, Ui ui, Storage storage)
+    public abstract TaskTracker execute(TaskTracker taskTracker, Ui ui, Storage storage)
             throws BingBongException;
 
     /**

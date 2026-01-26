@@ -32,11 +32,11 @@ public class Todo extends Task {
     /**
      * Returns a copy of this todo, but with the specified completion status instead.
      *
-     * @param newStatus New completion status for this todo.
+     * @param isDoneNew New completion status for this todo.
      * @return Copy of this todo, with the chosen completion status.
      */
-    Todo changeTaskStatus(boolean newStatus) {
-        return new Todo(this, newStatus);
+    Todo changeTaskStatus(boolean isDoneNew) {
+        return new Todo(this, isDoneNew);
     }
 
     /**

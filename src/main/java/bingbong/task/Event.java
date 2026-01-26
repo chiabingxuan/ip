@@ -41,11 +41,11 @@ public class Event extends Task {
     /**
      * Returns a copy of this event, but with the specified completion status instead.
      *
-     * @param newStatus New completion status for this event.
+     * @param isDoneNew New completion status for this event.
      * @return Copy of this event, with the chosen completion status.
      */
-    Event changeTaskStatus(boolean newStatus) {
-        return new Event(this, newStatus);
+    Event changeTaskStatus(boolean isDoneNew) {
+        return new Event(this, isDoneNew);
     }
 
     /**

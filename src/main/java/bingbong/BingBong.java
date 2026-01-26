@@ -1,15 +1,15 @@
 package bingbong;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Scanner;
+
 import bingbong.command.Command;
+import bingbong.task.TaskTracker;
 import bingbong.util.BingBongException;
 import bingbong.util.Parser;
 import bingbong.util.Storage;
 import bingbong.util.Ui;
-import bingbong.task.TaskTracker;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Scanner;
 
 /**
  * Initialises the task list storage, current task

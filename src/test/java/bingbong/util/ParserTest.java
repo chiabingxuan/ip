@@ -1,9 +1,9 @@
 package bingbong.util;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
+
+import org.junit.jupiter.api.Test;
 
 public class ParserTest {
     @Test
@@ -18,7 +18,7 @@ public class ParserTest {
 
         // event provided in correct format
         assertEquals("add command: [E][ ] chess training "
-                + "(from: 1 Mar 2025, 3:00 pm to: 1 Mar 2025, 6:00 pm)",
+                        + "(from: 1 Mar 2025, 3:00 pm to: 1 Mar 2025, 6:00 pm)",
                 Parser.parse("event chess training /from 1/3/2025 15:00 "
                         + "/to 1/3/2025 18:00").toString());
 
@@ -215,9 +215,9 @@ public class ParserTest {
             fail();
         } catch (Exception ex) {
             assertEquals("The description of an event cannot be empty. "
-                    + "Add a task name after the \"event\" command."
-                    + "\nEg. "
-                    + "\"event go for a jog /from 2/1/2003 09:00 /to 2/1/2003 10:00\"",
+                            + "Add a task name after the \"event\" command."
+                            + "\nEg. "
+                            + "\"event go for a jog /from 2/1/2003 09:00 /to 2/1/2003 10:00\"",
                     ex.getMessage());
         }
 
@@ -228,9 +228,9 @@ public class ParserTest {
             fail();
         } catch (Exception ex) {
             assertEquals("For events, the \"/from\" delimiter "
-                    + "must be placed between the task description and the chosen start time."
-                    + "\nEg. "
-                    + "\"event go for a jog /from 2/1/2003 09:00 /to 2/1/2003 10:00\"",
+                            + "must be placed between the task description and the chosen start time."
+                            + "\nEg. "
+                            + "\"event go for a jog /from 2/1/2003 09:00 /to 2/1/2003 10:00\"",
                     ex.getMessage());
         }
 
@@ -241,9 +241,9 @@ public class ParserTest {
             fail();
         } catch (Exception ex) {
             assertEquals("For events, the \"/from\" delimiter "
-                    + "must be placed between the task description and the chosen start time."
-                    + "\nEg. "
-                    + "\"event go for a jog /from 2/1/2003 09:00 /to 2/1/2003 10:00\"",
+                            + "must be placed between the task description and the chosen start time."
+                            + "\nEg. "
+                            + "\"event go for a jog /from 2/1/2003 09:00 /to 2/1/2003 10:00\"",
                     ex.getMessage());
         }
 
@@ -254,9 +254,9 @@ public class ParserTest {
             fail();
         } catch (Exception ex) {
             assertEquals("For events, the \"/from\" delimiter "
-                    + "must be placed between the task description and the chosen start time."
-                    + "\nEg. "
-                    + "\"event go for a jog /from 2/1/2003 09:00 /to 2/1/2003 10:00\"",
+                            + "must be placed between the task description and the chosen start time."
+                            + "\nEg. "
+                            + "\"event go for a jog /from 2/1/2003 09:00 /to 2/1/2003 10:00\"",
                     ex.getMessage());
         }
 
@@ -267,9 +267,9 @@ public class ParserTest {
             fail();
         } catch (Exception ex) {
             assertEquals("For events, the \"/to\" delimiter "
-                    + "must be placed between the chosen start time and the chosen end time."
-                    + "\nEg. "
-                    + "\"event go for a jog /from 2/1/2003 09:00 /to 2/1/2003 10:00\"",
+                            + "must be placed between the chosen start time and the chosen end time."
+                            + "\nEg. "
+                            + "\"event go for a jog /from 2/1/2003 09:00 /to 2/1/2003 10:00\"",
                     ex.getMessage());
         }
 
@@ -280,9 +280,9 @@ public class ParserTest {
             fail();
         } catch (Exception ex) {
             assertEquals("For events, the \"/to\" delimiter "
-                    + "must be placed between the chosen start time and the chosen end time."
-                    + "\nEg. "
-                    + "\"event go for a jog /from 2/1/2003 09:00 /to 2/1/2003 10:00\"",
+                            + "must be placed between the chosen start time and the chosen end time."
+                            + "\nEg. "
+                            + "\"event go for a jog /from 2/1/2003 09:00 /to 2/1/2003 10:00\"",
                     ex.getMessage());
         }
 
@@ -293,9 +293,9 @@ public class ParserTest {
             fail();
         } catch (Exception ex) {
             assertEquals("For events, the \"/to\" delimiter "
-                    + "must be placed between the chosen start time and the chosen end time."
-                    + "\nEg. "
-                    + "\"event go for a jog /from 2/1/2003 09:00 /to 2/1/2003 10:00\"",
+                            + "must be placed between the chosen start time and the chosen end time."
+                            + "\nEg. "
+                            + "\"event go for a jog /from 2/1/2003 09:00 /to 2/1/2003 10:00\"",
                     ex.getMessage());
         }
     }

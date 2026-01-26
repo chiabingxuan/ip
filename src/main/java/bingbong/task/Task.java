@@ -9,10 +9,10 @@ import java.time.format.DateTimeFormatter;
  * task.
  */
 public abstract class Task {
-    private static final String DATE_OUTPUT_FORMAT = "d MMM yyyy, h:mm a";
     public static final String DONE_ICON = "X";
     public static final String NOT_DONE_ICON = " ";
     protected static final String DIVIDER = " | ";
+    private static final String DATE_OUTPUT_FORMAT = "d MMM yyyy, h:mm a";
 
     private final String taskName;
     private final boolean isDone;
@@ -45,10 +45,10 @@ public abstract class Task {
     /**
      * Returns a copy of this task, but with the specified completion status instead.
      *
-     * @param newStatus New completion status for this task.
+     * @param isDoneNew New completion status for this task.
      * @return Copy of this task, with the chosen completion status.
      */
-    abstract Task changeTaskStatus(boolean newStatus);
+    abstract Task changeTaskStatus(boolean isDoneNew);
 
     /**
      * Returns a <code>String</code> corresponding to the input
@@ -60,8 +60,7 @@ public abstract class Task {
      */
     protected String outputDate(LocalDateTime datetime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_OUTPUT_FORMAT);
-        String formatted = datetime.format(formatter);
-        return formatted;
+        return datetime.format(formatter);
     }
 
     /**
