@@ -114,8 +114,9 @@ public class TaskTracker {
      */
     public String getCombinedSaveableTasks(DateTimeFormatter dateFormatter) {
         // get combined string to write to saved file
-        return IntStream.range(0, this.getNumOfTasks())
-                .mapToObj(index -> this.tasks.get(index).getSaveableString(dateFormatter))
+        return this.getFilteredTasks(task -> true) // get all tasks
+                .stream()
+                .map(task -> task.getSaveableString(dateFormatter))
                 .reduce((x, y) -> x + System.lineSeparator() + y)
                 .orElse("");
     }
@@ -232,9 +233,10 @@ public class TaskTracker {
 
     @Override
     public String toString() {
-        return IntStream.range(0, this.getNumOfTasks())
+        return this.getFilteredTasks(task -> true) // get all tasks
+                .stream()
                 // create list item in String
-                .mapToObj(i -> this.tasks.get(i).toString())
+                .map(task -> task.toString())
                 // combine list items
                 .reduce((x, y) -> x + "\n" + y)
                 .orElse("");
