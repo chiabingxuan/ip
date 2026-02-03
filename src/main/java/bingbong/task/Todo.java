@@ -16,7 +16,7 @@ public class Todo extends Task {
      * @param taskName Name of the todo.
      */
     public Todo(String taskName) {
-        super(taskName);
+        super(taskName, TASK_ICON);
     }
 
     /**
@@ -51,10 +51,5 @@ public class Todo extends Task {
     public String getSaveableString(DateTimeFormatter dateFormatter) {
         return TASK_ICON
                 + DIVIDER + super.getSaveableString(dateFormatter);
-    }
-
-    @Override
-    public String toString() {
-        return "[" + TASK_ICON + "]" + super.toString();
     }
 }
