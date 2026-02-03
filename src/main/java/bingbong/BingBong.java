@@ -2,7 +2,6 @@ package bingbong;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Scanner;
 
 import bingbong.command.Command;
 import bingbong.task.TaskTracker;
@@ -63,11 +62,10 @@ public class BingBong {
 
         // main processing loop for input
         boolean isExit = false;
-        Scanner sc = new Scanner(System.in);
         while (!isExit) {
             try {
                 // get command requested by user
-                String inputLine = sc.nextLine();
+                String inputLine = ui.readInput();
                 ui.showLine();
                 Command chosenCommand = Parser.parse(inputLine);
                 taskTracker = chosenCommand.execute(taskTracker, ui, storage);

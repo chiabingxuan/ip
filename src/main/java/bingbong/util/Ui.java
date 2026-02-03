@@ -1,5 +1,7 @@
 package bingbong.util;
 
+import java.util.Scanner;
+
 import bingbong.task.Task;
 
 /**
@@ -9,6 +11,14 @@ import bingbong.task.Task;
 public class Ui {
     private static final String HORIZONTAL_LINE =
             "________________________________________________________";
+    private final Scanner sc;
+
+    /**
+     * Initialises a new <code>Ui</code>.
+     */
+    public Ui() {
+        this.sc = new Scanner(System.in);
+    }
 
     /**
      * Outputs the opening message of the chatbot when the application
@@ -16,6 +26,16 @@ public class Ui {
      */
     public void greet() {
         System.out.println("Yo, my name is BingBong. Hit me up if you need any help.");
+    }
+
+    /**
+     * Returns the next line of input provided, using the <code>Scanner</code>
+     * of this <code>Ui</code>.
+     *
+     * @return The next line of input provided.
+     */
+    public String readInput() {
+        return this.sc.nextLine();
     }
 
     /**
