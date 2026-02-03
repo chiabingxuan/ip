@@ -15,15 +15,18 @@ public abstract class Task {
     private static final String DATE_OUTPUT_FORMAT = "d MMM yyyy, h:mm a";
 
     private final String taskName;
+    private final String taskIcon;
     private final boolean isDone;
 
     /**
      * Initialises an incomplete task with the specified name.
      *
      * @param taskName Name of the task.
+     * @param taskIcon Icon that represents the type of task.
      */
-    Task(String taskName) {
+    Task(String taskName, String taskIcon) {
         this.taskName = taskName;
+        this.taskIcon = taskIcon;
         this.isDone = false;
     }
 
@@ -35,6 +38,7 @@ public abstract class Task {
      */
     protected Task(Task task, boolean isDone) {
         this.taskName = task.taskName;
+        this.taskIcon = task.taskIcon;
         this.isDone = isDone;
     }
 
@@ -88,6 +92,8 @@ public abstract class Task {
 
     @Override
     public String toString() {
-        return "[" + this.getStatusIcon() + "] " + this.taskName;
+        return "[" + this.taskIcon + "]"
+                + "[" + this.getStatusIcon() + "] "
+                + this.taskName;
     }
 }

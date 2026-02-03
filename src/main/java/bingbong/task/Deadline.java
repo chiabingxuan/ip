@@ -19,7 +19,7 @@ public class Deadline extends Task {
      * @param byWhen   Date by which the deadline must be completed.
      */
     public Deadline(String taskName, LocalDateTime byWhen) {
-        super(taskName);
+        super(taskName, TASK_ICON);
         this.byWhen = byWhen;
     }
 
@@ -61,8 +61,7 @@ public class Deadline extends Task {
 
     @Override
     public String toString() {
-        return "[" + TASK_ICON + "]"
-                + super.toString()
+        return super.toString()
                 + " (by: " + super.outputDate(this.byWhen) + ")";
     }
 }

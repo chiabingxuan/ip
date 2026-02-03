@@ -21,7 +21,7 @@ public class Event extends Task {
      * @param endTime   Time at which the event ends.
      */
     public Event(String taskName, LocalDateTime startTime, LocalDateTime endTime) {
-        super(taskName);
+        super(taskName, TASK_ICON);
         this.startTime = startTime;
         this.endTime = endTime;
     }
@@ -66,8 +66,7 @@ public class Event extends Task {
 
     @Override
     public String toString() {
-        return "[" + TASK_ICON + "]"
-                + super.toString()
+        return super.toString()
                 + " (from: " + super.outputDate(this.startTime)
                 + " to: " + super.outputDate(this.endTime) + ")";
     }
