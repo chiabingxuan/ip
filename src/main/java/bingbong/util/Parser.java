@@ -61,12 +61,12 @@ public class Parser {
                 int indexToMark = Integer.parseInt(inputTokens[1]) - 1;
                 return new MarkCommand(indexToMark);
             } catch (ArrayIndexOutOfBoundsException ex) {
-                throw new BingBongException("Task number is missing. Make sure you have added a "
+                throw new ParserException("Task number is missing. Make sure you have added a "
                         + "task number after the \"mark\" command."
                         + "\nEg. "
                         + MARK_EXAMPLE);
             } catch (NumberFormatException ex) {
-                throw new BingBongException("Task number is invalid. Make sure you have added the "
+                throw new ParserException("Task number is invalid. Make sure you have added the "
                         + "correct task number after the \"mark\" command."
                         + "\nEg. "
                         + MARK_EXAMPLE);
@@ -80,12 +80,12 @@ public class Parser {
                 int indexToUnmark = Integer.parseInt(inputTokens[1]) - 1;
                 return new UnmarkCommand(indexToUnmark);
             } catch (ArrayIndexOutOfBoundsException ex) {
-                throw new BingBongException("Task number is missing. Make sure you have added a "
+                throw new ParserException("Task number is missing. Make sure you have added a "
                         + "task number after the \"unmark\" command."
                         + "\nEg. "
                         + UNMARK_EXAMPLE);
             } catch (NumberFormatException ex) {
-                throw new BingBongException("Task number is invalid. Make sure you have added the "
+                throw new ParserException("Task number is invalid. Make sure you have added the "
                         + "correct task number after the \"unmark\" command."
                         + "\nEg. "
                         + UNMARK_EXAMPLE);
@@ -99,12 +99,12 @@ public class Parser {
                 int indexToDelete = Integer.parseInt(inputTokens[1]) - 1;
                 return new DeleteCommand(indexToDelete);
             } catch (ArrayIndexOutOfBoundsException ex) {
-                throw new BingBongException("Task number is missing. Make sure you have added a "
+                throw new ParserException("Task number is missing. Make sure you have added a "
                         + "task number after the \"delete\" command."
                         + "\nEg. "
                         + DELETE_EXAMPLE);
             } catch (NumberFormatException ex) {
-                throw new BingBongException("Task number is invalid. Make sure you have added the "
+                throw new ParserException("Task number is invalid. Make sure you have added the "
                         + "correct task number after the \"delete\" command."
                         + "\nEg. "
                         + DELETE_EXAMPLE);
@@ -118,7 +118,7 @@ public class Parser {
                 String substring = inputTokens[1];
                 return new FindCommand(substring);
             } catch (ArrayIndexOutOfBoundsException ex) {
-                throw new BingBongException("Substring is missing. After the \"find\" command, "
+                throw new ParserException("Substring is missing. After the \"find\" command, "
                         + "make sure you have added a substring to search for."
                         + "\nEg. "
                         + FIND_EXAMPLE);
@@ -130,7 +130,7 @@ public class Parser {
             String[] detailsAfterSplit = inputLine.split("todo\\s+", 2);
 
             if (detailsAfterSplit.length < 2) {
-                throw new BingBongException("The description of a todo cannot be empty. "
+                throw new ParserException("The description of a todo cannot be empty. "
                         + "Add a task name after the \"todo\" command."
                         + "\nEg. "
                         + TODO_EXAMPLE);
@@ -139,14 +139,14 @@ public class Parser {
             String todoName = detailsAfterSplit[1];
             Todo newTodo = new Todo(todoName);
 
-            return new AddCommand(newTodo, DATE_FORMAT);
+            return new AddCommand(newTodo);
         });
 
         // add a deadline
         typesToCommands.put(CommandType.DEADLINE, inputLine -> {
             String[] detailsAfterSplittingCommand = inputLine.split("deadline\\s+", 2);
             if (detailsAfterSplittingCommand.length < 2) {
-                throw new BingBongException("The description of a deadline cannot be empty. "
+                throw new ParserException("The description of a deadline cannot be empty. "
                         + "Add a task name after the \"deadline\" command."
                         + "\nEg. "
                         + DEADLINE_EXAMPLE);
@@ -155,7 +155,7 @@ public class Parser {
             String[] deadlineDetails = detailsAfterSplittingCommand[1]
                     .split("\\s+/by\\s+", 2);
             if (deadlineDetails.length < 2) {
-                throw new BingBongException("For deadlines, the \"/by\" delimiter "
+                throw new ParserException("For deadlines, the \"/by\" delimiter "
                         + "must be placed between the task description and the chosen date."
                         + "\nEg. "
                         + DEADLINE_EXAMPLE);
@@ -165,14 +165,14 @@ public class Parser {
             LocalDateTime byWhen = parseDate(deadlineDetails[1]);
             Deadline newDeadline = new Deadline(deadlineName, byWhen);
 
-            return new AddCommand(newDeadline, DATE_FORMAT);
+            return new AddCommand(newDeadline);
         });
 
         // add an event
         typesToCommands.put(CommandType.EVENT, inputLine -> {
             String[] detailsAfterSplittingCommand = inputLine.split("event\\s+", 2);
             if (detailsAfterSplittingCommand.length < 2) {
-                throw new BingBongException("The description of an event cannot be empty. "
+                throw new ParserException("The description of an event cannot be empty. "
                         + "Add a task name after the \"event\" command."
                         + "\nEg. "
                         + EVENT_EXAMPLE);
@@ -181,7 +181,7 @@ public class Parser {
             String[] detailsAfterSplittingFrom = detailsAfterSplittingCommand[1]
                     .split("\\s+/from\\s+", 2);
             if (detailsAfterSplittingFrom.length < 2) {
-                throw new BingBongException("For events, the \"/from\" delimiter "
+                throw new ParserException("For events, the \"/from\" delimiter "
                         + "must be placed between the task description and the chosen start time."
                         + "\nEg. "
                         + EVENT_EXAMPLE);
@@ -191,7 +191,7 @@ public class Parser {
             String[] detailsAfterSplittingTo = detailsAfterSplittingFrom[1]
                     .split("\\s+/to\\s+", 2);
             if (detailsAfterSplittingTo.length < 2) {
-                throw new BingBongException("For events, the \"/to\" delimiter "
+                throw new ParserException("For events, the \"/to\" delimiter "
                         + "must be placed between the chosen start time and the chosen end time."
                         + "\nEg. "
                         + EVENT_EXAMPLE);
@@ -201,7 +201,7 @@ public class Parser {
             LocalDateTime endTime = parseDate(detailsAfterSplittingTo[1]);
             Event newEvent = new Event(eventName, startTime, endTime);
 
-            return new AddCommand(newEvent, DATE_FORMAT);
+            return new AddCommand(newEvent);
         });
 
         // list all tasks
@@ -212,7 +212,7 @@ public class Parser {
     }
 
     // get the correct command from the input
-    private static CommandType getCommandType(String inputLine) throws BingBongException {
+    private static CommandType getCommandType(String inputLine) throws ParserException {
         CommandType chosenCommand;
 
         try {
@@ -225,10 +225,10 @@ public class Parser {
                 String inputCommand = inputTokens[0];
                 chosenCommand = CommandType.valueOf(inputCommand.toUpperCase());
                 if (chosenCommand.equals(CommandType.LIST) || chosenCommand.equals(CommandType.BYE)) {
-                    throw new BingBongException("LIST or BYE command was given with other arguments - invalid");
+                    throw new ParserException("LIST or BYE command was given with other arguments - invalid");
                 }
             } catch (IllegalArgumentException notValidCommandEx) {
-                throw new BingBongException("I have no idea what that "
+                throw new ParserException("I have no idea what that "
                         + "means. You could try:\n"
                         + Arrays.toString(CommandType.values()));
             }
@@ -243,13 +243,13 @@ public class Parser {
      *
      * @param dateString Date provided in <code>String</code>.
      * @return Date parsed.
-     * @throws BingBongException If date cannot be parsed.
+     * @throws ParserException If date cannot be parsed.
      */
-    static LocalDateTime parseDate(String dateString) throws BingBongException {
+    static LocalDateTime parseDate(String dateString) throws ParserException {
         try {
             return LocalDateTime.parse(dateString, DateTimeFormatter.ofPattern(DATE_FORMAT));
         } catch (DateTimeParseException ex) {
-            throw new BingBongException("The date "
+            throw new ParserException("The date "
                     + "that you have provided cannot be parsed: "
                     + ex.getMessage()
                     + "\nPlease use the correct format for dates. For example: "
@@ -263,14 +263,14 @@ public class Parser {
      *
      * @param inputLine Input given by the user.
      * @return Command to be executed.
-     * @throws BingBongException If at least one of the following occurs:
+     * @throws ParserException If at least one of the following occurs:
      *                           <ul>
      *                           <li> Type of command in user input is unknown.
      *                           <li> Input arguments are invalid for the command type identified.
      *                           <li> Dates in the input cannot be parsed.
      *                           </ul>
      */
-    public static Command parse(String inputLine) throws BingBongException {
+    public static Command parse(String inputLine) throws ParserException {
         setupMapping();
 
         // first remove the whitespace in the input

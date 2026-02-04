@@ -2,9 +2,9 @@ package bingbong.command;
 
 import bingbong.task.Task;
 import bingbong.task.TaskTracker;
-import bingbong.util.BingBongException;
 import bingbong.util.MessageFormatter;
 import bingbong.util.Storage;
+import bingbong.util.TaskTrackerException;
 
 /**
  * Represents a command where a task is to be deleted.
@@ -31,10 +31,10 @@ public class DeleteCommand extends Command {
      *                    task list (if modifications have been made),
      *                    at the end of the command's execution.
      * @return New task list.
-     * @throws BingBongException If the command was not executed successfully.
+     * @throws TaskTrackerException If the command was not executed successfully.
      */
     public TaskTracker execute(TaskTracker taskTracker, Storage storage)
-            throws BingBongException {
+            throws TaskTrackerException {
         Task taskToDelete = taskTracker.getTask(this.index);
         taskTracker = taskTracker.deleteTask(this.index);
         int newNumOfTasks = taskTracker.getNumOfTasks();

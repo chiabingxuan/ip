@@ -13,6 +13,7 @@ public abstract class Task {
     public static final String NOT_DONE_ICON = " ";
     protected static final String DIVIDER = " | ";
     private static final String DATE_OUTPUT_FORMAT = "d MMM yyyy, h:mm a";
+    private static final String DATE_SAVE_FORMAT = "d/M/yyyy HH:mm";
 
     private final String taskName;
     private final String taskIcon;
@@ -67,15 +68,17 @@ public abstract class Task {
         return datetime.format(formatter);
     }
 
+    protected String getSaveableDate(LocalDateTime datetime) {
+        return datetime.format(DateTimeFormatter.ofPattern(DATE_SAVE_FORMAT));
+    }
+
     /**
      * Returns a <code>String</code> that represents this task.
      * This <code>String</code> can be saved to the task storage.
      *
-     * @param dateFormatter A <code>DateTimeFormatter</code> that converts
-     *                      <code>LocalDateTime</code> objects to <code>String</code> type.
      * @return <code>String</code> representation of this task.
      */
-    String getSaveableString(DateTimeFormatter dateFormatter) {
+    String getSaveableString() {
         return this.getStatusIcon() + DIVIDER + this.taskName;
     }
 

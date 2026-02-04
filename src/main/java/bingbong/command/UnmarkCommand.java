@@ -2,9 +2,10 @@ package bingbong.command;
 
 import bingbong.task.Task;
 import bingbong.task.TaskTracker;
-import bingbong.util.BingBongException;
 import bingbong.util.MessageFormatter;
 import bingbong.util.Storage;
+import bingbong.util.StorageException;
+import bingbong.util.TaskTrackerException;
 
 /**
  * Represents a command where a task is to be marked as incomplete.
@@ -31,14 +32,22 @@ public class UnmarkCommand extends Command {
      *                    task list (if modifications have been made),
      *                    at the end of the command's execution.
      * @return New task list.
-     * @throws BingBongException If the command was not executed successfully.
+     * @throws TaskTrackerException If the command was not executed successfully.
      */
     public TaskTracker execute(TaskTracker taskTracker, Storage storage)
-            throws BingBongException {
+            throws TaskTrackerException {
         Task unmarkedTask = taskTracker.changeTaskStatusAtIndex(this.index, false);
         taskTracker = taskTracker.editTask(this.index, unmarkedTask);
 
+        // add message to output
         super.addToCommandOutput(MessageFormatter.getUnmarkedTaskMessage(unmarkedTask));
+
+        // update storage
+        try {
+            storage.saveTasks(taskTracker.getCombinedSaveableTasks());
+        } catch (StorageException ex) {
+            super.addToCommandOutput(ex.getMessage());
+        }
 
         return taskTracker;
     }

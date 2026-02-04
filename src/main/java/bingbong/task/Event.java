@@ -52,16 +52,14 @@ public class Event extends Task {
      * Returns a <code>String</code> that represents this event.
      * This <code>String</code> can be saved to the task storage.
      *
-     * @param dateFormatter A <code>DateTimeFormatter</code> that converts
-     *                      <code>LocalDateTime</code> objects to <code>String</code> type.
      * @return <code>String</code> representation of this event.
      */
     @Override
-    public String getSaveableString(DateTimeFormatter dateFormatter) {
+    public String getSaveableString() {
         return TASK_ICON
-                + DIVIDER + super.getSaveableString(dateFormatter)
-                + DIVIDER + this.startTime.format(dateFormatter)
-                + DIVIDER + this.endTime.format(dateFormatter);
+                + DIVIDER + super.getSaveableString()
+                + DIVIDER + super.getSaveableDate(this.startTime)
+                + DIVIDER + super.getSaveableDate(this.endTime);
     }
 
     @Override

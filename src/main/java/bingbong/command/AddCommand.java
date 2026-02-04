@@ -1,31 +1,25 @@
 package bingbong.command;
 
-import java.time.format.DateTimeFormatter;
-
 import bingbong.task.Task;
 import bingbong.task.TaskTracker;
-import bingbong.util.BingBongException;
 import bingbong.util.MessageFormatter;
 import bingbong.util.Storage;
+import bingbong.util.StorageException;
 
 /**
  * Represents a command where a new task is to be added.
  */
 public class AddCommand extends Command {
     private final Task task;
-    private final DateTimeFormatter dateFormatter;
 
     /**
      * Initialises an <code>AddCommand</code>.
      *
-     * @param task       Task to be added.
-     * @param dateFormat Date format used to convert <code>LocalDateTime</code>
-     *                   objects to <code>String</code>, for the saving of tasks to the storage.
+     * @param task Task to be added.
      */
-    public AddCommand(Task task, String dateFormat) {
+    public AddCommand(Task task) {
         super(false);
         this.task = task;
-        this.dateFormatter = DateTimeFormatter.ofPattern(dateFormat);
     }
 
     /**
@@ -48,8 +42,8 @@ public class AddCommand extends Command {
 
         // update storage
         try {
-            storage.saveTasks(taskTracker.getCombinedSaveableTasks(this.dateFormatter));
-        } catch (BingBongException ex) {
+            storage.saveTasks(taskTracker.getCombinedSaveableTasks());
+        } catch (StorageException ex) {
             super.addToCommandOutput(ex.getMessage());
         }
 

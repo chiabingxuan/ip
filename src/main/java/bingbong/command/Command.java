@@ -3,8 +3,8 @@ package bingbong.command;
 import java.util.Optional;
 
 import bingbong.task.TaskTracker;
-import bingbong.util.BingBongException;
 import bingbong.util.Storage;
+import bingbong.util.TaskTrackerException;
 
 /**
  * Represents a command that is to be executed, according
@@ -39,10 +39,10 @@ public abstract class Command {
      *                    task list (if modifications have been made),
      *                    at the end of the command's execution.
      * @return New task list.
-     * @throws BingBongException If the command was not executed successfully.
+     * @throws TaskTrackerException If the command was not executed successfully.
      */
     public abstract TaskTracker execute(TaskTracker taskTracker, Storage storage)
-            throws BingBongException;
+            throws TaskTrackerException;
 
     /**
      * Returns the output message after the command has been executed.

@@ -10,6 +10,7 @@ import bingbong.util.BingBongException;
 import bingbong.util.MessageFormatter;
 import bingbong.util.Parser;
 import bingbong.util.Storage;
+import bingbong.util.StorageException;
 
 /**
  * Initialises the task list storage, current task
@@ -46,12 +47,13 @@ public class BingBong {
                     + "An empty task list will be initialised.");
             this.taskTracker = new TaskTracker();
             this.isInitSuccessful = true;
-        } catch (BingBongException ex) {
-            // if existing file is corrupted
+        } catch (StorageException ex) {
+            // if existing file is incorrectly formatted or corrupted
             this.loadedMessage = Optional.of(ex.getMessage());
             this.taskTracker = new TaskTracker();
             this.isInitSuccessful = true;
         } catch (IOException ex) {
+            // cannot even initialise storage correctly
             this.loadedMessage = Optional.of(MessageFormatter
                     .getExceptionMessage("Something went wrong when "
                             + "initialising task storage: "

@@ -1,8 +1,6 @@
 package bingbong.task;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 /**
  * Represents a deadline that can be recorded in the chatbot. Contains
  * details of the deadline, including the deadline name, the completion status of the
@@ -48,15 +46,13 @@ public class Deadline extends Task {
      * Returns a <code>String</code> that represents this deadline.
      * This <code>String</code> can be saved to the task storage.
      *
-     * @param dateFormatter A <code>DateTimeFormatter</code> that converts
-     *                      <code>LocalDateTime</code> objects to <code>String</code> type.
      * @return <code>String</code> representation of this deadline.
      */
     @Override
-    public String getSaveableString(DateTimeFormatter dateFormatter) {
+    public String getSaveableString() {
         return TASK_ICON
-                + DIVIDER + super.getSaveableString(dateFormatter)
-                + DIVIDER + this.byWhen.format(dateFormatter);
+                + DIVIDER + super.getSaveableString()
+                + DIVIDER + super.getSaveableDate(this.byWhen);
     }
 
     @Override
