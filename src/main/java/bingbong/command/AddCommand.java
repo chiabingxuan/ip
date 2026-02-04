@@ -5,8 +5,8 @@ import java.time.format.DateTimeFormatter;
 import bingbong.task.Task;
 import bingbong.task.TaskTracker;
 import bingbong.util.BingBongException;
+import bingbong.util.MessageFormatter;
 import bingbong.util.Storage;
-import bingbong.util.Ui;
 
 /**
  * Represents a command where a new task is to be added.
@@ -33,26 +33,24 @@ public class AddCommand extends Command {
      * completion of the command.
      *
      * @param taskTracker Task list before the command's execution.
-     * @param ui          User interface that displays messages to the user,
-     *                    during the command's execution.
      * @param storage     Storage which updates the task file with the new
      *                    task list (if modifications have been made),
      *                    at the end of the command's execution.
      * @return New task list.
      */
-    public TaskTracker execute(TaskTracker taskTracker, Ui ui, Storage storage) {
+    public TaskTracker execute(TaskTracker taskTracker, Storage storage) {
         // add to tracker
         taskTracker = taskTracker.addTask(task);
         int newNumOfTasks = taskTracker.getNumOfTasks();
 
-        // print in display
-        ui.printAddTaskMessage(task, newNumOfTasks);
+        // add message to output
+        super.addToCommandOutput(MessageFormatter.getAddTaskMessage(task, newNumOfTasks));
 
         // update storage
         try {
             storage.saveTasks(taskTracker.getCombinedSaveableTasks(this.dateFormatter));
         } catch (BingBongException ex) {
-            ui.printWarning(ex.getMessage());
+            super.addToCommandOutput(ex.getMessage());
         }
 
         return taskTracker;

@@ -8,7 +8,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -103,10 +102,10 @@ public class Storage {
             }
 
             return new TaskTracker(loadedTasks);
-        } catch (ArrayIndexOutOfBoundsException | DateTimeParseException | IllegalArgumentException ex) {
+        } catch (ArrayIndexOutOfBoundsException | BingBongException | IllegalArgumentException ex) {
             throw new BingBongException("Something went wrong loading the saved task file: "
                     + ex.getMessage()
-                    + "\n The file might be corrupted (ie. wrongly formatted)."
+                    + "\nThe file might be corrupted (ie. wrongly formatted)."
                     + "\nAn empty task list will be initialised.");
         }
     }
