@@ -2,23 +2,31 @@ package bingbong;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 
 import bingbong.command.Command;
+import bingbong.message.ErrorMessage;
+import bingbong.message.Message;
+import bingbong.message.WarningMessage;
 import bingbong.task.TaskTracker;
 import bingbong.util.BingBongException;
+import bingbong.util.MessageFormatter;
 import bingbong.util.Parser;
 import bingbong.util.Storage;
-import bingbong.util.Ui;
+import bingbong.util.StorageException;
 
 /**
  * Initialises the task list storage, current task
  * list and user interface, before running the chatbot application.
  */
 public class BingBong {
+    // describe loading status
+    private Optional<Message> loadedMessage;
+
+    // tools for the bot
     private Storage storage;
     private TaskTracker taskTracker;
-    private final Ui ui;
-    private boolean isInitSuccessful;
 
     /**
      * Initialises the <code>BingBong</code> class for the running of the chatbot.
@@ -28,61 +36,56 @@ public class BingBong {
      *                       file is stored in <code>dataFolderPath</code>.
      */
     public BingBong(String dataFolderPath, String tasksFilename) {
-        ui = new Ui();
-
         try {
-            storage = new Storage(dataFolderPath, tasksFilename);
-            taskTracker = storage.loadSavedTasks();
-            isInitSuccessful = true;
+            this.loadedMessage = Optional.empty();
+            this.storage = new Storage(dataFolderPath, tasksFilename);
+            this.taskTracker = storage.loadSavedTasks();
         } catch (FileNotFoundException ex) {
-            ui.printWarning("No existing task file detected. "
+            WarningMessage noFileWarningMsg = new WarningMessage("No existing task file detected. "
                     + "An empty task list will be initialised.");
-            taskTracker = new TaskTracker();
-            isInitSuccessful = true;
-        } catch (BingBongException ex) {
-            ui.printExceptionMessage(ex.getMessage());
-            taskTracker = new TaskTracker();
-            isInitSuccessful = true;
+            this.loadedMessage = Optional.of(noFileWarningMsg);
+            this.taskTracker = new TaskTracker();
+        } catch (StorageException ex) {
+            // if existing file is incorrectly formatted or corrupted
+            WarningMessage fileCorruptedWarningMsg = new WarningMessage(ex.getMessage());
+            this.loadedMessage = Optional.of(fileCorruptedWarningMsg);
+            this.taskTracker = new TaskTracker();
         } catch (IOException ex) {
-            ui.printExceptionMessage("Something went wrong when "
-                    + "initialising task storage: "
-                    + ex.getMessage()
-                    + "\nPlease fix the problem and try again.");
-            isInitSuccessful = false;
+            // cannot even initialise storage correctly
+            ErrorMessage storageInitErrorMsg = new ErrorMessage(MessageFormatter
+                    .getExceptionMessage("Something went wrong when "
+                            + "initialising task storage: "
+                            + ex.getMessage()
+                            + "\nPlease fix the problem and try again."));
+            this.loadedMessage = Optional.of(storageInitErrorMsg);
         }
     }
 
     /**
-     * Runs the chatbot application.
+     * Returns the message obtained from the chatbot after it has been loaded,
+     * if any. If there is no such message, <code>Optional.empty</code>
+     * is returned.
+     *
+     * @return The message obtained from the chatbot after it has been loaded, if any.
      */
-    public void run() {
-        ui.showLine();
-        ui.greet();
-        ui.showLine();
-
-        // main processing loop for input
-        boolean isExit = false;
-        while (!isExit) {
-            try {
-                // get command requested by user
-                String inputLine = ui.readInput();
-                ui.showLine();
-                Command chosenCommand = Parser.parse(inputLine);
-                taskTracker = chosenCommand.execute(taskTracker, ui, storage);
-                isExit = chosenCommand.isExit();
-            } catch (BingBongException ex) {
-                ui.printExceptionMessage(ex.getMessage());
-            } finally {
-                ui.showLine();
-            }
-        }
+    public Optional<Message> getLoadedMessage() {
+        return this.loadedMessage;
     }
 
-    public static void main(String[] args) {
-        BingBong bot = new BingBong("./data", "tasks.txt");
-
-        if (bot.isInitSuccessful) {
-            bot.run();
+    /**
+     * Processes the given user input and subsequently returns a list of
+     * messages from the chatbot's output.
+     *
+     * @return The list of messages from the chatbot's output.
+     */
+    public List<Message> getResponses(String inputLine) {
+        try {
+            Command commandParsed = Parser.parse(inputLine);
+            taskTracker = commandParsed.execute(taskTracker, storage);
+            return commandParsed.getOutputMessages();
+        } catch (BingBongException ex) {
+            ErrorMessage errorMsg = new ErrorMessage(MessageFormatter.getExceptionMessage(ex.getMessage()));
+            return List.of(errorMsg);
         }
     }
 }

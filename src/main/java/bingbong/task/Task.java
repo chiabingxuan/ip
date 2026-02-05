@@ -13,6 +13,7 @@ public abstract class Task {
     public static final String NOT_DONE_ICON = " ";
     protected static final String DIVIDER = " | ";
     private static final String DATE_OUTPUT_FORMAT = "d MMM yyyy, h:mm a";
+    private static final String DATE_SAVE_FORMAT = "d/M/yyyy HH:mm";
 
     private final String taskName;
     private final String taskIcon;
@@ -56,26 +57,36 @@ public abstract class Task {
 
     /**
      * Returns a <code>String</code> corresponding to the input
-     * <code>LocalDateTime</code> object. To be displayed
-     * as output for the user.
+     * <code>LocalDateTime</code> object. This <code>String</code> is formatted for
+     * the chatbot's output, which can be viewed by the user.
      *
      * @param datetime <code>LocalDateTime</code> object.
      * @return The chosen date in <code>String</code> type.
      */
-    protected String outputDate(LocalDateTime datetime) {
+    protected String getOutputDate(LocalDateTime datetime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_OUTPUT_FORMAT);
         return datetime.format(formatter);
+    }
+
+    /**
+     * Returns a <code>String</code> corresponding to the input
+     * <code>LocalDateTime</code> object. This <code>String</code> is formatted for
+     * the task storage (in the form of a .txt file).
+     *
+     * @param datetime <code>LocalDateTime</code> object.
+     * @return The chosen date in <code>String</code> type.
+     */
+    protected String getSavableDate(LocalDateTime datetime) {
+        return datetime.format(DateTimeFormatter.ofPattern(DATE_SAVE_FORMAT));
     }
 
     /**
      * Returns a <code>String</code> that represents this task.
      * This <code>String</code> can be saved to the task storage.
      *
-     * @param dateFormatter A <code>DateTimeFormatter</code> that converts
-     *                      <code>LocalDateTime</code> objects to <code>String</code> type.
      * @return <code>String</code> representation of this task.
      */
-    String getSaveableString(DateTimeFormatter dateFormatter) {
+    String getSavableString() {
         return this.getStatusIcon() + DIVIDER + this.taskName;
     }
 

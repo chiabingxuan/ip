@@ -1,7 +1,5 @@
 package bingbong.task;
 
-import java.time.format.DateTimeFormatter;
-
 /**
  * Represents a todo that can be recorded in the chatbot. Contains
  * details of the todo, including the todo name and the completion status of the
@@ -43,13 +41,11 @@ public class Todo extends Task {
      * Returns a <code>String</code> that represents this todo.
      * This <code>String</code> can be saved to the task storage.
      *
-     * @param dateFormatter A <code>DateTimeFormatter</code> that converts
-     *                      <code>LocalDateTime</code> objects to <code>String</code> type.
      * @return <code>String</code> representation of this todo.
      */
     @Override
-    public String getSaveableString(DateTimeFormatter dateFormatter) {
+    public String getSavableString() {
         return TASK_ICON
-                + DIVIDER + super.getSaveableString(dateFormatter);
+                + DIVIDER + super.getSavableString();
     }
 }

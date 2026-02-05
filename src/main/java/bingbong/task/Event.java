@@ -1,7 +1,6 @@
 package bingbong.task;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 /**
  * Represents an event that can be recorded in the chatbot. Contains
@@ -52,22 +51,20 @@ public class Event extends Task {
      * Returns a <code>String</code> that represents this event.
      * This <code>String</code> can be saved to the task storage.
      *
-     * @param dateFormatter A <code>DateTimeFormatter</code> that converts
-     *                      <code>LocalDateTime</code> objects to <code>String</code> type.
      * @return <code>String</code> representation of this event.
      */
     @Override
-    public String getSaveableString(DateTimeFormatter dateFormatter) {
+    public String getSavableString() {
         return TASK_ICON
-                + DIVIDER + super.getSaveableString(dateFormatter)
-                + DIVIDER + this.startTime.format(dateFormatter)
-                + DIVIDER + this.endTime.format(dateFormatter);
+                + DIVIDER + super.getSavableString()
+                + DIVIDER + super.getSavableDate(this.startTime)
+                + DIVIDER + super.getSavableDate(this.endTime);
     }
 
     @Override
     public String toString() {
         return super.toString()
-                + " (from: " + super.outputDate(this.startTime)
-                + " to: " + super.outputDate(this.endTime) + ")";
+                + " (from: " + super.getOutputDate(this.startTime)
+                + " to: " + super.getOutputDate(this.endTime) + ")";
     }
 }

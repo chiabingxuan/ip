@@ -8,7 +8,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -48,14 +47,13 @@ public class Storage {
      * Returns a <code>TaskTracker</code> object containing
      * a list of loaded tasks from the disk.
      *
-     * @return <code>TaskTracker</code> object with a list of
-     *     existing tasks from previous runs.
+     * @return <code>TaskTracker</code> object with a list of existing tasks from previous runs.
      * @throws FileNotFoundException If there is no existing file
      *                               containing a list of pre-saved tasks.
-     * @throws BingBongException     If the task file is incorrectly formatted
+     * @throws StorageException      If the task file is incorrectly formatted
      *                               or corrupted.
      */
-    public TaskTracker loadSavedTasks() throws FileNotFoundException, BingBongException {
+    public TaskTracker loadSavedTasks() throws FileNotFoundException, StorageException {
         try {
             File f = new File(this.filePath);
             Scanner fileScanner = new Scanner(f);
@@ -103,10 +101,10 @@ public class Storage {
             }
 
             return new TaskTracker(loadedTasks);
-        } catch (ArrayIndexOutOfBoundsException | DateTimeParseException | IllegalArgumentException ex) {
-            throw new BingBongException("Something went wrong loading the saved task file: "
+        } catch (ArrayIndexOutOfBoundsException | ParserException | IllegalArgumentException ex) {
+            throw new StorageException("Something went wrong loading the saved task file: "
                     + ex.getMessage()
-                    + "\n The file might be corrupted (ie. wrongly formatted)."
+                    + "\nThe file might be corrupted (ie. wrongly formatted)."
                     + "\nAn empty task list will be initialised.");
         }
     }
@@ -115,19 +113,19 @@ public class Storage {
      * Writes a list of tasks (provided in concatenated <code>String</code>
      * format) to the disk.
      *
-     * @param textToWrite Concatenated <code>String</code> representing the current
-     *                    list of tasks recorded.
-     * @throws BingBongException If the task file cannot be saved due to an
-     *                           <code>IOException</code> being thrown.
+     * @param textToWrite Concatenated <code>String</code> representing the current list
+     *                    of tasks recorded.
+     * @throws StorageException If the task file cannot be saved due to an
+     *                          <code>IOException</code> being thrown.
      */
-    public void saveTasks(String textToWrite) throws BingBongException {
+    public void saveTasks(String textToWrite) throws StorageException {
         try {
             // write to file
             FileWriter fw = new FileWriter(this.filePath);
             fw.write(textToWrite);
             fw.close();
         } catch (IOException ex) {
-            throw new BingBongException("Something went wrong when saving the tasks: "
+            throw new StorageException("Something went wrong when saving the tasks: "
                     + ex.getMessage()
                     + "\nHence, the tasks are not being saved to disk.");
         }

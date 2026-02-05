@@ -75,8 +75,8 @@ public class ParserTest {
             fail();
         } catch (Exception ex) {
             assertEquals("I have no idea what that "
-                    + "means. You could try:\n"
-                    + "[MARK, UNMARK, DELETE, FIND, TODO, DEADLINE, EVENT, LIST, BYE]",
+                            + "means. You could try:\n"
+                            + "[MARK, UNMARK, DELETE, FIND, TODO, DEADLINE, EVENT, LIST, BYE]",
                     ex.getMessage());
         }
     }
@@ -188,9 +188,9 @@ public class ParserTest {
             fail();
         } catch (Exception ex) {
             assertEquals("Substring is missing. After the \"find\" command, "
-                    + "make sure you have added a substring to search for."
-                    + "\nEg. "
-                    + "\"find exercise\" to find all the tasks containing the substring \"exercise\"",
+                            + "make sure you have added a substring to search for."
+                            + "\nEg. "
+                            + "\"find exercise\" to find all the tasks containing the substring \"exercise\"",
                     ex.getMessage());
         }
     }

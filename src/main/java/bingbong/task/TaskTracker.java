@@ -1,12 +1,11 @@
 package bingbong.task;
 
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
-import bingbong.util.BingBongException;
+import bingbong.util.TaskTrackerException;
 
 /**
  * Manages the current list of tasks recorded, during the running of the
@@ -108,15 +107,13 @@ public class TaskTracker {
      * Returns a concatenated <code>String</code> of all the tasks currently being
      * recorded. This <code>String</code> can be saved to the task storage.
      *
-     * @param dateFormatter A <code>DateTimeFormatter</code> that converts
-     *                      <code>LocalDateTime</code> objects to <code>String</code> type.
      * @return Combined <code>String</code> of all the tasks currently in the list.
      */
-    public String getCombinedSaveableTasks(DateTimeFormatter dateFormatter) {
+    public String getCombinedSavableTasks() {
         // get combined string to write to saved file
         return this.getFilteredTasks(task -> true) // get all tasks
                 .stream()
-                .map(task -> task.getSaveableString(dateFormatter))
+                .map(task -> task.getSavableString())
                 .reduce((x, y) -> x + System.lineSeparator() + y)
                 .orElse("");
     }
@@ -135,13 +132,14 @@ public class TaskTracker {
      *
      * @param index List index of the task to be returned.
      * @return Task at the chosen index.
-     * @throws BingBongException If <code>index</code> is out of bounds of the task list.
+     * @throws bingbong.util.TaskTrackerException If <code>index</code>
+     *                                            is out of bounds of the task list.
      */
-    public Task getTask(int index) throws BingBongException {
+    public Task getTask(int index) throws TaskTrackerException {
         try {
             return this.tasks.get(index);
         } catch (IndexOutOfBoundsException ex) {
-            throw new BingBongException(this.getWrongIndexExceptionMsg(index));
+            throw new TaskTrackerException(this.getWrongIndexExceptionMsg(index));
         }
     }
 
@@ -151,14 +149,14 @@ public class TaskTracker {
      *
      * @param index   List index of the task to be edited.
      * @param newTask New task to replace the previous task with.
-     * @throws BingBongException If <code>index</code> is out of bounds of the task list.
+     * @throws TaskTrackerException If <code>index</code> is out of bounds of the task list.
      */
     public TaskTracker editTask(int index, Task newTask)
-            throws BingBongException {
+            throws TaskTrackerException {
         try {
             return new TaskTracker(this, newTask, index);
         } catch (IndexOutOfBoundsException ex) {
-            throw new BingBongException(this.getWrongIndexExceptionMsg(index));
+            throw new TaskTrackerException(this.getWrongIndexExceptionMsg(index));
         }
     }
 
@@ -177,14 +175,14 @@ public class TaskTracker {
      * index has now been deleted.
      *
      * @param index List index of the task to be deleted.
-     * @throws BingBongException If <code>index</code> is out of bounds of the task list.
+     * @throws TaskTrackerException If <code>index</code> is out of bounds of the task list.
      */
     public TaskTracker deleteTask(int index)
-            throws BingBongException {
+            throws TaskTrackerException {
         try {
             return new TaskTracker(this, index);
         } catch (IndexOutOfBoundsException ex) {
-            throw new BingBongException(this.getWrongIndexExceptionMsg(index));
+            throw new TaskTrackerException(this.getWrongIndexExceptionMsg(index));
         }
     }
 
@@ -223,10 +221,10 @@ public class TaskTracker {
      * @param taskIndex List index of the task whose status is to be changed.
      * @param isDoneNew New completion status of the chosen task
      * @return Copy of the task at the chosen index, with its status updated accordingly.
-     * @throws BingBongException If <code>index</code> is out of bounds of the task list.
+     * @throws TaskTrackerException If <code>index</code> is out of bounds of the task list.
      */
     public Task changeTaskStatusAtIndex(int taskIndex, boolean isDoneNew)
-            throws BingBongException {
+            throws TaskTrackerException {
         Task oldTask = this.getTask(taskIndex);
         return oldTask.changeTaskStatus(isDoneNew);
     }

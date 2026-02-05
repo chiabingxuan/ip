@@ -1,10 +1,13 @@
 package bingbong.command;
 
+import bingbong.message.SuccessMessage;
+import bingbong.message.WarningMessage;
 import bingbong.task.Task;
 import bingbong.task.TaskTracker;
-import bingbong.util.BingBongException;
+import bingbong.util.MessageFormatter;
 import bingbong.util.Storage;
-import bingbong.util.Ui;
+import bingbong.util.StorageException;
+import bingbong.util.TaskTrackerException;
 
 /**
  * Represents a command where a task is to be deleted.
@@ -18,7 +21,7 @@ public class DeleteCommand extends Command {
      * @param index List index of the task to be deleted.
      */
     public DeleteCommand(int index) {
-        super(false);
+        super();
         this.index = index;
     }
 
@@ -27,20 +30,30 @@ public class DeleteCommand extends Command {
      * completion of the command.
      *
      * @param taskTracker Task list before the command's execution.
-     * @param ui          User interface that displays messages to the user,
-     *                    during the command's execution.
      * @param storage     Storage which updates the task file with the new
      *                    task list (if modifications have been made),
      *                    at the end of the command's execution.
      * @return New task list.
-     * @throws BingBongException If the command was not executed successfully.
+     * @throws TaskTrackerException If the command was not executed successfully.
      */
-    public TaskTracker execute(TaskTracker taskTracker, Ui ui, Storage storage) throws BingBongException {
+    public TaskTracker execute(TaskTracker taskTracker, Storage storage)
+            throws TaskTrackerException {
         Task taskToDelete = taskTracker.getTask(this.index);
         taskTracker = taskTracker.deleteTask(this.index);
         int newNumOfTasks = taskTracker.getNumOfTasks();
 
-        ui.printDeletedTaskMessage(taskToDelete, newNumOfTasks);
+        // add message to output
+        SuccessMessage successMessage = new SuccessMessage(MessageFormatter
+                .getDeletedTaskMessage(taskToDelete, newNumOfTasks));
+        super.addToOutputMessages(successMessage);
+
+        // update storage
+        try {
+            storage.saveTasks(taskTracker.getCombinedSavableTasks());
+        } catch (StorageException ex) {
+            WarningMessage warningMessage = new WarningMessage(ex.getMessage());
+            super.addToOutputMessages(warningMessage);
+        }
 
         return taskTracker;
     }
