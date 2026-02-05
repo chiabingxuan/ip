@@ -42,14 +42,6 @@ public class MainWindow extends AnchorPane {
     private Image bingBongImage = new Image(this.getClass().getResourceAsStream("/images/robot.png"));
 
     /**
-     * Initialises this window.
-     */
-    @FXML
-    public void initialize() {
-        scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
-    }
-
-    /**
      * Closes the application.
      */
     @FXML
@@ -116,5 +108,8 @@ public class MainWindow extends AnchorPane {
 
         // clear all text in the input box
         userInput.clear();
+
+        // autoscroll downwards after the new bubbles have been added
+        Platform.runLater(() -> scrollPane.setVvalue(1.0));
     }
 }
