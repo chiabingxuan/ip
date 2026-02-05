@@ -61,10 +61,23 @@ public class BingBong {
         }
     }
 
+    /**
+     * Returns the message obtained from the chatbot after it has been loaded,
+     * if any. If there is no such message, <code>Optional.empty</code>
+     * is returned.
+     *
+     * @return The message obtained from the chatbot after it has been loaded, if any.
+     */
     public Optional<Message> getLoadedMessage() {
         return this.loadedMessage;
     }
 
+    /**
+     * Processes the given user input and subsequently returns a list of
+     * messages from the chatbot's output.
+     *
+     * @return The list of messages from the chatbot's output.
+     */
     public List<Message> getResponses(String inputLine) {
         try {
             Command commandParsed = Parser.parse(inputLine);

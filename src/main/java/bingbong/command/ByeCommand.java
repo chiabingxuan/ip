@@ -10,13 +10,6 @@ import bingbong.util.Storage;
  */
 public class ByeCommand extends Command {
     /**
-     * Initialises a <code>ByeCommand</code>.
-     */
-    public ByeCommand() {
-        super();
-    }
-
-    /**
      * Executes this <code>ByeCommand</code> and returns the new task list, upon
      * completion of the command.
      *

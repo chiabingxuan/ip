@@ -41,11 +41,17 @@ public class MainWindow extends AnchorPane {
     private Image userImage = new Image(this.getClass().getResourceAsStream("/images/user.png"));
     private Image bingBongImage = new Image(this.getClass().getResourceAsStream("/images/robot.png"));
 
+    /**
+     * Initialises this window.
+     */
     @FXML
     public void initialize() {
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
     }
 
+    /**
+     * Closes the application.
+     */
     @FXML
     void terminate() {
         // wait for a while before closing the app
@@ -56,7 +62,9 @@ public class MainWindow extends AnchorPane {
         pause.play();
     }
 
-    /** Injects the BingBong instance */
+    /**
+     * Injects the <code>BingBong</code> instance.
+     */
     @FXML
     public void setBingBong(BingBong b) {
         bot = b;
@@ -81,8 +89,9 @@ public class MainWindow extends AnchorPane {
     }
 
     /**
-     * Creates two dialog boxes, one echoing user input and the other containing BingBong's reply
-     * and then appends them to the dialog container. Clears the user input after processing.
+     * Creates two dialog boxes, one echoing user input and the other containing
+     * <code>BingBong</code>'s reply and then appends them to the dialog container.
+     * Clears the user input after processing.
      */
     @FXML
     private void handleUserInput() {

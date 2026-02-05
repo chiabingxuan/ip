@@ -47,8 +47,7 @@ public class Storage {
      * Returns a <code>TaskTracker</code> object containing
      * a list of loaded tasks from the disk.
      *
-     * @return <code>TaskTracker</code> object with a list of
-     *     existing tasks from previous runs.
+     * @return <code>TaskTracker</code> object with a list of existing tasks from previous runs.
      * @throws FileNotFoundException If there is no existing file
      *                               containing a list of pre-saved tasks.
      * @throws StorageException      If the task file is incorrectly formatted
@@ -117,7 +116,7 @@ public class Storage {
      * @param textToWrite Concatenated <code>String</code> representing the current list
      *                    of tasks recorded.
      * @throws StorageException If the task file cannot be saved due to an
-     *                    <code>IOException</code> being thrown.
+     *                          <code>IOException</code> being thrown.
      */
     public void saveTasks(String textToWrite) throws StorageException {
         try {

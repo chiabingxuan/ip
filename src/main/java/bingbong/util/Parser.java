@@ -264,11 +264,11 @@ public class Parser {
      * @param inputLine Input given by the user.
      * @return Command to be executed.
      * @throws ParserException If at least one of the following occurs:
-     *                           <ul>
-     *                           <li> Type of command in user input is unknown.
-     *                           <li> Input arguments are invalid for the command type identified.
-     *                           <li> Dates in the input cannot be parsed.
-     *                           </ul>
+     *                         <ul>
+     *                         <li> Type of command in user input is unknown.
+     *                         <li> Input arguments are invalid for the command type identified.
+     *                         <li> Dates in the input cannot be parsed.
+     *                         </ul>
      */
     public static Command parse(String inputLine) throws ParserException {
         setupMapping();

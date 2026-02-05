@@ -44,8 +44,8 @@ public class Todo extends Task {
      * @return <code>String</code> representation of this todo.
      */
     @Override
-    public String getSaveableString() {
+    public String getSavableString() {
         return TASK_ICON
-                + DIVIDER + super.getSaveableString();
+                + DIVIDER + super.getSavableString();
     }
 }

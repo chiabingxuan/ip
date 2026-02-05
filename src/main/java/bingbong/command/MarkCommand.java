@@ -48,7 +48,7 @@ public class MarkCommand extends Command {
 
         // update storage
         try {
-            storage.saveTasks(taskTracker.getCombinedSaveableTasks());
+            storage.saveTasks(taskTracker.getCombinedSavableTasks());
         } catch (StorageException ex) {
             WarningMessage warningMessage = new WarningMessage(ex.getMessage());
             super.addToOutputMessages(warningMessage);

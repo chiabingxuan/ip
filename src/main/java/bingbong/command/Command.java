@@ -12,7 +12,7 @@ import bingbong.util.TaskTrackerException;
  * to what is requested in the user input.
  */
 public abstract class Command {
-    private ArrayList<Message> outputMessages;
+    private final ArrayList<Message> outputMessages;
 
     /**
      * Initialises a command.

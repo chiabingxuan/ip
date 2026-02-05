@@ -50,15 +50,15 @@ public class Deadline extends Task {
      * @return <code>String</code> representation of this deadline.
      */
     @Override
-    public String getSaveableString() {
+    public String getSavableString() {
         return TASK_ICON
-                + DIVIDER + super.getSaveableString()
-                + DIVIDER + super.getSaveableDate(this.byWhen);
+                + DIVIDER + super.getSavableString()
+                + DIVIDER + super.getSavableDate(this.byWhen);
     }
 
     @Override
     public String toString() {
         return super.toString()
-                + " (by: " + super.outputDate(this.byWhen) + ")";
+                + " (by: " + super.getOutputDate(this.byWhen) + ")";
     }
 }

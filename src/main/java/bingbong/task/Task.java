@@ -57,18 +57,26 @@ public abstract class Task {
 
     /**
      * Returns a <code>String</code> corresponding to the input
-     * <code>LocalDateTime</code> object. To be displayed
-     * as output for the user.
+     * <code>LocalDateTime</code> object. This <code>String</code> is formatted for
+     * the chatbot's output, which can be viewed by the user.
      *
      * @param datetime <code>LocalDateTime</code> object.
      * @return The chosen date in <code>String</code> type.
      */
-    protected String outputDate(LocalDateTime datetime) {
+    protected String getOutputDate(LocalDateTime datetime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_OUTPUT_FORMAT);
         return datetime.format(formatter);
     }
 
-    protected String getSaveableDate(LocalDateTime datetime) {
+    /**
+     * Returns a <code>String</code> corresponding to the input
+     * <code>LocalDateTime</code> object. This <code>String</code> is formatted for
+     * the task storage (in the form of a .txt file).
+     *
+     * @param datetime <code>LocalDateTime</code> object.
+     * @return The chosen date in <code>String</code> type.
+     */
+    protected String getSavableDate(LocalDateTime datetime) {
         return datetime.format(DateTimeFormatter.ofPattern(DATE_SAVE_FORMAT));
     }
 
@@ -78,7 +86,7 @@ public abstract class Task {
      *
      * @return <code>String</code> representation of this task.
      */
-    String getSaveableString() {
+    String getSavableString() {
         return this.getStatusIcon() + DIVIDER + this.taskName;
     }
 

@@ -54,17 +54,17 @@ public class Event extends Task {
      * @return <code>String</code> representation of this event.
      */
     @Override
-    public String getSaveableString() {
+    public String getSavableString() {
         return TASK_ICON
-                + DIVIDER + super.getSaveableString()
-                + DIVIDER + super.getSaveableDate(this.startTime)
-                + DIVIDER + super.getSaveableDate(this.endTime);
+                + DIVIDER + super.getSavableString()
+                + DIVIDER + super.getSavableDate(this.startTime)
+                + DIVIDER + super.getSavableDate(this.endTime);
     }
 
     @Override
     public String toString() {
         return super.toString()
-                + " (from: " + super.outputDate(this.startTime)
-                + " to: " + super.outputDate(this.endTime) + ")";
+                + " (from: " + super.getOutputDate(this.startTime)
+                + " to: " + super.getOutputDate(this.endTime) + ")";
     }
 }

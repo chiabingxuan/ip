@@ -1,6 +1,5 @@
 package bingbong.task;
 
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -110,11 +109,11 @@ public class TaskTracker {
      *
      * @return Combined <code>String</code> of all the tasks currently in the list.
      */
-    public String getCombinedSaveableTasks() {
+    public String getCombinedSavableTasks() {
         // get combined string to write to saved file
         return this.getFilteredTasks(task -> true) // get all tasks
                 .stream()
-                .map(task -> task.getSaveableString())
+                .map(task -> task.getSavableString())
                 .reduce((x, y) -> x + System.lineSeparator() + y)
                 .orElse("");
     }
@@ -134,7 +133,7 @@ public class TaskTracker {
      * @param index List index of the task to be returned.
      * @return Task at the chosen index.
      * @throws bingbong.util.TaskTrackerException If <code>index</code>
-     *         is out of bounds of the task list.
+     *                                            is out of bounds of the task list.
      */
     public Task getTask(int index) throws TaskTrackerException {
         try {

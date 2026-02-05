@@ -66,10 +66,24 @@ public class DialogBox extends HBox {
         }
     }
 
+    /**
+     * Returns a dialog box corresponding to the user's chosen input.
+     *
+     * @param text The user's input.
+     * @param img The user icon to be placed beside his / her message bubble.
+     * @return A dialog box with the selected input and user icon.
+     */
     public static DialogBox getUserDialog(String text, Image img) {
         return new DialogBox(text, img);
     }
 
+    /**
+     * Returns a dialog box corresponding to a message produced by the chatbot.
+     *
+     * @param msg The message from the chatbot.
+     * @param img The chatbot icon to be placed beside its message bubble.
+     * @return A dialog box with the selected text and chatbot icon.
+     */
     public static DialogBox getBingBongDialog(Message msg, Image img) {
         // get what is written in the message
         String msgText = msg.getMsg();

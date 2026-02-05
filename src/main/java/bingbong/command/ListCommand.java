@@ -10,13 +10,6 @@ import bingbong.util.Storage;
  */
 public class ListCommand extends Command {
     /**
-     * Initialises a <code>ListCommand</code>.
-     */
-    public ListCommand() {
-        super();
-    }
-
-    /**
      * Executes this <code>ListCommand</code> and returns the new task list, upon
      * completion of the command.
      *
