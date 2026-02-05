@@ -1,7 +1,8 @@
 package bingbong.command;
 
-import java.util.Optional;
+import java.util.ArrayList;
 
+import bingbong.message.Message;
 import bingbong.task.TaskTracker;
 import bingbong.util.Storage;
 import bingbong.util.TaskTrackerException;
@@ -11,23 +12,17 @@ import bingbong.util.TaskTrackerException;
  * to what is requested in the user input.
  */
 public abstract class Command {
-    private final boolean isExit;
-    private Optional<String> commandOutput;
+    private ArrayList<Message> outputMessages;
 
     /**
      * Initialises a command.
-     *
-     * @param isExit Whether the command should terminate the application.
      */
-    Command(boolean isExit) {
-        this.isExit = isExit;
-        this.commandOutput = Optional.empty();
+    Command() {
+        this.outputMessages = new ArrayList<>();
     }
 
-    protected void addToCommandOutput(String outputToAdd) {
-        this.commandOutput = this.commandOutput
-                .map(out -> out + "\n\n" + outputToAdd)
-                .or(() -> Optional.of(outputToAdd));
+    protected void addToOutputMessages(Message msgToAdd) {
+        this.outputMessages.add(msgToAdd);
     }
 
     /**
@@ -45,21 +40,11 @@ public abstract class Command {
             throws TaskTrackerException;
 
     /**
-     * Returns the output message after the command has been executed.
+     * Returns the output messages after the command has been executed.
      *
-     * @return The output message after the command has been executed.
+     * @return The output messages after the command has been executed.
      */
-    public String getString() {
-        return this.commandOutput.orElse("");
-    }
-
-    /**
-     * Returns a flag which shows whether this command
-     * should terminate the application.
-     *
-     * @return Whether this command should terminate the application.
-     */
-    public boolean isExit() {
-        return this.isExit;
+    public ArrayList<Message> getOutputMessages() {
+        return this.outputMessages;
     }
 }

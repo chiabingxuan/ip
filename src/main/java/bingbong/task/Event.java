@@ -1,7 +1,6 @@
 package bingbong.task;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 /**
  * Represents an event that can be recorded in the chatbot. Contains

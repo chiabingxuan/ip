@@ -1,5 +1,6 @@
 package bingbong.command;
 
+import bingbong.message.SuccessMessage;
 import bingbong.task.TaskTracker;
 import bingbong.util.MessageFormatter;
 import bingbong.util.Storage;
@@ -15,7 +16,7 @@ public class FindCommand extends Command {
      * Initialises a <code>FindCommand</code>.
      */
     public FindCommand(String substring) {
-        super(false);
+        super();
         this.substring = substring;
     }
 
@@ -31,7 +32,9 @@ public class FindCommand extends Command {
      */
     public TaskTracker execute(TaskTracker taskTracker, Storage storage) {
         String listOfTasks = taskTracker.findTasks(this.substring);
-        super.addToCommandOutput(MessageFormatter.getMatchingTasksMessage(listOfTasks));
+        SuccessMessage successMessage = new SuccessMessage(MessageFormatter
+                .getMatchingTasksMessage(listOfTasks));
+        super.addToOutputMessages(successMessage);
         return taskTracker;
     }
 

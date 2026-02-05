@@ -1,5 +1,7 @@
 package bingbong.command;
 
+import bingbong.message.SuccessMessage;
+import bingbong.message.WarningMessage;
 import bingbong.task.Task;
 import bingbong.task.TaskTracker;
 import bingbong.util.MessageFormatter;
@@ -18,7 +20,7 @@ public class AddCommand extends Command {
      * @param task Task to be added.
      */
     public AddCommand(Task task) {
-        super(false);
+        super();
         this.task = task;
     }
 
@@ -38,13 +40,16 @@ public class AddCommand extends Command {
         int newNumOfTasks = taskTracker.getNumOfTasks();
 
         // add message to output
-        super.addToCommandOutput(MessageFormatter.getAddTaskMessage(task, newNumOfTasks));
+        SuccessMessage successMessage = new SuccessMessage(MessageFormatter
+                .getAddTaskMessage(task, newNumOfTasks));
+        super.addToOutputMessages(successMessage);
 
         // update storage
         try {
             storage.saveTasks(taskTracker.getCombinedSaveableTasks());
         } catch (StorageException ex) {
-            super.addToCommandOutput(ex.getMessage());
+            WarningMessage warningMessage = new WarningMessage(ex.getMessage());
+            super.addToOutputMessages(warningMessage);
         }
 
         return taskTracker;

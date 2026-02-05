@@ -1,5 +1,6 @@
 package bingbong.command;
 
+import bingbong.message.SuccessMessage;
 import bingbong.task.TaskTracker;
 import bingbong.util.MessageFormatter;
 import bingbong.util.Storage;
@@ -12,7 +13,7 @@ public class ListCommand extends Command {
      * Initialises a <code>ListCommand</code>.
      */
     public ListCommand() {
-        super(false);
+        super();
     }
 
     /**
@@ -27,7 +28,9 @@ public class ListCommand extends Command {
      */
     public TaskTracker execute(TaskTracker taskTracker, Storage storage) {
         String listOfTasks = taskTracker.listTasks();
-        super.addToCommandOutput(MessageFormatter.getListTasksMessage(listOfTasks));
+        SuccessMessage successMessage = new SuccessMessage(MessageFormatter
+                .getListTasksMessage(listOfTasks));
+        super.addToOutputMessages(successMessage);
         return taskTracker;
     }
 

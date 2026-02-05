@@ -2,9 +2,13 @@ package bingbong;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 import bingbong.command.Command;
+import bingbong.message.ErrorMessage;
+import bingbong.message.Message;
+import bingbong.message.WarningMessage;
 import bingbong.task.TaskTracker;
 import bingbong.util.BingBongException;
 import bingbong.util.MessageFormatter;
@@ -18,16 +22,11 @@ import bingbong.util.StorageException;
  */
 public class BingBong {
     // describe loading status
-    private Optional<String> loadedMessage;
-    private boolean isInitSuccessful;
+    private Optional<Message> loadedMessage;
 
     // tools for the bot
     private Storage storage;
     private TaskTracker taskTracker;
-
-    // tracks the command parsed. if
-    // it is not a known command, this is empty
-    private Optional<Command> chosenCommand = Optional.empty();
 
     /**
      * Initialises the <code>BingBong</code> class for the running of the chatbot.
@@ -41,46 +40,39 @@ public class BingBong {
             this.loadedMessage = Optional.empty();
             this.storage = new Storage(dataFolderPath, tasksFilename);
             this.taskTracker = storage.loadSavedTasks();
-            this.isInitSuccessful = true;
         } catch (FileNotFoundException ex) {
-            this.loadedMessage = Optional.of("No existing task file detected. "
+            WarningMessage noFileWarningMsg = new WarningMessage("No existing task file detected. "
                     + "An empty task list will be initialised.");
+            this.loadedMessage = Optional.of(noFileWarningMsg);
             this.taskTracker = new TaskTracker();
-            this.isInitSuccessful = true;
         } catch (StorageException ex) {
             // if existing file is incorrectly formatted or corrupted
-            this.loadedMessage = Optional.of(ex.getMessage());
+            WarningMessage fileCorruptedWarningMsg = new WarningMessage(ex.getMessage());
+            this.loadedMessage = Optional.of(fileCorruptedWarningMsg);
             this.taskTracker = new TaskTracker();
-            this.isInitSuccessful = true;
         } catch (IOException ex) {
             // cannot even initialise storage correctly
-            this.loadedMessage = Optional.of(MessageFormatter
+            ErrorMessage storageInitErrorMsg = new ErrorMessage(MessageFormatter
                     .getExceptionMessage("Something went wrong when "
                             + "initialising task storage: "
                             + ex.getMessage()
                             + "\nPlease fix the problem and try again."));
-            this.isInitSuccessful = false;
+            this.loadedMessage = Optional.of(storageInitErrorMsg);
         }
     }
 
-    public Optional<String> getLoadedMessage() {
+    public Optional<Message> getLoadedMessage() {
         return this.loadedMessage;
     }
 
-    public Optional<Command> getAndResetChosenCommand() {
-        Optional<Command> chosenCommand = this.chosenCommand;
-        this.chosenCommand = Optional.empty(); // clear the tracking of the command
-        return chosenCommand;
-    }
-
-    public String getResponse(String inputLine) {
+    public List<Message> getResponses(String inputLine) {
         try {
             Command commandParsed = Parser.parse(inputLine);
-            this.chosenCommand = Optional.of(commandParsed);
             taskTracker = commandParsed.execute(taskTracker, storage);
-            return commandParsed.getString();
+            return commandParsed.getOutputMessages();
         } catch (BingBongException ex) {
-            return MessageFormatter.getExceptionMessage(ex.getMessage());
+            ErrorMessage errorMsg = new ErrorMessage(MessageFormatter.getExceptionMessage(ex.getMessage()));
+            return List.of(errorMsg);
         }
     }
 }

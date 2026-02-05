@@ -1,7 +1,5 @@
 package bingbong.task;
 
-import java.time.format.DateTimeFormatter;
-
 /**
  * Represents a todo that can be recorded in the chatbot. Contains
  * details of the todo, including the todo name and the completion status of the

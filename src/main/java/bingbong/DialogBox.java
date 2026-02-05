@@ -3,6 +3,7 @@ package bingbong;
 import java.io.IOException;
 import java.util.Collections;
 
+import bingbong.message.Message;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -49,16 +50,16 @@ public class DialogBox extends HBox {
         dialog.getStyleClass().add("reply-label");
     }
 
-    private void changeDialogStyle(String commandName) {
-        switch (commandName) {
-        case "AddCommand":
-            dialog.getStyleClass().add("add-label");
+    private void changeDialogStyle(String messageType) {
+        switch (messageType) {
+        case "SuccessMessage":
+            dialog.getStyleClass().add("success-label");
             break;
-        case "MarkCommand":
-            dialog.getStyleClass().add("marked-label");
+        case "WarningMessage":
+            dialog.getStyleClass().add("warning-label");
             break;
-        case "DeleteCommand":
-            dialog.getStyleClass().add("delete-label");
+        case "ErrorMessage":
+            dialog.getStyleClass().add("error-label");
             break;
         default:
             // do nothing
@@ -69,16 +70,16 @@ public class DialogBox extends HBox {
         return new DialogBox(text, img);
     }
 
-    public static DialogBox getBingBongDialog(String text, Image img) {
-        var db = new DialogBox(text, img);
-        db.flip();
-        return db;
-    }
+    public static DialogBox getBingBongDialog(Message msg, Image img) {
+        // get what is written in the message
+        String msgText = msg.getMsg();
 
-    // change style for a bot's response to a command
-    public static DialogBox getBingBongResponseDialog(String text, Image img, String chosenCommandName) {
-        DialogBox db = getBingBongDialog(text, img);
-        db.changeDialogStyle(chosenCommandName);
+        // get class name of message, which can be used to determine the message type
+        String msgType = msg.getClass().getSimpleName();
+
+        var db = new DialogBox(msgText, img);
+        db.flip();
+        db.changeDialogStyle(msgType);
         return db;
     }
 }

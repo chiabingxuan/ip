@@ -1,9 +1,12 @@
 package bingbong.command;
 
+import bingbong.message.SuccessMessage;
+import bingbong.message.WarningMessage;
 import bingbong.task.Task;
 import bingbong.task.TaskTracker;
 import bingbong.util.MessageFormatter;
 import bingbong.util.Storage;
+import bingbong.util.StorageException;
 import bingbong.util.TaskTrackerException;
 
 /**
@@ -18,7 +21,7 @@ public class DeleteCommand extends Command {
      * @param index List index of the task to be deleted.
      */
     public DeleteCommand(int index) {
-        super(false);
+        super();
         this.index = index;
     }
 
@@ -39,7 +42,18 @@ public class DeleteCommand extends Command {
         taskTracker = taskTracker.deleteTask(this.index);
         int newNumOfTasks = taskTracker.getNumOfTasks();
 
-        super.addToCommandOutput(MessageFormatter.getDeletedTaskMessage(taskToDelete, newNumOfTasks));
+        // add message to output
+        SuccessMessage successMessage = new SuccessMessage(MessageFormatter
+                .getDeletedTaskMessage(taskToDelete, newNumOfTasks));
+        super.addToOutputMessages(successMessage);
+
+        // update storage
+        try {
+            storage.saveTasks(taskTracker.getCombinedSaveableTasks());
+        } catch (StorageException ex) {
+            WarningMessage warningMessage = new WarningMessage(ex.getMessage());
+            super.addToOutputMessages(warningMessage);
+        }
 
         return taskTracker;
     }

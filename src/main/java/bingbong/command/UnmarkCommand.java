@@ -1,5 +1,7 @@
 package bingbong.command;
 
+import bingbong.message.SuccessMessage;
+import bingbong.message.WarningMessage;
 import bingbong.task.Task;
 import bingbong.task.TaskTracker;
 import bingbong.util.MessageFormatter;
@@ -19,7 +21,7 @@ public class UnmarkCommand extends Command {
      * @param index List index of the task to be marked as incomplete.
      */
     public UnmarkCommand(int index) {
-        super(false);
+        super();
         this.index = index;
     }
 
@@ -40,13 +42,16 @@ public class UnmarkCommand extends Command {
         taskTracker = taskTracker.editTask(this.index, unmarkedTask);
 
         // add message to output
-        super.addToCommandOutput(MessageFormatter.getUnmarkedTaskMessage(unmarkedTask));
+        SuccessMessage successMessage = new SuccessMessage(MessageFormatter
+                .getUnmarkedTaskMessage(unmarkedTask));
+        super.addToOutputMessages(successMessage);
 
         // update storage
         try {
             storage.saveTasks(taskTracker.getCombinedSaveableTasks());
         } catch (StorageException ex) {
-            super.addToCommandOutput(ex.getMessage());
+            WarningMessage warningMessage = new WarningMessage(ex.getMessage());
+            super.addToOutputMessages(warningMessage);
         }
 
         return taskTracker;

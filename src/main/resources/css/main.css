@@ -1,7 +1,9 @@
 .root {
-    main-color: rgb(237, 255, 242);       /* Create a looked-up color called "main-color" within root. */
+    /* Create a looked-up color called "main-color" within root. */
+    main-color: rgb(237, 255, 242);
+
     -fx-background-color: main-color;
-    -fx-background-image: url("../images/ripples.jpg"); /* Set image */
+    -fx-background-image: url("../images/rain.png");
     -fx-background-size: stretch;
 }
 
@@ -26,7 +28,7 @@
 }
 
 .scroll-pane {
-    -fx-background-color: rgba(255, 255, 255, 0.5);
+    -fx-background-color: rgba(255, 255, 255, 0.3);
 }
 
 .scroll-pane .viewport {

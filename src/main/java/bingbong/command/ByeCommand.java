@@ -1,5 +1,6 @@
 package bingbong.command;
 
+import bingbong.message.ByeMessage;
 import bingbong.task.TaskTracker;
 import bingbong.util.MessageFormatter;
 import bingbong.util.Storage;
@@ -12,7 +13,7 @@ public class ByeCommand extends Command {
      * Initialises a <code>ByeCommand</code>.
      */
     public ByeCommand() {
-        super(true);
+        super();
     }
 
     /**
@@ -26,7 +27,8 @@ public class ByeCommand extends Command {
      * @return New task list.
      */
     public TaskTracker execute(TaskTracker taskTracker, Storage storage) {
-        super.addToCommandOutput(MessageFormatter.getGoodbyeMessage());
+        ByeMessage goodbyeMessage = new ByeMessage(MessageFormatter.getGoodbyeMessage());
+        super.addToOutputMessages(goodbyeMessage);
         return taskTracker;
     }
 

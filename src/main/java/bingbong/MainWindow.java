@@ -1,8 +1,10 @@
 package bingbong;
 
+import java.util.List;
 import java.util.Optional;
 
-import bingbong.command.Command;
+import bingbong.message.ErrorMessage;
+import bingbong.message.Message;
 import bingbong.util.MessageFormatter;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
@@ -20,7 +22,7 @@ import javafx.util.Duration;
  */
 public class MainWindow extends AnchorPane {
     // if a wait is needed, this is how long we wait for
-    private static final int WAITING_TIME_SECONDS = 1;
+    private static final int WAITING_TIME_SECONDS = 3;
 
     // list of controls
     @FXML
@@ -44,6 +46,16 @@ public class MainWindow extends AnchorPane {
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
     }
 
+    @FXML
+    void terminate() {
+        // wait for a while before closing the app
+        PauseTransition pause = new PauseTransition(Duration.seconds(WAITING_TIME_SECONDS));
+        pause.setOnFinished(event -> Platform.exit());
+
+        // run the transition
+        pause.play();
+    }
+
     /** Injects the BingBong instance */
     @FXML
     public void setBingBong(BingBong b) {
@@ -51,15 +63,21 @@ public class MainWindow extends AnchorPane {
 
         // add the message from bot when it was loaded, if any.
         // show as a message bubble
-        Optional<String> loadedMessage = b.getLoadedMessage();
+        Optional<Message> loadedMessage = b.getLoadedMessage();
         loadedMessage.ifPresent(msg -> dialogContainer.getChildren().add(
                 DialogBox.getBingBongDialog(msg, bingBongImage)
         ));
 
-        // add welcome message bubble
-        dialogContainer.getChildren().add(
-                DialogBox.getBingBongDialog(MessageFormatter.getOpeningMessage(), bingBongImage)
-        );
+        // check whether or not loaded message is an error message
+        loadedMessage.filter(msg -> msg instanceof ErrorMessage)
+                // if there is error message, situation is fatal.
+                // need to terminate the app
+                .ifPresentOrElse(msg -> this.terminate(), () -> {
+                    // add welcome message bubble if there is no error message
+                    Message welcomeMessage = new Message(MessageFormatter.getOpeningMessage());
+                    dialogContainer.getChildren()
+                            .add(DialogBox.getBingBongDialog(welcomeMessage, bingBongImage));
+                });
     }
 
     /**
@@ -69,33 +87,25 @@ public class MainWindow extends AnchorPane {
     @FXML
     private void handleUserInput() {
         String input = userInput.getText();
-        String response = bot.getResponse(input);
+        List<Message> responses = bot.getResponses(input);
 
         // add user message bubble
         dialogContainer.getChildren().add(DialogBox.getUserDialog(input, userImage));
 
-        // get parsed command. if unknown, this is empty
-        Optional<Command> chosenCommand = bot.getAndResetChosenCommand();
+        // for each bot response, add and format the bubble
+        // according to the corresponding type of message produced by the bot
+        responses.forEach(msg -> {
+            DialogBox formattedDb = DialogBox.getBingBongDialog(msg, bingBongImage);
+            dialogContainer.getChildren().add(formattedDb);
+        });
 
-        // if command is known, format the bubble according to command name.
-        // otherwise, use normal formatting
-        chosenCommand.map(command -> command.getClass().getSimpleName()) // get specific name of command
-                .ifPresentOrElse(name -> dialogContainer.getChildren()
-                .add(DialogBox.getBingBongResponseDialog(response, bingBongImage, name)), () ->
-                        dialogContainer.getChildren().add(DialogBox.getBingBongDialog(response, bingBongImage)));
+        // terminate app if the last message from the bot is a bye message
+        Message lastMessage = responses.get(responses.size() - 1);
+        if (lastMessage.isTerminalMsg()) {
+            this.terminate();
+        }
 
-        // terminate app if bye command is issued
-        chosenCommand.filter(command -> command.isExit())
-                .ifPresent(name -> {
-                    // wait for a while before closing the app
-                    PauseTransition pause =
-                            new PauseTransition(Duration.seconds(WAITING_TIME_SECONDS));
-                    pause.setOnFinished(event -> Platform.exit());
-
-                    // run the transition
-                    pause.play();
-                });
-
+        // clear all text in the input box
         userInput.clear();
     }
 }
