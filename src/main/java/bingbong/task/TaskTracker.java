@@ -233,9 +233,7 @@ public class TaskTracker {
     public String toString() {
         return this.getFilteredTasks(task -> true) // get all tasks
                 .stream()
-                // create list item in String
                 .map(task -> task.toString())
-                // combine list items
                 .reduce((x, y) -> x + "\n" + y)
                 .orElse("");
     }

@@ -35,7 +35,6 @@ public class AddCommand extends Command {
      * @return New task list.
      */
     public TaskTracker execute(TaskTracker taskTracker, Storage storage) {
-        // add to tracker
         taskTracker = taskTracker.addTask(task);
         int newNumOfTasks = taskTracker.getNumOfTasks();
 
