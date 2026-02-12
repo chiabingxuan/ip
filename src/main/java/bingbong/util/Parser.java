@@ -281,6 +281,7 @@ public class Parser {
 
         // create a class that can be used to carry out the operation,
         // based on the command type
+        assert !typesToCommands.isEmpty() : "Mapping of command types to command functions cannot be empty";
         ThrowingFunction<String, Command> getCommandFunction = typesToCommands.get(chosenCommandType);
         return getCommandFunction.apply(inputLine);
     }
