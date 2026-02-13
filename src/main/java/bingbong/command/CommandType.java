@@ -13,5 +13,6 @@ public enum CommandType {
     DEADLINE,
     EVENT,
     LIST,
+    REMIND,
     BYE
 }

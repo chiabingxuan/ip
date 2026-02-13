@@ -1,5 +1,8 @@
 package bingbong.task;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 /**
  * Represents a todo that can be recorded in the chatbot. Contains
  * details of the todo, including the todo name and the completion status of the
@@ -35,6 +38,21 @@ public class Todo extends Task {
      */
     Todo changeTaskStatus(boolean isDoneNew) {
         return new Todo(this, isDoneNew);
+    }
+
+    /**
+     * Returns whether the todo will be occurring within the
+     * selected number of days from the specified date.
+     *
+     * @param windowStartDate The start of the time window to check.
+     * @param daysFromWindowStartDate Number of days from<code>windowStartDate</code>,
+     *                                defining the future time window for which todos
+     *                                should be flagged.
+     * @return Whether the todo will be occurring soon.
+     */
+    boolean isHappeningSoon(LocalDateTime windowStartDate, int daysFromWindowStartDate) {
+        // todos will never have a due date
+        return false;
     }
 
     /**

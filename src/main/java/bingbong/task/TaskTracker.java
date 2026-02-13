@@ -1,5 +1,7 @@
 package bingbong.task;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -229,6 +231,26 @@ public class TaskTracker {
             throws TaskTrackerException {
         Task oldTask = this.getTask(taskIndex);
         return oldTask.changeTaskStatus(isDoneNew);
+    }
+
+    /**
+     * Returns a <code>String</code> showing all the outstanding tasks that will be occurring
+     * within the selected number of days from the specified date, in a numbered list.
+     * In the case of deadlines, we check whether the deadline is due soon. In the case of
+     * events, we check whether the event is starting soon.
+     *
+     * @param windowStartDate The start of the time window to check.
+     * @param daysFromWindowStartDate Number of days from <code>windowStartDate</code>,
+     *                                defining the future time window for which tasks
+     *                                should be flagged.
+     * @return Numbered list of all the tasks that will be occurring soon, to be used
+     * in the reminder.
+     */
+    public String remindImpendingTasks(LocalDateTime windowStartDate, int daysFromWindowStartDate) {
+        List<Task> impendingTasks = this.getFilteredTasks(task ->
+                task.isHappeningSoon(windowStartDate, daysFromWindowStartDate) && !task.isDone());
+
+        return this.getNumberedTaskList(impendingTasks);
     }
 
     @Override

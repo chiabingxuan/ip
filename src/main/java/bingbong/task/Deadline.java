@@ -44,6 +44,21 @@ public class Deadline extends Task {
     }
 
     /**
+     * Returns whether the deadline will be due within the
+     * selected number of days from the specified date.
+     *
+     * @param windowStartDate The start of the time window to check.
+     * @param daysFromWindowStartDate Number of days from <code>windowStartDate</code>,
+     *                                defining the future time window for which deadlines
+     *                                should be flagged.
+     * @return Whether the deadline will be occurring soon.
+     */
+    boolean isHappeningSoon(LocalDateTime windowStartDate, int daysFromWindowStartDate) {
+        LocalDateTime windowEndDate = windowStartDate.plusDays(daysFromWindowStartDate);
+        return this.byWhen.isAfter(windowStartDate) && this.byWhen.isBefore(windowEndDate);
+    }
+
+    /**
      * Returns a <code>String</code> that represents this deadline.
      * This <code>String</code> can be saved to the task storage.
      *
