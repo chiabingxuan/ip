@@ -44,6 +44,8 @@ public class TaskTracker {
     private TaskTracker(TaskTracker taskTracker, Task newTask) {
         this.tasks = new ArrayList<>(taskTracker.tasks);
         this.tasks.add(newTask);
+        assert this.getNumOfTasks() > 0 : "Number of tasks in list is less than or equal "
+                + "to 0, even though a new task has been added";
     }
 
     /**
@@ -74,6 +76,7 @@ public class TaskTracker {
     private TaskTracker(TaskTracker taskTracker, int taskIndex) {
         this.tasks = new ArrayList<>(taskTracker.tasks);
         this.tasks.remove(taskIndex);
+        assert this.getNumOfTasks() >= 0 : "After deletion of task, number of tasks in list is now negative";
     }
 
     private String getWrongIndexExceptionMsg(int index) {
@@ -132,8 +135,7 @@ public class TaskTracker {
      *
      * @param index List index of the task to be returned.
      * @return Task at the chosen index.
-     * @throws bingbong.util.TaskTrackerException If <code>index</code>
-     *                                            is out of bounds of the task list.
+     * @throws TaskTrackerException If <code>index</code> is out of bounds of the task list.
      */
     public Task getTask(int index) throws TaskTrackerException {
         try {

@@ -69,6 +69,7 @@ public class BingBong {
      * @return The message obtained from the chatbot after it has been loaded, if any.
      */
     public Optional<Message> getLoadedMessage() {
+        assert this.loadedMessage != null : "Loaded message has not been initialised";
         return this.loadedMessage;
     }
 
@@ -80,8 +81,10 @@ public class BingBong {
      */
     public List<Message> getResponses(String inputLine) {
         try {
+            assert this.storage != null : "Storage has not been initialised";
+            assert this.taskTracker != null : "Task list has not been initialised";
             Command commandParsed = Parser.parse(inputLine);
-            taskTracker = commandParsed.execute(taskTracker, storage);
+            this.taskTracker = commandParsed.execute(this.taskTracker, storage);
             return commandParsed.getOutputMessages();
         } catch (BingBongException ex) {
             ErrorMessage errorMsg = new ErrorMessage(MessageFormatter.getExceptionMessage(ex.getMessage()));
