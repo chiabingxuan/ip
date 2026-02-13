@@ -68,7 +68,7 @@ public class MainWindow extends AnchorPane {
                 DialogBox.getBingBongDialog(msg, bingBongImage)
         ));
 
-        // check whether or not loaded message is an error message
+        // check whether loaded message is an error message
         loadedMessage.filter(msg -> msg instanceof ErrorMessage)
                 // if there is error message, situation is fatal.
                 // need to terminate the app
