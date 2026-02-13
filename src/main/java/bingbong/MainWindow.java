@@ -1,5 +1,6 @@
 package bingbong;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,6 +25,10 @@ public class MainWindow extends AnchorPane {
     // if a wait is needed, this is how long we wait for
     private static final int WAITING_TIME_SECONDS = 3;
 
+    // image paths to be used in the message display
+    private static final String USER_IMAGE_PATH = "/images/user.png";
+    private static final String BINGBONG_IMAGE_PATH = "/images/robot.png";
+
     // list of controls
     @FXML
     private ScrollPane scrollPane;
@@ -37,9 +42,11 @@ public class MainWindow extends AnchorPane {
     // instance of the chatbot
     private BingBong bot;
 
-    // images to be used in the message display
-    private Image userImage = new Image(this.getClass().getResourceAsStream("/images/user.png"));
-    private Image bingBongImage = new Image(this.getClass().getResourceAsStream("/images/robot.png"));
+    private Image getImage(String path) {
+        InputStream imageStream = this.getClass().getResourceAsStream(path);
+        assert imageStream != null : "Image stream cannot be null";
+        return new Image(imageStream);
+    }
 
     /**
      * Closes the application.
@@ -65,7 +72,7 @@ public class MainWindow extends AnchorPane {
         // show as a message bubble
         Optional<Message> loadedMessage = b.getLoadedMessage();
         loadedMessage.ifPresent(msg -> dialogContainer.getChildren().add(
-                DialogBox.getBingBongDialog(msg, bingBongImage)
+                DialogBox.getBingBongDialog(msg, this.getImage(BINGBONG_IMAGE_PATH))
         ));
 
         // check whether loaded message is an error message
@@ -76,7 +83,7 @@ public class MainWindow extends AnchorPane {
                     // add welcome message bubble if there is no error message
                     Message welcomeMessage = new Message(MessageFormatter.getOpeningMessage());
                     dialogContainer.getChildren()
-                            .add(DialogBox.getBingBongDialog(welcomeMessage, bingBongImage));
+                            .add(DialogBox.getBingBongDialog(welcomeMessage, this.getImage(BINGBONG_IMAGE_PATH)));
                 });
     }
 
@@ -91,12 +98,12 @@ public class MainWindow extends AnchorPane {
         List<Message> responses = bot.getResponses(input);
 
         // add user message bubble
-        dialogContainer.getChildren().add(DialogBox.getUserDialog(input, userImage));
+        dialogContainer.getChildren().add(DialogBox.getUserDialog(input, this.getImage(USER_IMAGE_PATH)));
 
         // for each bot response, add and format the bubble
         // according to the corresponding type of message produced by the bot
         responses.forEach(msg -> {
-            DialogBox formattedDb = DialogBox.getBingBongDialog(msg, bingBongImage);
+            DialogBox formattedDb = DialogBox.getBingBongDialog(msg, this.getImage(BINGBONG_IMAGE_PATH));
             dialogContainer.getChildren().add(formattedDb);
         });
 
