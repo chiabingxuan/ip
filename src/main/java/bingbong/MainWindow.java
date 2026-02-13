@@ -113,7 +113,6 @@ public class MainWindow extends AnchorPane {
             this.terminate();
         }
 
-        // clear all text in the input box
         userInput.clear();
 
         // autoscroll downwards after the new bubbles have been added

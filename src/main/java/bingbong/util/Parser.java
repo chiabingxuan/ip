@@ -51,164 +51,171 @@ public class Parser {
     private static final HashMap<CommandType,
             ThrowingFunction<String, Command>> typesToCommands = new HashMap<>();
 
+    // functions that get the Command object from the input String
+    private static MarkCommand getMarkCommand(String inputLine) throws ParserException {
+        try {
+            String[] inputTokens = inputLine.split("\\s+");
+            int indexToMark = Integer.parseInt(inputTokens[1]) - 1;
+            return new MarkCommand(indexToMark);
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            throw new ParserException("Task number is missing. Make sure you have added a "
+                    + "task number after the \"mark\" command."
+                    + "\nEg. "
+                    + MARK_EXAMPLE);
+        } catch (NumberFormatException ex) {
+            throw new ParserException("Task number is invalid. Make sure you have added the "
+                    + "correct task number after the \"mark\" command."
+                    + "\nEg. "
+                    + MARK_EXAMPLE);
+        }
+    }
+
+    private static UnmarkCommand getUnmarkCommand(String inputLine) throws ParserException {
+        try {
+            String[] inputTokens = inputLine.split("\\s+");
+            int indexToUnmark = Integer.parseInt(inputTokens[1]) - 1;
+            return new UnmarkCommand(indexToUnmark);
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            throw new ParserException("Task number is missing. Make sure you have added a "
+                    + "task number after the \"unmark\" command."
+                    + "\nEg. "
+                    + UNMARK_EXAMPLE);
+        } catch (NumberFormatException ex) {
+            throw new ParserException("Task number is invalid. Make sure you have added the "
+                    + "correct task number after the \"unmark\" command."
+                    + "\nEg. "
+                    + UNMARK_EXAMPLE);
+        }
+    }
+
+    private static DeleteCommand getDeleteCommand(String inputLine) throws ParserException {
+        try {
+            String[] inputTokens = inputLine.split("\\s+");
+            int indexToDelete = Integer.parseInt(inputTokens[1]) - 1;
+            return new DeleteCommand(indexToDelete);
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            throw new ParserException("Task number is missing. Make sure you have added a "
+                    + "task number after the \"delete\" command."
+                    + "\nEg. "
+                    + DELETE_EXAMPLE);
+        } catch (NumberFormatException ex) {
+            throw new ParserException("Task number is invalid. Make sure you have added the "
+                    + "correct task number after the \"delete\" command."
+                    + "\nEg. "
+                    + DELETE_EXAMPLE);
+        }
+    }
+
+    private static FindCommand getFindCommand(String inputLine) throws ParserException {
+        try {
+            String[] inputTokens = inputLine.split("\\s+", 2);
+            String substring = inputTokens[1];
+            return new FindCommand(substring);
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            throw new ParserException("Substring is missing. After the \"find\" command, "
+                    + "make sure you have added a substring to search for."
+                    + "\nEg. "
+                    + FIND_EXAMPLE);
+        }
+    }
+
+    private static AddCommand getTodoAddCommand(String inputLine) throws ParserException {
+        String[] detailsAfterSplit = inputLine.split("todo\\s+", 2);
+
+        if (detailsAfterSplit.length < 2) {
+            throw new ParserException("The description of a todo cannot be empty. "
+                    + "Add a task name after the \"todo\" command."
+                    + "\nEg. "
+                    + TODO_EXAMPLE);
+        }
+
+        String todoName = detailsAfterSplit[1];
+        Todo newTodo = new Todo(todoName);
+
+        return new AddCommand(newTodo);
+
+    }
+
+    private static AddCommand getDeadlineAddCommand(String inputLine) throws ParserException {
+        String[] detailsAfterSplittingCommand = inputLine.split("deadline\\s+", 2);
+        if (detailsAfterSplittingCommand.length < 2) {
+            throw new ParserException("The description of a deadline cannot be empty. "
+                    + "Add a task name after the \"deadline\" command."
+                    + "\nEg. "
+                    + DEADLINE_EXAMPLE);
+        }
+
+        String[] deadlineDetails = detailsAfterSplittingCommand[1]
+                .split("\\s+/by\\s+", 2);
+        if (deadlineDetails.length < 2) {
+            throw new ParserException("For deadlines, the \"/by\" delimiter "
+                    + "must be placed between the task description and the chosen date."
+                    + "\nEg. "
+                    + DEADLINE_EXAMPLE);
+        }
+
+        String deadlineName = deadlineDetails[0];
+        LocalDateTime byWhen = parseDate(deadlineDetails[1]);
+        Deadline newDeadline = new Deadline(deadlineName, byWhen);
+
+        return new AddCommand(newDeadline);
+    }
+
+    private static AddCommand getEventAddCommand(String inputLine) throws ParserException {
+        String[] detailsAfterSplittingCommand = inputLine.split("event\\s+", 2);
+        if (detailsAfterSplittingCommand.length < 2) {
+            throw new ParserException("The description of an event cannot be empty. "
+                    + "Add a task name after the \"event\" command."
+                    + "\nEg. "
+                    + EVENT_EXAMPLE);
+        }
+
+        String[] detailsAfterSplittingFrom = detailsAfterSplittingCommand[1]
+                .split("\\s+/from\\s+", 2);
+        if (detailsAfterSplittingFrom.length < 2) {
+            throw new ParserException("For events, the \"/from\" delimiter "
+                    + "must be placed between the task description and the chosen start time."
+                    + "\nEg. "
+                    + EVENT_EXAMPLE);
+        }
+
+        String eventName = detailsAfterSplittingFrom[0];
+        String[] detailsAfterSplittingTo = detailsAfterSplittingFrom[1]
+                .split("\\s+/to\\s+", 2);
+        if (detailsAfterSplittingTo.length < 2) {
+            throw new ParserException("For events, the \"/to\" delimiter "
+                    + "must be placed between the chosen start time and the chosen end time."
+                    + "\nEg. "
+                    + EVENT_EXAMPLE);
+        }
+
+        LocalDateTime startTime = parseDate(detailsAfterSplittingTo[0]);
+        LocalDateTime endTime = parseDate(detailsAfterSplittingTo[1]);
+        Event newEvent = new Event(eventName, startTime, endTime);
+
+        return new AddCommand(newEvent);
+    }
+
+    private static ListCommand getListCommand() {
+        return new ListCommand();
+    }
+
+    private static ByeCommand getByeCommand() {
+        return new ByeCommand();
+    }
+
     // init typesToCommands mapping
     // populate mapping of command types to the ThrowingFunction to be called
     private static void setupMapping() {
-        // mark chosen task done
-        typesToCommands.put(CommandType.MARK, inputLine -> {
-            try {
-                String[] inputTokens = inputLine.split("\\s+");
-                int indexToMark = Integer.parseInt(inputTokens[1]) - 1;
-                return new MarkCommand(indexToMark);
-            } catch (ArrayIndexOutOfBoundsException ex) {
-                throw new ParserException("Task number is missing. Make sure you have added a "
-                        + "task number after the \"mark\" command."
-                        + "\nEg. "
-                        + MARK_EXAMPLE);
-            } catch (NumberFormatException ex) {
-                throw new ParserException("Task number is invalid. Make sure you have added the "
-                        + "correct task number after the \"mark\" command."
-                        + "\nEg. "
-                        + MARK_EXAMPLE);
-            }
-        });
-
-        // mark chosen task as not done
-        typesToCommands.put(CommandType.UNMARK, inputLine -> {
-            try {
-                String[] inputTokens = inputLine.split("\\s+");
-                int indexToUnmark = Integer.parseInt(inputTokens[1]) - 1;
-                return new UnmarkCommand(indexToUnmark);
-            } catch (ArrayIndexOutOfBoundsException ex) {
-                throw new ParserException("Task number is missing. Make sure you have added a "
-                        + "task number after the \"unmark\" command."
-                        + "\nEg. "
-                        + UNMARK_EXAMPLE);
-            } catch (NumberFormatException ex) {
-                throw new ParserException("Task number is invalid. Make sure you have added the "
-                        + "correct task number after the \"unmark\" command."
-                        + "\nEg. "
-                        + UNMARK_EXAMPLE);
-            }
-        });
-
-        // delete chosen task
-        typesToCommands.put(CommandType.DELETE, inputLine -> {
-            try {
-                String[] inputTokens = inputLine.split("\\s+");
-                int indexToDelete = Integer.parseInt(inputTokens[1]) - 1;
-                return new DeleteCommand(indexToDelete);
-            } catch (ArrayIndexOutOfBoundsException ex) {
-                throw new ParserException("Task number is missing. Make sure you have added a "
-                        + "task number after the \"delete\" command."
-                        + "\nEg. "
-                        + DELETE_EXAMPLE);
-            } catch (NumberFormatException ex) {
-                throw new ParserException("Task number is invalid. Make sure you have added the "
-                        + "correct task number after the \"delete\" command."
-                        + "\nEg. "
-                        + DELETE_EXAMPLE);
-            }
-        });
-
-        // find tasks based on substring in input
-        typesToCommands.put(CommandType.FIND, inputLine -> {
-            try {
-                String[] inputTokens = inputLine.split("\\s+", 2);
-                String substring = inputTokens[1];
-                return new FindCommand(substring);
-            } catch (ArrayIndexOutOfBoundsException ex) {
-                throw new ParserException("Substring is missing. After the \"find\" command, "
-                        + "make sure you have added a substring to search for."
-                        + "\nEg. "
-                        + FIND_EXAMPLE);
-            }
-        });
-
-        // add a todo
-        typesToCommands.put(CommandType.TODO, inputLine -> {
-            String[] detailsAfterSplit = inputLine.split("todo\\s+", 2);
-
-            if (detailsAfterSplit.length < 2) {
-                throw new ParserException("The description of a todo cannot be empty. "
-                        + "Add a task name after the \"todo\" command."
-                        + "\nEg. "
-                        + TODO_EXAMPLE);
-            }
-
-            String todoName = detailsAfterSplit[1];
-            Todo newTodo = new Todo(todoName);
-
-            return new AddCommand(newTodo);
-        });
-
-        // add a deadline
-        typesToCommands.put(CommandType.DEADLINE, inputLine -> {
-            String[] detailsAfterSplittingCommand = inputLine.split("deadline\\s+", 2);
-            if (detailsAfterSplittingCommand.length < 2) {
-                throw new ParserException("The description of a deadline cannot be empty. "
-                        + "Add a task name after the \"deadline\" command."
-                        + "\nEg. "
-                        + DEADLINE_EXAMPLE);
-            }
-
-            String[] deadlineDetails = detailsAfterSplittingCommand[1]
-                    .split("\\s+/by\\s+", 2);
-            if (deadlineDetails.length < 2) {
-                throw new ParserException("For deadlines, the \"/by\" delimiter "
-                        + "must be placed between the task description and the chosen date."
-                        + "\nEg. "
-                        + DEADLINE_EXAMPLE);
-            }
-
-            String deadlineName = deadlineDetails[0];
-            LocalDateTime byWhen = parseDate(deadlineDetails[1]);
-            Deadline newDeadline = new Deadline(deadlineName, byWhen);
-
-            return new AddCommand(newDeadline);
-        });
-
-        // add an event
-        typesToCommands.put(CommandType.EVENT, inputLine -> {
-            String[] detailsAfterSplittingCommand = inputLine.split("event\\s+", 2);
-            if (detailsAfterSplittingCommand.length < 2) {
-                throw new ParserException("The description of an event cannot be empty. "
-                        + "Add a task name after the \"event\" command."
-                        + "\nEg. "
-                        + EVENT_EXAMPLE);
-            }
-
-            String[] detailsAfterSplittingFrom = detailsAfterSplittingCommand[1]
-                    .split("\\s+/from\\s+", 2);
-            if (detailsAfterSplittingFrom.length < 2) {
-                throw new ParserException("For events, the \"/from\" delimiter "
-                        + "must be placed between the task description and the chosen start time."
-                        + "\nEg. "
-                        + EVENT_EXAMPLE);
-            }
-
-            String eventName = detailsAfterSplittingFrom[0];
-            String[] detailsAfterSplittingTo = detailsAfterSplittingFrom[1]
-                    .split("\\s+/to\\s+", 2);
-            if (detailsAfterSplittingTo.length < 2) {
-                throw new ParserException("For events, the \"/to\" delimiter "
-                        + "must be placed between the chosen start time and the chosen end time."
-                        + "\nEg. "
-                        + EVENT_EXAMPLE);
-            }
-
-            LocalDateTime startTime = parseDate(detailsAfterSplittingTo[0]);
-            LocalDateTime endTime = parseDate(detailsAfterSplittingTo[1]);
-            Event newEvent = new Event(eventName, startTime, endTime);
-
-            return new AddCommand(newEvent);
-        });
-
-        // list all tasks
-        typesToCommands.put(CommandType.LIST, inputLine -> new ListCommand());
-
-        // quit the app
-        typesToCommands.put(CommandType.BYE, inputLine -> new ByeCommand());
+        typesToCommands.put(CommandType.MARK, inputLine -> getMarkCommand(inputLine));
+        typesToCommands.put(CommandType.UNMARK, inputLine -> getUnmarkCommand(inputLine));
+        typesToCommands.put(CommandType.DELETE, inputLine -> getDeleteCommand(inputLine));
+        typesToCommands.put(CommandType.FIND, inputLine -> getFindCommand(inputLine));
+        typesToCommands.put(CommandType.TODO, inputLine -> getTodoAddCommand(inputLine));
+        typesToCommands.put(CommandType.DEADLINE, inputLine -> getDeadlineAddCommand(inputLine));
+        typesToCommands.put(CommandType.EVENT, inputLine -> getEventAddCommand(inputLine));
+        typesToCommands.put(CommandType.LIST, inputLine -> getListCommand());
+        typesToCommands.put(CommandType.BYE, inputLine -> getByeCommand());
     }
 
     // get the correct command from the input

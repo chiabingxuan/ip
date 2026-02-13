@@ -85,7 +85,6 @@ public class DialogBox extends HBox {
      * @return A dialog box with the selected text and chatbot icon.
      */
     public static DialogBox getBingBongDialog(Message msg, Image img) {
-        // get what is written in the message
         String msgText = msg.getMsg();
 
         // get class name of message, which can be used to determine the message type
