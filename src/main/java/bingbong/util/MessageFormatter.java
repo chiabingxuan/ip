@@ -105,6 +105,22 @@ public class MessageFormatter {
     }
 
     /**
+     * Returns a message that reminds the user of all the tasks that
+     * will be happening, over the next few days.
+     *
+     * @param daysFromNow The selected number of days from the current date.
+     * @param listOfTasks Concatenated <code>String</code> representing the
+     *                    list of impending tasks.
+     * @return Output message.
+     */
+    public static String getReminderMessage(int daysFromNow, String listOfTasks) {
+        return "Don't forget! Here are all the outstanding tasks that you should take note of, "
+                + "over the next " + daysFromNow + " day(s):"
+                + "\n\n"
+                + listOfTasks;
+    }
+
+    /**
      * Returns a message notifying the user that an exception has occurred.
      *
      * @param msg Message of the exception thrown.

@@ -56,6 +56,20 @@ public abstract class Task {
     abstract Task changeTaskStatus(boolean isDoneNew);
 
     /**
+     * Returns whether the task will be occurring within the
+     * selected number of days from the specified date. In the case of deadlines,
+     * we check whether the deadline is due soon. In the case of
+     * events, we check whether the event is starting soon.
+     *
+     * @param windowStartDate The start of the time window to check.
+     * @param daysFromWindowStartDate Number of days from <code>windowStartDate</code>,
+     *                                defining the future time window for which tasks
+     *                                should be flagged.
+     * @return Whether the task will be occurring soon.
+     */
+    abstract boolean isHappeningSoon(LocalDateTime windowStartDate, int daysFromWindowStartDate);
+
+    /**
      * Returns a <code>String</code> corresponding to the input
      * <code>LocalDateTime</code> object. This <code>String</code> is formatted for
      * the chatbot's output, which can be viewed by the user.
@@ -99,6 +113,15 @@ public abstract class Task {
      */
     boolean hasSubstringInName(String substring) {
         return this.taskName.contains(substring);
+    }
+
+    /**
+     * Returns whether this task has been completed.
+     *
+     * @return Whether this task has been completed.
+     */
+    boolean isDone() {
+        return this.isDone;
     }
 
     @Override

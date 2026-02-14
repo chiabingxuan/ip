@@ -14,6 +14,7 @@ import bingbong.command.DeleteCommand;
 import bingbong.command.FindCommand;
 import bingbong.command.ListCommand;
 import bingbong.command.MarkCommand;
+import bingbong.command.RemindCommand;
 import bingbong.command.UnmarkCommand;
 import bingbong.task.Deadline;
 import bingbong.task.Event;
@@ -44,6 +45,8 @@ public class Parser {
             "\"deadline finish homework /by 2/1/2003 21:00\"";
     private static final String EVENT_EXAMPLE =
             "\"event go for a jog /from 2/1/2003 09:00 /to 2/1/2003 10:00\"";
+    private static final String REMIND_EXAMPLE =
+            "\"remind 3\" to be reminded of all the tasks taking place, within 3 days from now";
     private static final String DATE_FORMATTING_EXAMPLE =
             "\"2/1/2003 13:18\" which means 2 Jan 2003, 1:18 pm";
 
@@ -200,6 +203,24 @@ public class Parser {
         return new ListCommand();
     }
 
+    private static RemindCommand getRemindCommand(String inputLine) throws ParserException {
+        try {
+            String[] inputTokens = inputLine.split("\\s+");
+            int daysFromNow = Integer.parseInt(inputTokens[1]);
+            return new RemindCommand(daysFromNow);
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            throw new ParserException("Time window to check for (in days) is missing. "
+                    + "Make sure you have added it after the \"remind\" command."
+                    + "\nEg. "
+                    + REMIND_EXAMPLE);
+        } catch (NumberFormatException ex) {
+            throw new ParserException("Time window is invalid. Make sure you have added a "
+                    + "valid time window (in days) after the \"remind\" command."
+                    + "\nEg. "
+                    + REMIND_EXAMPLE);
+        }
+    }
+
     private static ByeCommand getByeCommand() {
         return new ByeCommand();
     }
@@ -215,6 +236,7 @@ public class Parser {
         typesToCommands.put(CommandType.DEADLINE, inputLine -> getDeadlineAddCommand(inputLine));
         typesToCommands.put(CommandType.EVENT, inputLine -> getEventAddCommand(inputLine));
         typesToCommands.put(CommandType.LIST, inputLine -> getListCommand());
+        typesToCommands.put(CommandType.REMIND, inputLine -> getRemindCommand(inputLine));
         typesToCommands.put(CommandType.BYE, inputLine -> getByeCommand());
     }
 

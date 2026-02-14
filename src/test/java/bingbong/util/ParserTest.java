@@ -30,6 +30,14 @@ public class ParserTest {
         assertEquals("list command",
                 Parser.parse("    list  ").toString());
 
+        // remind provided in correct format
+        assertEquals("remind command: 2",
+                Parser.parse("remind 2").toString());
+
+        // remind provided in correct format with whitespace
+        assertEquals("remind command: 3",
+                Parser.parse("    remind  3 ").toString());
+
         // bye provided in correct format
         assertEquals("bye command",
                 Parser.parse("bye").toString());
@@ -76,7 +84,7 @@ public class ParserTest {
         } catch (Exception ex) {
             assertEquals("I have no idea what that "
                             + "means. You could try:\n"
-                            + "[MARK, UNMARK, DELETE, FIND, TODO, DEADLINE, EVENT, LIST, BYE]",
+                            + "[MARK, UNMARK, DELETE, FIND, TODO, DEADLINE, EVENT, LIST, REMIND, BYE]",
                     ex.getMessage());
         }
     }
@@ -103,7 +111,7 @@ public class ParserTest {
     }
 
     @Test
-    public void parse_invalidIndex_exceptionThrown() {
+    public void parse_invalidInt_exceptionThrown() {
         // invalid index for mark
         try {
             assertEquals("", Parser.parse("mark something").toString());
@@ -135,6 +143,18 @@ public class ParserTest {
                     + "correct task number after the \"delete\" command."
                     + "\nEg. "
                     + "\"delete 1\" to delete the first task", ex.getMessage());
+        }
+
+        // invalid number of days for remind
+        try {
+            assertEquals("", Parser.parse("remind something").toString());
+            fail();
+        } catch (Exception ex) {
+            assertEquals("Time window is invalid. Make sure you have added a "
+                    + "valid time window (in days) after the \"remind\" command."
+                    + "\nEg. "
+                    + "\"remind 3\" to be reminded of all the tasks taking place, within 3 days from now",
+                    ex.getMessage());
         }
     }
 
@@ -335,6 +355,21 @@ public class ParserTest {
                             + "\nEg. "
                             + "\"event go for a jog /from 2/1/2003 09:00 /to 2/1/2003 10:00\"",
                     ex.getMessage());
+        }
+    }
+
+    @Test
+    public void parse_remindMissingFields_exceptionThrown() {
+        // missing number of days for remind
+        try {
+            assertEquals("", Parser.parse("remind  ").toString());
+            fail();
+        } catch (Exception ex) {
+            assertEquals("Time window to check for (in days) is missing. "
+                    + "Make sure you have added it after the \"remind\" command."
+                    + "\nEg. "
+                    + "\"remind 3\" to be reminded of all the tasks taking place, "
+                    + "within 3 days from now", ex.getMessage());
         }
     }
 

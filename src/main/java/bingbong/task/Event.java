@@ -48,6 +48,21 @@ public class Event extends Task {
     }
 
     /**
+     * Returns whether the event will start within the
+     * selected number of days from the specified date.
+     *
+     * @param windowStartDate The start of the time window to check.
+     * @param daysFromWindowStartDate Number of days from <code>windowStartDate</code>,
+     *                                defining the future time window for which
+     *                                events should be flagged.
+     * @return Whether the event will start soon.
+     */
+    boolean isHappeningSoon(LocalDateTime windowStartDate, int daysFromWindowStartDate) {
+        LocalDateTime windowEndDate = windowStartDate.plusDays(daysFromWindowStartDate);
+        return this.startTime.isAfter(windowStartDate) && this.startTime.isBefore(windowEndDate);
+    }
+
+    /**
      * Returns a <code>String</code> that represents this event.
      * This <code>String</code> can be saved to the task storage.
      *
