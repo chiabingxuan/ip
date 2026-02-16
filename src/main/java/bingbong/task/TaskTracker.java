@@ -1,6 +1,5 @@
 package bingbong.task;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +7,9 @@ import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
 import bingbong.util.TaskTrackerException;
+
+// used GPT-5.0 to improve existing JavaDoc comments, as well as
+// add JavaDoc for non-public methods
 
 /**
  * Manages the current list of tasks recorded, during the running of the
@@ -81,6 +83,14 @@ public class TaskTracker {
         assert this.getNumOfTasks() >= 0 : "After deletion of task, number of tasks in list is now negative";
     }
 
+    /**
+     * Returns a detailed exception message in <code>String</code>,
+     * describing an invalid task index. The index is converted to 1-indexing,
+     * in order to match user-facing representations.
+     *
+     * @param index Zero-based task index provided internally.
+     * @return Error message describing why the index is invalid.
+     */
     private String getWrongIndexExceptionMsg(int index) {
         // user uses 1-indexing
         int indexInInput = index + 1;
@@ -92,12 +102,27 @@ public class TaskTracker {
                 + " task(s) in the list.";
     }
 
+    /**
+     * Returns a list of tasks that satisfy the given predicate.
+     * This method centralises task filtering logic to avoid
+     * duplication across different operations.
+     *
+     * @param predicate Condition used to filter tasks.
+     * @return List of tasks matching the predicate.
+     */
     private List<Task> getFilteredTasks(Predicate<Task> predicate) {
         return this.tasks.stream()
                 .filter(predicate)
                 .toList();
     }
 
+    /**
+     * Returns a numbered string representation of the given task list.
+     * The numbering uses 1-indexing to align with user-facing output.
+     *
+     * @param tasks List of tasks to be formatted.
+     * @return Numbered list of tasks as a single concatenated string.
+     */
     private String getNumberedTaskList(List<Task> tasks) {
         // use 1-indexing for printed list
         return IntStream.rangeClosed(1, tasks.size())

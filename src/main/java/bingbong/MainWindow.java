@@ -18,6 +18,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
+// used GPT-5.0 to improve existing JavaDoc comments, as well as
+// add JavaDoc for non-public methods
+
 /**
  * Controller for the main GUI.
  */
@@ -42,6 +45,13 @@ public class MainWindow extends AnchorPane {
     // instance of the chatbot
     private BingBong bot;
 
+    /**
+     * Loads an image from the given resource path.
+     *
+     * @param path Classpath-relative path to the image resource.
+     * @return <code>Image</code> loaded from the specified path.
+     * @throws AssertionError If the image resource cannot be found.
+     */
     private Image getImage(String path) {
         InputStream imageStream = this.getClass().getResourceAsStream(path);
         assert imageStream != null : "Image stream cannot be null";
@@ -49,7 +59,9 @@ public class MainWindow extends AnchorPane {
     }
 
     /**
-     * Closes the application.
+     * Closes the application after a fixed delay.
+     * A short pause is introduced before exiting to allow any final
+     * messages to be displayed to the user.
      */
     @FXML
     void terminate() {
@@ -62,7 +74,12 @@ public class MainWindow extends AnchorPane {
     }
 
     /**
-     * Injects the <code>BingBong</code> instance.
+     * Injects the <code>BingBong</code> chatbot instance into this controller.
+     * Displays any loaded message from storage. If the loaded
+     * message is an error message, the application is terminated. Otherwise,
+     * a welcome message is displayed.
+     *
+     * @param b The <code>BingBong</code> instance to be used by the GUI.
      */
     @FXML
     public void setBingBong(BingBong b) {

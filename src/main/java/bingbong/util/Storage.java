@@ -17,6 +17,9 @@ import bingbong.task.Task;
 import bingbong.task.TaskTracker;
 import bingbong.task.Todo;
 
+// used GPT-5.0 to improve existing JavaDoc comments, as well as
+// add JavaDoc for non-public methods
+
 /**
  * Manages the storage of existing task lists in the disk.
  * Loads the task list that has been saved in previous runs, if any.
@@ -44,6 +47,125 @@ public class Storage {
     }
 
     /**
+     * Reads the next line from the saved task file and splits it
+     * into individual task details using the standard delimiter. Returns
+     * the resultant array.
+     *
+     * @param fileScanner <code>Scanner</code> used to read from the saved task file.
+     * @return Array of task detail tokens extracted from the line.
+     */
+    private String[] getTaskDetails(Scanner fileScanner) {
+        String taskString = fileScanner.nextLine();
+        return taskString.split(" \\| ");
+    }
+
+    /**
+     * Extracts and returns the task type icon from the parsed task details.
+     *
+     * @param taskDetails Tokenised representation of a saved task.
+     * @return <code>String</code> representing the task type icon.
+     */
+    private String getTaskType(String[] taskDetails) {
+        return taskDetails[0];
+    }
+
+    /**
+     * Determines and returns whether a task is marked as completed, based on
+     * its saved progress icon.
+     *
+     * @param taskDetails Tokenised representation of a saved task.
+     * @return <code>true</code> if the task is completed, <code>false</code> otherwise.
+     * @throws IllegalArgumentException If the progress icon is invalid.
+     */
+    private boolean getIsDone(String[] taskDetails) {
+        String isDoneIcon = taskDetails[1];
+        if (!isDoneIcon.equals(Task.DONE_ICON) && !isDoneIcon.equals(Task.NOT_DONE_ICON)) {
+            throw new IllegalArgumentException("Invalid progress icons in saved task file");
+        }
+        return isDoneIcon.equals(Task.DONE_ICON);
+    }
+
+    /**
+     * Extracts and returns the task name from the parsed task details.
+     *
+     * @param taskDetails Tokenised representation of a saved task.
+     * @return Name of the task.
+     */
+    private String getTaskName(String[] taskDetails) {
+        return taskDetails[2];
+    }
+
+    /**
+     * Creates and returns a todo from stored data.
+     *
+     * @param taskName Name of the todo.
+     * @param isDone Whether the todo is marked as completed.
+     * @return A reconstructed todo.
+     */
+    private Task createTodo(String taskName, boolean isDone) {
+        Todo todo = new Todo(taskName);
+        return new Todo(todo, isDone);
+    }
+
+    /**
+     * Creates and returns a deadline from stored data.
+     *
+     * @param taskDetails Array containing task information read from storage.
+     * @param taskName Name of the deadline.
+     * @param isDone Whether the deadline is marked as completed.
+     * @return A reconstructed deadline.
+     * @throws ParserException If the stored deadline date cannot be parsed.
+     */
+    private Task createDeadline(String[] taskDetails, String taskName, boolean isDone)
+            throws ParserException {
+        LocalDateTime byWhen = Parser.parseDate(taskDetails[3]);
+        Deadline deadline = new Deadline(taskName, byWhen);
+        return new Deadline(deadline, isDone);
+    }
+
+    /**
+     * Creates and returns an event from stored data.
+     *
+     * @param taskDetails Array containing task information read from storage.
+     * @param taskName Name of the event.
+     * @param isDone Whether the event is marked as completed.
+     * @return A reconstructed event.
+     * @throws ParserException If the stored event dates cannot be parsed.
+     */
+    private Task createEvent(String[] taskDetails, String taskName, boolean isDone)
+            throws ParserException {
+        LocalDateTime startTime = Parser.parseDate(taskDetails[3]);
+        LocalDateTime endTime = Parser.parseDate(taskDetails[4]);
+        Event event = new Event(taskName, startTime, endTime);
+        return new Event(event, isDone);
+    }
+
+    /**
+     * Creates a <code>Task</code> object from the parsed task details.
+     * The task type is determined using the saved task icon, and
+     * additional datetime fields are parsed where required.
+     *
+     * @param taskDetails Tokenised representation of a saved task.
+     * @return Newly constructed <code>Task</code> instance.
+     * @throws ParserException If date parsing fails.
+     * @throws IllegalArgumentException If the task type is invalid.
+     */
+    private Task createTask(String[] taskDetails) throws ParserException {
+        // get separate info on the task
+        String taskType = this.getTaskType(taskDetails);
+        boolean isDone = this.getIsDone(taskDetails);
+        String taskName = this.getTaskName(taskDetails);
+
+        // create and return new task object
+        return switch (taskType) {
+            case Todo.TASK_ICON -> this.createTodo(taskName, isDone);
+            case Deadline.TASK_ICON -> this.createDeadline(taskDetails, taskName, isDone);
+            case Event.TASK_ICON -> this.createEvent(taskDetails, taskName, isDone);
+            default -> throw new IllegalArgumentException("Invalid task icons in saved task file");
+        };
+    }
+
+    /**
      * Returns a <code>TaskTracker</code> object containing
      * a list of loaded tasks from the disk.
      *
@@ -59,44 +181,9 @@ public class Storage {
             Scanner fileScanner = new Scanner(f);
 
             ArrayList<Task> loadedTasks = new ArrayList<>();
-
             while (fileScanner.hasNextLine()) {
-                String taskString = fileScanner.nextLine();
-                String[] taskDetails = taskString.split(" \\| ");
-
-                // get task details
-                String taskType = taskDetails[0];
-                String isDoneIcon = taskDetails[1];
-                if (!isDoneIcon.equals(Task.DONE_ICON) && !isDoneIcon.equals(Task.NOT_DONE_ICON)) {
-                    throw new IllegalArgumentException("Invalid progress icons in saved task file");
-                }
-                boolean isDone = isDoneIcon.equals(Task.DONE_ICON);
-                String taskName = taskDetails[2];
-
-                // create new task object
-                Task newTask;
-                switch (taskType) {
-                case Todo.TASK_ICON:
-                    Todo todo = new Todo(taskName);
-                    newTask = new Todo(todo, isDone);
-                    break;
-                case Deadline.TASK_ICON:
-                    LocalDateTime byWhen = Parser.parseDate(taskDetails[3]);
-                    Deadline deadline = new Deadline(taskName, byWhen);
-                    newTask = new Deadline(deadline, isDone);
-                    break;
-                case Event.TASK_ICON:
-                    // task is an event
-                    LocalDateTime startTime = Parser.parseDate(taskDetails[3]);
-                    LocalDateTime endTime = Parser.parseDate(taskDetails[4]);
-                    Event event = new Event(taskName, startTime, endTime);
-                    newTask = new Event(event, isDone);
-                    break;
-                default:
-                    throw new IllegalArgumentException("Invalid task icons in saved task file");
-                }
-
-                // add this new task object
+                String[] taskDetails = this.getTaskDetails(fileScanner);
+                Task newTask = this.createTask(taskDetails);
                 loadedTasks.add(newTask);
             }
 

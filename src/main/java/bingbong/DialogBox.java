@@ -15,6 +15,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 
+// used GPT-5.0 to improve existing JavaDoc comments, as well as
+// add JavaDoc for non-public methods
+
 /**
  * Represents a dialog box consisting of an ImageView to represent the speaker's face
  * and a label containing text from the speaker.
@@ -25,6 +28,14 @@ public class DialogBox extends HBox {
     @FXML
     private ImageView displayPicture;
 
+    /**
+     * Constructs a dialog box with the specified text and display image.
+     * This constructor loads the dialog box layout from the corresponding FXML file
+     * and initialises the dialog text and display picture.
+     *
+     * @param text The text to be displayed in the dialog box.
+     * @param img  The image representing the speaker.
+     */
     private DialogBox(String text, Image img) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(MainWindow.class.getResource("/view/DialogBox.fxml"));
@@ -50,6 +61,13 @@ public class DialogBox extends HBox {
         dialog.getStyleClass().add("reply-label");
     }
 
+    /**
+     * Updates the visual styling of the dialog text based on the message type.
+     * The message type is inferred from the class name of the <code>Message</code>
+     * and is used to apply the appropriate CSS style class.
+     *
+     * @param messageType The simple class name of the message used to determine styling.
+     */
     private void changeDialogStyle(String messageType) {
         switch (messageType) {
         case "SuccessMessage":
