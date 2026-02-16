@@ -20,6 +20,9 @@ import bingbong.task.Deadline;
 import bingbong.task.Event;
 import bingbong.task.Todo;
 
+// used GPT-5.0 to improve existing JavaDoc comments, as well as
+// add JavaDoc for non-public methods
+
 /**
  * Processes and parses input provided by the user. Identifies the type of
  * command that is to be executed, whilst creating the operation to be applied
@@ -54,7 +57,13 @@ public class Parser {
     private static final HashMap<CommandType,
             ThrowingFunction<String, Command>> typesToCommands = new HashMap<>();
 
-    // functions that get the Command object from the input String
+    /**
+     * Parses and returns a <code>MarkCommand</code> from the user input.
+     *
+     * @param inputLine Raw input string from the user.
+     * @return <code>MarkCommand</code> representing the operation to be executed.
+     * @throws ParserException If the task index is missing or invalid.
+     */
     private static MarkCommand getMarkCommand(String inputLine) throws ParserException {
         try {
             String[] inputTokens = inputLine.split("\\s+");
@@ -73,6 +82,13 @@ public class Parser {
         }
     }
 
+    /**
+     * Parses and returns a <code>UnmarkCommand</code> from the user input.
+     *
+     * @param inputLine Raw input string from the user.
+     * @return <code>UnmarkCommand</code> representing the operation to be executed.
+     * @throws ParserException If the task index is missing or invalid.
+     */
     private static UnmarkCommand getUnmarkCommand(String inputLine) throws ParserException {
         try {
             String[] inputTokens = inputLine.split("\\s+");
@@ -91,6 +107,13 @@ public class Parser {
         }
     }
 
+    /**
+     * Parses and returns a <code>DeleteCommand</code> from the user input.
+     *
+     * @param inputLine Raw input string from the user.
+     * @return <code>DeleteCommand</code> representing the operation to be executed.
+     * @throws ParserException If the task index is missing or invalid.
+     */
     private static DeleteCommand getDeleteCommand(String inputLine) throws ParserException {
         try {
             String[] inputTokens = inputLine.split("\\s+");
@@ -109,6 +132,13 @@ public class Parser {
         }
     }
 
+    /**
+     * Parses and returns a <code>FindCommand</code> from the user input.
+     *
+     * @param inputLine Raw input string from the user.
+     * @return <code>FindCommand</code> containing the substring to search for.
+     * @throws ParserException If the search substring is missing.
+     */
     private static FindCommand getFindCommand(String inputLine) throws ParserException {
         try {
             String[] inputTokens = inputLine.split("\\s+", 2);
@@ -122,6 +152,14 @@ public class Parser {
         }
     }
 
+    /**
+     * Parses and returns an <code>AddCommand</code> from the user input,
+     * where we wish to add a todo.
+     *
+     * @param inputLine Raw input string from the user.
+     * @return <code>AddCommand</code> wrapping a newly created todo.
+     * @throws ParserException If the task description is missing.
+     */
     private static AddCommand getTodoAddCommand(String inputLine) throws ParserException {
         String[] detailsAfterSplit = inputLine.split("todo\\s+", 2);
 
@@ -139,6 +177,15 @@ public class Parser {
 
     }
 
+    /**
+     * Parses and returns an <code>AddCommand</code> from the user input,
+     * where we wish to add a deadline.
+     *
+     * @param inputLine Raw input string from the user.
+     * @return <code>AddCommand</code> wrapping a newly created deadline.
+     * @throws ParserException If the description or required delimiters are missing,
+     *                         or if the date cannot be parsed.
+     */
     private static AddCommand getDeadlineAddCommand(String inputLine) throws ParserException {
         String[] detailsAfterSplittingCommand = inputLine.split("deadline\\s+", 2);
         if (detailsAfterSplittingCommand.length < 2) {
@@ -164,6 +211,15 @@ public class Parser {
         return new AddCommand(newDeadline);
     }
 
+    /**
+     * Parses and returns an <code>AddCommand</code> from the user input,
+     * where we wish to add an event.
+     *
+     * @param inputLine Raw input string from the user.
+     * @return <code>AddCommand</code> wrapping a newly created event.
+     * @throws ParserException If required delimiters are missing or
+     *                         if the start or end dates cannot be parsed.
+     */
     private static AddCommand getEventAddCommand(String inputLine) throws ParserException {
         String[] detailsAfterSplittingCommand = inputLine.split("event\\s+", 2);
         if (detailsAfterSplittingCommand.length < 2) {
@@ -199,10 +255,22 @@ public class Parser {
         return new AddCommand(newEvent);
     }
 
+    /**
+     * Creates and returns a <code>ListCommand</code>.
+     *
+     * @return <code>ListCommand</code> representing a request to list all tasks.
+     */
     private static ListCommand getListCommand() {
         return new ListCommand();
     }
 
+    /**
+     * Parses and returns a <code>RemindCommand</code> from the user input.
+     *
+     * @param inputLine Raw input string from the user.
+     * @return <code>RemindCommand</code> representing the reminder operation.
+     * @throws ParserException If the time window is missing or invalid.
+     */
     private static RemindCommand getRemindCommand(String inputLine) throws ParserException {
         try {
             String[] inputTokens = inputLine.split("\\s+");
@@ -221,12 +289,20 @@ public class Parser {
         }
     }
 
+    /**
+     * Creates and returns a <code>ByeCommand</code>.
+     *
+     * @return <code>ByeCommand</code> representing program termination.
+     */
     private static ByeCommand getByeCommand() {
         return new ByeCommand();
     }
 
-    // init typesToCommands mapping
-    // populate mapping of command types to the ThrowingFunction to be called
+    /**
+     * Populates the internal mapping from <code>CommandType</code> to the
+     * corresponding command-construction function. This method must be called
+     * before attempting to retrieve commands from the mapping.
+     */
     private static void setupMapping() {
         typesToCommands.put(CommandType.MARK, inputLine -> getMarkCommand(inputLine));
         typesToCommands.put(CommandType.UNMARK, inputLine -> getUnmarkCommand(inputLine));
@@ -240,7 +316,13 @@ public class Parser {
         typesToCommands.put(CommandType.BYE, inputLine -> getByeCommand());
     }
 
-    // get the correct command from the input
+    /**
+     * Determines and returns the <code>CommandType</code> represented by the user input.
+     *
+     * @param inputLine Raw input string from the user.
+     * @return Identified <code>CommandType</code>.
+     * @throws ParserException If the command type is unknown, or if the input is invalid.
+     */
     private static CommandType getCommandType(String inputLine) throws ParserException {
         CommandType chosenCommand;
 

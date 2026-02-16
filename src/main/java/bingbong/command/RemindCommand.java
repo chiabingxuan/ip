@@ -3,13 +3,17 @@ package bingbong.command;
 import java.time.LocalDateTime;
 
 import bingbong.message.SuccessMessage;
-import bingbong.message.WarningMessage;
-import bingbong.task.Task;
 import bingbong.task.TaskTracker;
 import bingbong.util.MessageFormatter;
 import bingbong.util.Storage;
-import bingbong.util.StorageException;
 
+// used GPT-5.0 to improve existing JavaDoc comments, as well as
+// add JavaDoc for non-public methods
+
+/**
+ * Represents a command where we want to remind users
+ * of impending, outstanding tasks.
+ */
 public class RemindCommand extends Command {
     private final int daysFromNow;
 

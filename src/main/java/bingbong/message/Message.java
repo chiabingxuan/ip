@@ -1,5 +1,8 @@
 package bingbong.message;
 
+// used GPT-5.0 to improve existing JavaDoc comments, as well as
+// add JavaDoc for non-public methods
+
 /**
  * Represents a message produced by the chatbot
  * (eg. when a command has been executed).
@@ -18,6 +21,13 @@ public class Message {
         this.isTerminalMsg = false;
     }
 
+    /**
+     * Initialises a message, with the specific flag for whether the message should
+     * terminate the chabot.
+     *
+     * @param msg Text to be contained in the message.
+     * @param isTerminalMsg Whether the message should terminate the chatbot.
+     */
     protected Message(String msg, boolean isTerminalMsg) {
         this.msg = msg;
         this.isTerminalMsg = isTerminalMsg;

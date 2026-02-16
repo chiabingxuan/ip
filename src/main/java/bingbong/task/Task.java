@@ -3,6 +3,9 @@ package bingbong.task;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+// used GPT-5.0 to improve existing JavaDoc comments, as well as
+// add JavaDoc for non-public methods
+
 /**
  * Represents a task that can be recorded in the chatbot. Contains
  * details of the task, including the task name and the completion status of the
@@ -43,6 +46,11 @@ public abstract class Task {
         this.isDone = isDone;
     }
 
+    /**
+     * Returns an icon that indicates whether this task has been marked as complete.
+     *
+     * @return Icon indicating this task's completion status.
+     */
     private String getStatusIcon() {
         return this.isDone ? DONE_ICON : NOT_DONE_ICON;
     }
