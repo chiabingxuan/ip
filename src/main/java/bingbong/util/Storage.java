@@ -157,12 +157,22 @@ public class Storage {
         String taskName = this.getTaskName(taskDetails);
 
         // create and return new task object
-        return switch (taskType) {
-            case Todo.TASK_ICON -> this.createTodo(taskName, isDone);
-            case Deadline.TASK_ICON -> this.createDeadline(taskDetails, taskName, isDone);
-            case Event.TASK_ICON -> this.createEvent(taskDetails, taskName, isDone);
-            default -> throw new IllegalArgumentException("Invalid task icons in saved task file");
-        };
+        Task newTask;
+        switch (taskType) {
+        case Todo.TASK_ICON:
+            newTask = this.createTodo(taskName, isDone);
+            break;
+        case Deadline.TASK_ICON:
+            newTask = this.createDeadline(taskDetails, taskName, isDone);
+            break;
+        case Event.TASK_ICON:
+            newTask = this.createEvent(taskDetails, taskName, isDone);
+            break;
+        default:
+            throw new IllegalArgumentException("Invalid task icons in saved task file");
+        }
+
+        return newTask;
     }
 
     /**

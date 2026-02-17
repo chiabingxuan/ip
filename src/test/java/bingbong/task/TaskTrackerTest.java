@@ -12,12 +12,12 @@ import org.junit.jupiter.api.Test;
 public class TaskTrackerTest {
     private static final ArrayList<Task> TASKS =
             new ArrayList<>(List.of(new Todo("finish some stuff"),
-            new Deadline(new Deadline("finish ip",
-                    LocalDateTime.of(2026, 2, 14, 14, 0)),
-                    true),
-            new Event("play basketball with friends",
-                    LocalDateTime.of(2026, 2, 17, 15, 0),
-                    LocalDateTime.of(2026, 2, 17, 17, 0))));
+                    new Deadline(new Deadline("finish ip",
+                            LocalDateTime.of(2026, 2, 14, 14, 0)),
+                            true),
+                    new Event("play basketball with friends",
+                            LocalDateTime.of(2026, 2, 17, 15, 0),
+                            LocalDateTime.of(2026, 2, 17, 17, 0))));
 
     @Test
     public void getTask_indexInRange_success() throws Exception {
@@ -27,7 +27,7 @@ public class TaskTrackerTest {
 
         // get last task
         assertEquals("[E][ ] play basketball with friends "
-                + "(from: 17 Feb 2026, 3:00 pm to: 17 Feb 2026, 5:00 pm)",
+                        + "(from: 17 Feb 2026, 3:00 pm to: 17 Feb 2026, 5:00 pm)",
                 new TaskTracker(TASKS).getTask(2).toString());
     }
 
@@ -66,16 +66,16 @@ public class TaskTrackerTest {
     public void editTask_indexInRange_success() throws Exception {
         // edit first task
         assertEquals("[T][ ] go jogging\n"
-                + "[D][X] finish ip (by: 14 Feb 2026, 2:00 pm)\n"
-                + "[E][ ] play basketball with friends (from: 17 Feb 2026, 3:00 pm to: 17 Feb 2026, 5:00 pm)",
+                        + "[D][X] finish ip (by: 14 Feb 2026, 2:00 pm)\n"
+                        + "[E][ ] play basketball with friends (from: 17 Feb 2026, 3:00 pm to: 17 Feb 2026, 5:00 pm)",
                 new TaskTracker(TASKS).editTask(0, new Todo("go jogging")).toString());
 
         // edit second task from marked to unmarked
         assertEquals("[T][ ] finish some stuff\n"
-                + "[D][ ] finish ip (by: 14 Feb 2026, 2:00 pm)\n"
-                + "[E][ ] play basketball with friends (from: 17 Feb 2026, 3:00 pm to: 17 Feb 2026, 5:00 pm)",
+                        + "[D][ ] finish ip (by: 14 Feb 2026, 2:00 pm)\n"
+                        + "[E][ ] play basketball with friends (from: 17 Feb 2026, 3:00 pm to: 17 Feb 2026, 5:00 pm)",
                 new TaskTracker(TASKS).editTask(1, new Deadline("finish ip",
-                        LocalDateTime.of(2026, 2, 14, 14, 0)))
+                                LocalDateTime.of(2026, 2, 14, 14, 0)))
                         .toString());
     }
 
@@ -117,9 +117,9 @@ public class TaskTrackerTest {
     public void addTask_success() {
         // add new task
         assertEquals("[T][ ] finish some stuff\n"
-                + "[D][X] finish ip (by: 14 Feb 2026, 2:00 pm)\n"
-                + "[E][ ] play basketball with friends (from: 17 Feb 2026, 3:00 pm to: 17 Feb 2026, 5:00 pm)\n"
-                + "[T][ ] go jogging",
+                        + "[D][X] finish ip (by: 14 Feb 2026, 2:00 pm)\n"
+                        + "[E][ ] play basketball with friends (from: 17 Feb 2026, 3:00 pm to: 17 Feb 2026, 5:00 pm)\n"
+                        + "[T][ ] go jogging",
                 new TaskTracker(TASKS).addTask(new Todo("go jogging")).toString());
     }
 
@@ -127,7 +127,7 @@ public class TaskTrackerTest {
     public void deleteTask_indexInRange_success() throws Exception {
         // delete first task
         assertEquals("[D][X] finish ip (by: 14 Feb 2026, 2:00 pm)\n"
-                + "[E][ ] play basketball with friends (from: 17 Feb 2026, 3:00 pm to: 17 Feb 2026, 5:00 pm)",
+                        + "[E][ ] play basketball with friends (from: 17 Feb 2026, 3:00 pm to: 17 Feb 2026, 5:00 pm)",
                 new TaskTracker(TASKS).deleteTask(0).toString());
     }
 
@@ -169,8 +169,9 @@ public class TaskTrackerTest {
     public void listTasks_success() {
         // list tasks
         assertEquals("1. [T][ ] finish some stuff\n"
-                + "2. [D][X] finish ip (by: 14 Feb 2026, 2:00 pm)\n"
-                + "3. [E][ ] play basketball with friends (from: 17 Feb 2026, 3:00 pm to: 17 Feb 2026, 5:00 pm)",
+                        + "2. [D][X] finish ip (by: 14 Feb 2026, 2:00 pm)\n"
+                        + "3. [E][ ] play basketball with friends "
+                        + "(from: 17 Feb 2026, 3:00 pm to: 17 Feb 2026, 5:00 pm)",
                 new TaskTracker(TASKS).listTasks());
     }
 
@@ -178,12 +179,12 @@ public class TaskTrackerTest {
     public void findTasks_success() {
         // find tasks containing substring "finish" (first and second tasks)
         assertEquals("1. [T][ ] finish some stuff\n"
-                + "2. [D][X] finish ip (by: 14 Feb 2026, 2:00 pm)",
+                        + "2. [D][X] finish ip (by: 14 Feb 2026, 2:00 pm)",
                 new TaskTracker(TASKS).findTasks("finish"));
 
         // find tasks containing substring "basket" (third task)
         assertEquals("1. [E][ ] play basketball with friends "
-                + "(from: 17 Feb 2026, 3:00 pm to: 17 Feb 2026, 5:00 pm)",
+                        + "(from: 17 Feb 2026, 3:00 pm to: 17 Feb 2026, 5:00 pm)",
                 new TaskTracker(TASKS).findTasks("basket"));
     }
 
@@ -244,7 +245,7 @@ public class TaskTrackerTest {
 
         // find tasks happening in 6 days (only 3rd task is outstanding and will be included)
         assertEquals("1. [E][ ] play basketball with friends "
-                + "(from: 17 Feb 2026, 3:00 pm to: 17 Feb 2026, 5:00 pm)",
+                        + "(from: 17 Feb 2026, 3:00 pm to: 17 Feb 2026, 5:00 pm)",
                 new TaskTracker(TASKS).remindImpendingTasks(windowStartTime, 6));
     }
 }

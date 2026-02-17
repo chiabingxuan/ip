@@ -269,7 +269,7 @@ public class TaskTracker {
      *                                defining the future time window for which tasks
      *                                should be flagged.
      * @return Numbered list of all the tasks that will be occurring soon, to be used
-     * in the reminder.
+     *         in the reminder.
      */
     public String remindImpendingTasks(LocalDateTime windowStartDate, int daysFromWindowStartDate) {
         List<Task> impendingTasks = this.getFilteredTasks(task ->

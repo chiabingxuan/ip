@@ -41,8 +41,12 @@ public class BingBong {
             this.storage = new Storage(dataFolderPath, tasksFilename);
             this.taskTracker = storage.loadSavedTasks();
         } catch (FileNotFoundException ex) {
-            WarningMessage noFileWarningMsg = new WarningMessage("No existing task file detected. "
-                    + "An empty task list will be initialised.");
+            WarningMessage noFileWarningMsg = new WarningMessage("There is no "
+                    + "task file named "
+                    + tasksFilename
+                    + " in "
+                    + dataFolderPath
+                    + ". An empty task list will be initialised.");
             this.loadedMessage = Optional.of(noFileWarningMsg);
             this.taskTracker = new TaskTracker();
         } catch (StorageException ex) {
