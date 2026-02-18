@@ -275,6 +275,14 @@ public class Parser {
         try {
             String[] inputTokens = inputLine.split("\\s+");
             int daysFromNow = Integer.parseInt(inputTokens[1]);
+
+            if (daysFromNow < 1) {
+                throw new ParserException("The time window that you have provided is non-positive. "
+                    + "Please make sure that the time window is greater than or equal to 1."
+                    + "\nEg. "
+                    + REMIND_EXAMPLE);
+            }
+
             return new RemindCommand(daysFromNow);
         } catch (ArrayIndexOutOfBoundsException ex) {
             throw new ParserException("Time window to check for (in days) is missing. "

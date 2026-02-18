@@ -111,7 +111,7 @@ public class ParserTest {
     }
 
     @Test
-    public void parse_invalidInt_exceptionThrown() {
+    public void parse_textInsteadOfInt_exceptionThrown() {
         // invalid index for mark
         try {
             assertEquals("", Parser.parse("mark something").toString());
@@ -152,6 +152,81 @@ public class ParserTest {
         } catch (Exception ex) {
             assertEquals("Time window is invalid. Make sure you have added a "
                     + "valid time window (in days) after the \"remind\" command."
+                    + "\nEg. "
+                    + "\"remind 3\" to be reminded of all the tasks taking place, within 3 days from now",
+                    ex.getMessage());
+        }
+    }
+
+    @Test
+    public void parse_decimalInsteadOfInt_exceptionThrown() {
+        // invalid index for mark
+        try {
+            assertEquals("", Parser.parse("mark 0.5").toString());
+            fail();
+        } catch (Exception ex) {
+            assertEquals("Task number is invalid. Make sure you have added the "
+                    + "correct task number after the \"mark\" command."
+                    + "\nEg. "
+                    + "\"mark 1\" to mark the first task as completed", ex.getMessage());
+        }
+
+        // invalid index for unmark
+        try {
+            assertEquals("", Parser.parse("unmark 0.5").toString());
+            fail();
+        } catch (Exception ex) {
+            assertEquals("Task number is invalid. Make sure you have added the "
+                    + "correct task number after the \"unmark\" command."
+                    + "\nEg. "
+                    + "\"unmark 1\" to mark the first task as incomplete", ex.getMessage());
+        }
+
+        // invalid index for delete
+        try {
+            assertEquals("", Parser.parse("delete 0.5").toString());
+            fail();
+        } catch (Exception ex) {
+            assertEquals("Task number is invalid. Make sure you have added the "
+                    + "correct task number after the \"delete\" command."
+                    + "\nEg. "
+                    + "\"delete 1\" to delete the first task", ex.getMessage());
+        }
+
+        // invalid number of days for remind
+        try {
+            assertEquals("", Parser.parse("remind 0.5").toString());
+            fail();
+        } catch (Exception ex) {
+            assertEquals("Time window is invalid. Make sure you have added a "
+                    + "valid time window (in days) after the \"remind\" command."
+                    + "\nEg. "
+                    + "\"remind 3\" to be reminded of all the tasks taking place, within 3 days from now",
+                    ex.getMessage());
+        }
+    }
+
+    @Test
+    public void parse_remindNonPositiveInt_exceptionThrown() {
+        // number of days is 0
+        try {
+            assertEquals("", Parser.parse("remind 0").toString());
+            fail();
+        } catch (Exception ex) {
+            assertEquals("The time window that you have provided is non-positive. "
+                    + "Please make sure that the time window is greater than or equal to 1."
+                    + "\nEg. "
+                    + "\"remind 3\" to be reminded of all the tasks taking place, within 3 days from now",
+                    ex.getMessage());
+        }
+
+        // number of days is negative
+        try {
+            assertEquals("", Parser.parse("remind -3").toString());
+            fail();
+        } catch (Exception ex) {
+            assertEquals("The time window that you have provided is non-positive. "
+                    + "Please make sure that the time window is greater than or equal to 1."
                     + "\nEg. "
                     + "\"remind 3\" to be reminded of all the tasks taking place, within 3 days from now",
                     ex.getMessage());
