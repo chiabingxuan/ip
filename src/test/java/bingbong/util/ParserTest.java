@@ -7,57 +7,51 @@ import org.junit.jupiter.api.Test;
 
 public class ParserTest {
     @Test
-    public void parse_correctFormat_success() throws Exception {
+    public void parse_todoCorrectFormat_success() throws Exception {
         // todo provided in correct format
         assertEquals("add command: [T][ ] borrow book",
                 Parser.parse("todo borrow book").toString());
+    }
 
+    @Test
+    public void parse_deadlineCorrectFormat_success() throws Exception {
         // deadline provided in correct format
         assertEquals("add command: [D][ ] do laundry (by: 1 Mar 2025, 11:00 am)",
                 Parser.parse("deadline do laundry /by 1/3/2025 11:00").toString());
+    }
 
+    @Test
+    public void parse_eventCorrectFormat_success() throws Exception {
         // event provided in correct format
         assertEquals("add command: [E][ ] chess training "
                         + "(from: 1 Mar 2025, 3:00 pm to: 1 Mar 2025, 6:00 pm)",
                 Parser.parse("event chess training /from 1/3/2025 15:00 "
                         + "/to 1/3/2025 18:00").toString());
+    }
 
-        // list provided in correct format
-        assertEquals("list command",
-                Parser.parse("list").toString());
-
-        // list provided in correct format with whitespace
-        assertEquals("list command",
-                Parser.parse("    list  ").toString());
-
-        // remind provided in correct format
-        assertEquals("remind command: 2",
-                Parser.parse("remind 2").toString());
-
-        // remind provided in correct format with whitespace
-        assertEquals("remind command: 3",
-                Parser.parse("    remind  3 ").toString());
-
-        // bye provided in correct format
-        assertEquals("bye command",
-                Parser.parse("bye").toString());
-
-        // bye provided in correct format with whitespace
-        assertEquals("bye command",
-                Parser.parse("    bye  ").toString());
-
+    @Test
+    public void parse_markCorrectFormat_success() throws Exception {
         // mark provided in correct format
         assertEquals("mark command: 0",
                 Parser.parse("mark 1").toString());
+    }
 
+    @Test
+    public void parse_unmarkCorrectFormat_success() throws Exception {
         // unmark provided in correct format
         assertEquals("unmark command: 2",
                 Parser.parse("unmark 3").toString());
+    }
 
+    @Test
+    public void parse_deleteCorrectFormat_success() throws Exception {
         // delete provided in correct format
         assertEquals("delete command: 1",
                 Parser.parse("delete 2").toString());
+    }
 
+    @Test
+    public void parse_findCorrectFormat_success() throws Exception {
         // find provided in correct format
         assertEquals("find command: running errands",
                 Parser.parse("find running errands").toString());
@@ -74,6 +68,40 @@ public class ParserTest {
         assertEquals("find command: running   errands",
                 Parser.parse("find running   errands").toString());
     }
+
+    @Test
+    public void parse_listCorrectFormat_success() throws Exception {
+        // list provided in correct format
+        assertEquals("list command",
+                Parser.parse("list").toString());
+
+        // list provided in correct format with whitespace
+        assertEquals("list command",
+                Parser.parse("    list  ").toString());
+    }
+
+    @Test
+    public void parse_remindCorrectFormat_success() throws Exception {
+        // remind provided in correct format
+        assertEquals("remind command: 2",
+                Parser.parse("remind 2").toString());
+
+        // remind provided in correct format with whitespace
+        assertEquals("remind command: 3",
+                Parser.parse("    remind  3 ").toString());
+    }
+
+    @Test
+    public void parse_byeCorrectFormat_success() throws Exception {
+        // bye provided in correct format
+        assertEquals("bye command",
+                Parser.parse("bye").toString());
+
+        // bye provided in correct format with whitespace
+        assertEquals("bye command",
+                Parser.parse("    bye  ").toString());
+    }
+
 
     @Test
     public void parse_unknownCommand_exceptionThrown() {
