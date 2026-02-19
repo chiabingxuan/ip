@@ -35,6 +35,7 @@ public class Storage {
      * @param dataFolderPath Path to the folder in which tasks are saved.
      * @param filename       Name of the file in which tasks are saved. The
      *                       file is stored in <code>dataFolderPath</code>.
+     * @throws IOException   If there was a problem initialising the data folder.
      */
     public Storage(String dataFolderPath, String filename) throws IOException {
         this.filePath = dataFolderPath + "/" + filename;
